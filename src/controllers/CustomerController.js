@@ -4,6 +4,7 @@ const bcryptjs = require('bcryptjs');
 const customerModel = require('../models/CustomerModel');
 const response = require('../utils/response');
 const jwt = require('../utils/jwt');
+const trainingController = require('./CustomerTrainingController');
 
 if(!process.env.BCRYPT_SALT_ROUNDS)
 {
@@ -89,11 +90,8 @@ async function registerCustomer(req, res)
             return;
         }
 
-        console.log('kontanjiol');
         const hashedPassword = await bcryptjs.hash(password, BCRYPT_SALT_ROUNDS);
-        console.log('sdadsa');
         createdId = await customerModel.createCustomer(name, gender, email, hashedPassword);
-
         
         if(!createdId)
         {
@@ -111,5 +109,6 @@ async function registerCustomer(req, res)
 
 router.post('/login', loginCustomer);
 router.post('/register', registerCustomer);
+router.use('/training', trainingController);
 
 module.exports = router;
