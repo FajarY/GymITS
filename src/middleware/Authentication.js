@@ -1,6 +1,7 @@
 const response = require('../utils/response');
 const jwt = require('../utils/jwt')
 
+
 const authenticate = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
 
@@ -13,6 +14,10 @@ const authenticate = async (req, res, next) => {
     }
 
     const token = authHeader.slice(7); 
+    
+    if (!token) {
+        token = req.cookies.token;
+    }   
 
     try {
         const decoded = jwt.validateToken(token);

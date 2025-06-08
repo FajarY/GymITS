@@ -1,0 +1,14 @@
+DROP TABLE IF EXISTS training_session;
+DROP TABLE IF EXISTS personal_trainer_appointment;
+DROP TABLE IF EXISTS personal_trainer_receipt;
+DROP TABLE IF EXISTS available_time;
+DROP TABLE IF EXISTS product_employee;
+DROP TABLE IF EXISTS receipt_product;
+DROP TABLE IF EXISTS membership_type_receipt;
+DROP TABLE IF EXISTS receipt;
+DROP TABLE IF EXISTS membership;
+DROP TABLE IF EXISTS customer CASCADE;
+DROP TABLE IF EXISTS personal_trainer CASCADE;
+DROP TABLE IF EXISTS product;
+DROP TABLE IF EXISTS membership_type;
+DROP TABLE IF EXISTS employee CASCADE;
