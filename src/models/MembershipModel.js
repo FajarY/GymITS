@@ -9,6 +9,29 @@ async function getCustomerMembership(c_id)
     return membership;
 }
 
+async function createCustomerMembership(c_id, telephone, alamat, start_date, expired_date, mt_id)
+{
+    const [membership] = await db('membership').insert({
+        m_telephone: telephone,
+        m_alamat: alamat,
+        m_start_date: start_date,
+        m_expired_date: expired_date,
+        c_id: c_id,
+        mt_id: mt_id
+    }).returning('m_id');
+
+    return membership;
+}
+
+async function updateCustomerMembership(c_id, telephone, alamat, start_date, expired_date, mt_id)
+{
+    const [membership] = await db('membership').where(
+        {
+            
+        }
+    );
+}
+
 module.exports = 
 {
     getCustomerMembership

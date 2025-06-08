@@ -6,7 +6,7 @@ const response = require('../utils/response');
 
 async function startTrainingSession(req, res)
 {
-    const id = req.token.id;
+    const id = req.decodedToken.id;
     const nowDate = new Date(Date.now());
 
     try
@@ -37,7 +37,7 @@ async function getTrainingSessionData(req, res)
         return;
     }
 
-    const c_id = req.token.id;
+    const c_id = req.decodedToken.id;
     const ts_id = req.params.id;
 
     try
@@ -59,8 +59,8 @@ async function getTrainingSessionData(req, res)
 
 async function getTrainingSessionIdList(req, res)
 {
-    const c_id = req.token.id;
-    
+    const c_id = req.decodedToken.id;
+
     try
     {
         const id_arr = await trainingModel.getTrainingSessionIdList(c_id);
@@ -75,7 +75,7 @@ async function getTrainingSessionIdList(req, res)
     }
     catch(error)
     {
-        res.status(500).json(response.buildResponseFailed('error when getting training session id list', 'unknown server error', null));
+        res.status(500).json(response.buildResponseFailed('error when getting training session id list', error.message, null));
     }
 }
 
@@ -87,13 +87,25 @@ async function endTrainingSession(req, res)
         return;
     }
 
-    const c_id = req.token.id;
+    const c_id = req.decodedToken.id;
     const ts_id = req.params.id;
 
     const nowDate = new Date(Date.now());
 
     try
     {
+        const trainingSessionData = await trainingModel.getTrainingSessionDataSafe(ts_id, c_id);
+        if(!trainingSessionData)
+        {
+            res.status(404).json(response.buildResponseFailed('error when ending training session', 'training session not found', null));
+            return;
+        }
+        if(trainingSessionData.end_time != null)
+        {
+            res.status(400).json(response.buildResponseFailed('error when ending training session', 'training is already ended', null));
+            return;
+        }
+
         const trainingSession = await trainingModel.endTrainingSessionSafe(c_id, ts_id, nowDate);
 
         if(!trainingSession)
@@ -103,9 +115,9 @@ async function endTrainingSession(req, res)
         }
 
         res.status(200).json(response.buildResponseSuccess('succesfully ended training session', {
-            id: trainingSession.id,
-            start_time: trainingSession.start_time,
-            end_time: trainingSession.end_time
+            id: trainingSession.ts_id,
+            start_time: trainingSession.ts_start_time,
+            end_time: trainingSession.ts_end_time
         }));
     }
     catch(error)

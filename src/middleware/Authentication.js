@@ -40,6 +40,7 @@ const authenticate = async (req, res, next) => {
         }
 
         req.token = token;
+        req.decodedToken = decoded;
         req.id = String(id); 
         req.role = role
         next();
