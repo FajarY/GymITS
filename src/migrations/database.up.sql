@@ -23,13 +23,13 @@ CREATE TABLE customer (
     c_id CHAR(8) PRIMARY KEY,
     c_name VARCHAR(128),
     c_gender CHAR(1),
-    c_email VARCHAR(64),
+    c_email VARCHAR(64) UNIQUE,
     c_password VARCHAR(60)
 );
 
 CREATE TABLE product (
-    p_id CHAR(12) PRIMARY KEY,
-    p_name VARCHAR(128),
+    p_id CHAR(8) PRIMARY KEY,
+    p_name VARCHAR(128) UNIQUE,
     p_price DECIMAL(10,2),
     p_stock INT
 );
@@ -53,7 +53,7 @@ CREATE TABLE membership (
 );
 
 CREATE TABLE receipt (
-    r_id CHAR(12) PRIMARY KEY,
+    r_id CHAR(8) PRIMARY KEY,
     r_date TIMESTAMP,
     r_final_price DECIMAL(10,2),
     c_id CHAR(8),
@@ -61,7 +61,7 @@ CREATE TABLE receipt (
 );
 
 CREATE TABLE receipt_product (
-    r_id CHAR(12),
+    r_id CHAR(8),
     p_id CHAR(12),
     rp_price DECIMAL(10,2),
     rp_amount INT,
@@ -72,7 +72,7 @@ CREATE TABLE receipt_product (
 );
 
 CREATE TABLE product_employee (
-    p_id CHAR(12),
+    p_id CHAR(8),
     added_by_e_id CHAR(8),
     add_amount INT,
     PRIMARY KEY (p_id, added_by_e_id),
@@ -81,7 +81,7 @@ CREATE TABLE product_employee (
 );
 
 CREATE TABLE training_session (
-    ts_id CHAR(12) PRIMARY KEY,
+    ts_id CHAR(8) PRIMARY KEY,
     ts_start_time TIMESTAMP,
     ts_end_time TIMESTAMP,
     c_id CHAR(8),
@@ -89,7 +89,7 @@ CREATE TABLE training_session (
 );
 
 CREATE TABLE personal_trainer_appointment (
-    pt_a_id CHAR(12) PRIMARY KEY,
+    pt_a_id CHAR(8) PRIMARY KEY,
     pt_a_date DATE,
     c_id CHAR(8),
     pt_id CHAR(8),
@@ -110,7 +110,7 @@ CREATE TABLE personal_trainer_receipt (
 );
 
 CREATE TABLE available_time (
-    at_id CHAR(12) PRIMARY KEY,
+    at_id CHAR(8) PRIMARY KEY,
     at_date DATE,
     pt_id CHAR(8),
     at_start_end_time TSRANGE,
@@ -118,7 +118,7 @@ CREATE TABLE available_time (
 );
 
 CREATE TABLE membership_type_receipt (
-    mtr_id INT PRIMARY KEY,
+    mtr_id CHAR(8) PRIMARY KEY,
     mtr_price_per_month DECIMAL(10,2),
     mtr_month_amount INT,
     mt_id CHAR(8),
