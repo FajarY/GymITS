@@ -16,6 +16,7 @@ const app = express()
 
 const staticPath = path.join(__dirname, '../', 'public');
 
+app.use(express.json())
 app.use('/customer', customer);
 app.use('/personaltrainer', personalTrainer);
 app.use('/employee', employee);

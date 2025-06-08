@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "tailwind": "npx @tailwindcss/cli -i input.css -o ./public/output.css --watch",
-    "start": "docker compose up -d && node ."
+    "start": "docker compose up -d && nodemon ."
   },
   "author": "",
   "license": "ISC",
