@@ -6,9 +6,9 @@
   "scripts": {
     "tailwind": "npx @tailwindcss/cli -i input.css -o ./public/output.css --watch",
     "start": "docker compose up -d && nodemon .",
-    "up": "node ./src/migrations/up.js",
+    "up": "node ./src/migrations/migrate.js",
     "down": "node ./src/migrations/down.js",
-    "seed": "node ./src/migrations/seed.js"
+    "seed": "node ./src/migrations/seeding.js"
   },
   "author": "",
   "license": "ISC",

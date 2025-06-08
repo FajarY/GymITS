@@ -32,21 +32,24 @@ const getAll = async() => {
     }
 }
 
-const addProductStock = async(id, stock, employeeID) => {
+const addProductStock = async(id, amount, employeeID) => {
+    console.log(id, amount, employeeID)
     try {
         const product = await db('product_employee').
         insert({
             p_id: id,
             added_by_e_id: employeeID,
-            add_amount: stock
+            add_amount: amount
         }).returning('*');
 
-        return product;
+        return product[0];
     } catch(error) {
         throw new Error('fail to add stock product');
     }
 }
 
 module.exports = {
-    addNewProduct
+    addNewProduct,
+    addProductStock,
+    getAll
 }
