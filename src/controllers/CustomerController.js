@@ -19,6 +19,11 @@ const JWT_SECRET = Number(process.env.JWT_SECRET);
 
 async function loginCustomer(req, res)
 {
+    if(!req.body)
+    {
+        res.status(400).json(response.buildResponseFailed('request body is missing', 'invalid request body', null));
+        return;
+    }
     const {email, password} = req.body;
 
     if(!email || !password)
@@ -29,12 +34,17 @@ async function loginCustomer(req, res)
 
     try
     {
-        const customer = customerModel.getCustomerByEmail(email);
+        const customer = await customerModel.getCustomerByEmail(email);
+        if(customer == undefined)
+        {
+            res.status(401).json(response.buildResponseFailed('failed to login', 'invalid email or password', null));
+            return;
+        }
 
-        const isPasswordValid = bcryptjs.compare(password, customer.password);
+        const isPasswordValid = await bcryptjs.compare(password, customer.password);
         if(!isPasswordValid)
         {
-            res.status(401).json(response.buildResponseFailed('invalid password', 'invalid password'));
+            res.status(401).json(response.buildResponseFailed('failed to login', 'invalid email or password', null));
             return;
         }
 
@@ -57,6 +67,11 @@ async function loginCustomer(req, res)
 
 async function registerCustomer(req, res)
 {
+    if(!req.body)
+    {
+        res.status(400).json(response.buildResponseFailed('request body is missing', 'invalid request body', null));
+        return;
+    }
     const {name, gender, email, password} = req.body;
 
     if(!name || !gender || !email || !password)
@@ -67,9 +82,19 @@ async function registerCustomer(req, res)
 
     try
     {
+        const customer = await customerModel.getCustomerByEmail(email);
+        if(customer != undefined)
+        {
+            res.status(401).json(response.buildResponseFailed('failed to register', 'email is already registered', null));
+            return;
+        }
+
+        console.log('kontanjiol');
         const hashedPassword = await bcryptjs.hash(password, BCRYPT_SALT_ROUNDS);
+        console.log('sdadsa');
         createdId = await customerModel.createCustomer(name, gender, email, hashedPassword);
 
+        
         if(!createdId)
         {
             res.status(500).json(response.buildResponseFailed('error when registering user', 'server error or possiblity of email taken', null));

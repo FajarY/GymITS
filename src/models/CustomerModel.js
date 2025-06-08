@@ -15,7 +15,7 @@ async function createCustomer(name, gender, email, password)
 async function getCustomerByEmail(email)
 {
     const [customer] = await db('customer')
-        .select('c_id as id, c_name as name, c_gender as gender, c_email as email, c_password as password')
+        .select('c_id as id', 'c_name as name', 'c_gender as gender', 'c_email as email', 'c_password as password')
         .where({c_email: email});
 
     return customer;
