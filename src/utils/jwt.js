@@ -11,6 +11,14 @@ const generateToken = (id, role) => {
     return jwt.sign({id, role}, process.env.JWT_SECRET, options)
 }
 
+const generateTokenFromObject = (obj) => {
+    const options = {
+        expiresIn: '6h',
+    };
+
+    return jwt.sign(obj, process.env.JWT_SECRET, options)
+}
+
 const validateToken = (token) => {
     return jwt.verify(token, secretKey);
 };
@@ -19,4 +27,5 @@ const validateToken = (token) => {
 module.exports = {
     validateToken,
     generateToken,
+    generateTokenFromObject
 }
