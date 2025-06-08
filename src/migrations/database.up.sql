@@ -168,6 +168,9 @@ BEGIN
     ELSIF TG_TABLE_NAME = 'product' THEN
         SELECT MAX(p_id) INTO last_id FROM product;
         NEW.p_id := increment_id(last_id, 'P');
+    ELSIF TG_TABLE_NAME = 'training_session' THEN
+        SELECT MAX(ts_id) INTO last_id FROM training_session;
+        NEW.ts_id := increment_id(last_id, 'TS');
     END IF; 
 
     RETURN NEW;
@@ -192,5 +195,10 @@ EXECUTE FUNCTION set_id();
 
 CREATE TRIGGER tgr_id_before_insert
 BEFORE INSERT ON product
+FOR EACH ROW
+EXECUTE FUNCTION set_id();
+
+CREATE TRIGGER tgr_id_before_insert
+BEFORE INSERT ON training_session
 FOR EACH ROW
 EXECUTE FUNCTION set_id();
