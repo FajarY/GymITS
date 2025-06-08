@@ -16,7 +16,6 @@ const create = async (name, alamat, password, telephone, gender, price_per_hour,
 
         return pt_id;
     } catch(error) {
-        console.log(error)
         throw new Error('fail to insert personal trainer');
     }
 }

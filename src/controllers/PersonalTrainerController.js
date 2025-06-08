@@ -6,6 +6,12 @@ const {authenticate, authorize} = require('../middleware/Authentication')
 const personalTrainerModel = require('../models/PersonalTrainerModel');
 const router = express.Router();
 
+if(!process.env.BCRYPT_SALT_ROUNDS)
+{
+    throw new Error('BCRYPT_SALT_ROUNDS is not defined!');
+}
+const BCRYPT_SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS);
+
 const loginPersonalTrainer = async (req, res) => {    
     try {
         const {id, password} = req.body;
@@ -29,6 +35,7 @@ const loginPersonalTrainer = async (req, res) => {
             role: "trainer"
         }
 
+        res.cookie('token', token, {maxAge: 360000});
         res.status(200).json(response.buildResponseSuccess("logged in successfully", result));
         return;
     } catch(error) {
@@ -47,7 +54,7 @@ const addPersonalTrainer = async (req, res) => {
             return;
         }
 
-        hashedPassword = await bcrypt.hash(password, 10);
+        hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
         
         const newPersonalTrainer = await personalTrainerModel.create(name, alamat, hashedPassword, telephone, gender, price_per_hour, employeeID);
         

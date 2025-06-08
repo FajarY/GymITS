@@ -30,6 +30,7 @@ const loginEmployee= async (req, res) => {
             role: "employee"
         }
 
+        res.cookie('token', token, {maxAge: 360000});
         res.status(200).json(response.buildResponseSuccess("logged in successfully", result))
         return;
     } catch(error) {
