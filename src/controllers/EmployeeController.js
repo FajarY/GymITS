@@ -6,17 +6,21 @@ const employeeModel = require('../models/EmployeeModel')
 const router = express.Router();
 
 const loginEmployee= async (req, res) => {
-    const {id, password} = req.body;
-    if (!id || !password) {
-       res.status(400).json(response.buildResponseFailed("missing required fields", "invalid request body", null));
-    }
     
     try {
+        const {id, password} = req.body;
+        
+        if (!id || !password) {
+           res.status(400).json(response.buildResponseFailed("missing required fields", "invalid request body", null));
+           return;
+        }
+
         const employee = await employeeModel.getByID(id)
 
         const isPasswordValid = await bcrypt.compare(password, employee.password);
         if(!isPasswordValid) {
             res.status(401).json(response.buildResponseFailed("invalid password", "invalid password", null));
+            return;
         }
 
         const token = jwt.generateToken(employee.id, "employee")
@@ -27,8 +31,10 @@ const loginEmployee= async (req, res) => {
         }
 
         res.status(200).json(response.buildResponseSuccess("logged in successfully", result))
+        return;
     } catch(error) {
         res.status(500).json(response.buildResponseFailed("failed to login", error.message, null));
+        return;
     }
 }
 
