@@ -124,3 +124,73 @@ CREATE TABLE membership_type_receipt (
     mt_id CHAR(8),
     FOREIGN KEY (mt_id) REFERENCES membership_type(mt_id)
 );
+
+
+CREATE OR REPLACE FUNCTION increment_id(
+    last_id CHAR, 
+    prefix CHAR
+)
+RETURNS CHAR 
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    new_id_num INT;
+    prefix_len INT;
+BEGIN
+    prefix_len := CHAR_LENGTH(prefix);
+
+    IF last_id IS NULL THEN 
+        new_id_num := 1;
+    ELSE 
+        new_id_num := CAST(SUBSTRING(last_id, prefix_len + 1) AS INT) + 1;
+    END IF;
+
+    RETURN CONCAT(prefix, LPAD(new_id_num::text, 8 - prefix_len, '0'));
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION set_id()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    last_id CHAR(8);
+BEGIN
+    IF TG_TABLE_NAME = 'customer' THEN
+        SELECT MAX(c_id) INTO last_id FROM customer;
+        NEW.c_id := increment_id(last_id, 'C');
+    ELSIF TG_TABLE_NAME = 'employee' THEN
+        SELECT MAX(e_id) INTO last_id FROM employee;
+        NEW.e_id := increment_id(last_id, 'E');
+    ELSIF TG_TABLE_NAME = 'personal_trainer' THEN
+        SELECT MAX(pt_id) INTO last_id FROM personal_trainer;
+        NEW.pt_id := increment_id(last_id, 'PT');
+    ELSIF TG_TABLE_NAME = 'product' THEN
+        SELECT MAX(p_id) INTO last_id FROM product;
+        NEW.p_id := increment_id(last_id, 'P');
+    END IF; 
+
+    RETURN NEW;
+END;
+$$;
+
+
+CREATE TRIGGER tgr_id_before_insert
+BEFORE INSERT ON customer
+FOR EACH ROW
+EXECUTE FUNCTION set_id();
+
+CREATE TRIGGER tgr_id_before_insert
+BEFORE INSERT ON personal_trainer
+FOR EACH ROW
+EXECUTE FUNCTION set_id();
+
+CREATE TRIGGER tgr_id_before_insert
+BEFORE INSERT ON employee
+FOR EACH ROW
+EXECUTE FUNCTION set_id();
+
+CREATE TRIGGER tgr_id_before_insert
+BEFORE INSERT ON product
+FOR EACH ROW
+EXECUTE FUNCTION set_id();
