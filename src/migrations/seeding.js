@@ -9,10 +9,10 @@ const down = async () => {
         const sql = fs.readFileSync(sqlPath, 'utf8');
 
         await db.raw(sql);
-        console.log('table dropped successfully.');
+        console.log('seeding successfull.');
         process.exit(0);
     } catch (error) {
-        console.error('error during droping table:', error);
+        console.error('error during seed table:', error);
         process.exit(1);
     } 
 }
