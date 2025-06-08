@@ -23,11 +23,12 @@ async function createCustomerMembership(c_id, telephone, alamat, start_date, exp
     return membership;
 }
 
-async function updateCustomerMembership(c_id, telephone, alamat, start_date, expired_date, mt_id)
+async function updateCustomerMembershipSafe(m_id, c_id, telephone, alamat, start_date, expired_date, mt_id)
 {
     const [membership] = await db('membership').where(
         {
-            
+            m_id: m_id,
+            c_id: c_id
         }
     );
 }
