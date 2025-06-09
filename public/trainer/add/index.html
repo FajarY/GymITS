@@ -46,7 +46,7 @@
             <div class="flex items-center gap-9">
               <a
                 class="text-[#0d141c] text-sm font-medium leading-normal"
-                href="/profile"
+                href="/profile/employee"
                 >Profile</a
               >
             </div>
@@ -101,15 +101,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div class="mb-4">
                     <label for="trainerName" class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
-                    <input type="text" id="trainerName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
+                    <input type="text" id="trainerName" maxlength="128" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
                 </div>
                  <div class="mb-4">
                     <label for="trainerPhone" class="block text-gray-700 text-sm font-bold mb-2">Telephone</label>
-                    <input type="tel" id="trainerPhone" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
+                    <input type="tel" id="trainerPhone" maxlength="16" pattern="[0-9]*" title="Please enter only numbers." class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
                 </div>
                  <div class="mb-4">
                     <label for="trainerPassword" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-                    <input type="password" id="trainerPassword" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
+                    <input type="password" id="trainerPassword" maxlength="32" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
                 </div>
                 <div class="mb-4">
                     <label for="trainerGender" class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
@@ -121,11 +121,11 @@
                 </div>
                 <div class="md:col-span-2 mb-4">
                     <label for="trainerAddress" class="block text-gray-700 text-sm font-bold mb-2">Address</label>
-                    <textarea id="trainerAddress" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required></textarea>
+                    <textarea id="trainerAddress" rows="3" maxlength="256" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required></textarea>
                 </div>
                  <div class="md:col-span-2 mb-6">
                     <label for="trainerPrice" class="block text-gray-700 text-sm font-bold mb-2">Price per Hour (Rp)</label>
-                    <input type="number" id="trainerPrice" min="0" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
+                    <input type="number" id="trainerPrice" min="0" max="99999999" step="0.01" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
                 </div>
             </div>
           <div class="flex items-center justify-end gap-4 mt-4">

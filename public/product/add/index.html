@@ -10,13 +10,9 @@
       style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'
     >
       <div class="layout-container flex h-full grow flex-col">
-        <!-- =================================================================
-        NAVIGATION BAR
-        ================================================================== -->
         <header
           class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf4] px-10 py-3"
         >
-          <!-- Logo and Site Name -->
           <div class="flex items-center gap-4 text-[#0d141c]">
             <div class="size-4">
               <svg
@@ -41,12 +37,11 @@
               GymITS
             </a>
           </div>
-          <!-- Profile Link -->
           <div class="flex flex-1 justify-end gap-8">
             <div class="flex items-center gap-9">
               <a
                 class="text-[#0d141c] text-sm font-medium leading-normal"
-                href="/profile"
+                href="/profile/employee"
                 >Profile</a
               >
             </div>
@@ -57,12 +52,8 @@
           </div>
         </header>
 
-        <!-- =================================================================
-        MAIN CONTENT: PRODUCT MANAGEMENT
-        ================================================================== -->
         <main class="px-10 lg:px-40 flex-1 py-5">
           <div class="max-w-[960px] mx-auto">
-            <!-- Header and Create Button -->
             <div class="flex flex-wrap justify-between items-center gap-3 p-4">
               <h1 class="text-[#0d141c] tracking-light text-[32px] font-bold leading-tight min-w-72">
                 Manage Products
@@ -72,9 +63,7 @@
               </button>
             </div>
 
-            <!-- Grid for Product Cards -->
             <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-              <!-- Product Card Example -->
               <div class="product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden" data-product-id="1">
                 <img src="https://placehold.co/400x300/3490f3/white?text=Gym+Product" alt="Product Image" class="w-full h-48 object-cover">
                 <div class="p-6 flex-grow flex flex-col">
@@ -88,28 +77,23 @@
                   </button>
                 </div>
               </div>
-               <!-- More products will be added here by JavaScript -->
-            </div>
+               </div>
           </div>
         </main>
       </div>
     </div>
 
-    <!-- =================================================================
-    MODALS (Pop-up Windows)
-    ================================================================== -->
-    <!-- 1. Create Product Modal -->
     <div id="create-product-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
       <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
         <h2 class="text-2xl font-bold mb-6">Create a New Product</h2>
         <form id="create-product-form">
           <div class="mb-4">
             <label for="productName" class="block text-gray-700 text-sm font-bold mb-2">Product Name</label>
-            <input type="text" id="productName" name="productName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <input type="text" maxlength="128" id="productName" name="productName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
           </div>
           <div class="mb-6">
             <label for="productPrice" class="block text-gray-700 text-sm font-bold mb-2">Price (Rp)</label>
-            <input type="number" id="productPrice" name="productPrice" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <input type="number" id="productPrice" name="productPrice" min="0" max="99999999" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
           </div>
           <div class="flex items-center justify-end gap-4">
             <button id="cancel-create-btn" type="button" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Cancel</button>
@@ -119,7 +103,6 @@
       </div>
     </div>
 
-    <!-- 2. Add Stock Modal -->
     <div id="add-stock-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
         <h2 class="text-2xl font-bold mb-2">Add Stock</h2>
@@ -127,7 +110,7 @@
         <form id="add-stock-form">
           <div class="mb-4">
             <label for="stockQuantity" class="block text-gray-700 text-sm font-bold mb-2">Quantity to Add</label>
-            <input type="number" id="stockQuantity" name="stockQuantity" min="1" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <input type="number" id="stockQuantity" name="stockQuantity" min="1" max="999999" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
             <input type="hidden" id="stockProductId">
           </div>
           <div class="flex items-center justify-end gap-4">
@@ -138,7 +121,6 @@
       </div>
     </div>
 
-    <!-- Link to the external JavaScript file -->
     <script src="script.js"></script>
   </body>
 </html>
