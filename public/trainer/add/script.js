@@ -27,13 +27,44 @@ document.addEventListener('DOMContentLoaded', () => {
   createTrainerForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    // Get all values from the form
-    const name = document.getElementById('trainerName').value;
-    const phone = document.getElementById('trainerPhone').value;
-    const password = document.getElementById('trainerPassword').value;
-    const gender = document.getElementById('trainerGender').value;
-    const address = document.getElementById('trainerAddress').value;
-    const price = document.getElementById('trainerPrice').value;
+    // Get all input elements from the form
+    const nameInput = document.getElementById('trainerName');
+    const phoneInput = document.getElementById('trainerPhone');
+    const passwordInput = document.getElementById('trainerPassword');
+    const genderInput = document.getElementById('trainerGender');
+    const addressInput = document.getElementById('trainerAddress');
+    const priceInput = document.getElementById('trainerPrice');
+
+    // Get the values from the inputs
+    const name = nameInput.value;
+    const phone = phoneInput.value;
+    const password = passwordInput.value;
+    const gender = genderInput.value;
+    const address = addressInput.value;
+    const price = parseFloat(priceInput.value);
+
+    // --- VALIDATION LOGIC ---
+    if (name.length > 128) {
+        alert('Error: Name must be 128 characters or less.');
+        return;
+    }
+    if (!/^\d*$/.test(phone) || phone.length > 16) {
+        alert('Error: Telephone must contain only numbers and be 16 digits or less.');
+        return;
+    }
+    if (password.length > 32) {
+        alert('Error: Password must be 32 characters or less.');
+        return;
+    }
+    if (address.length > 256) {
+        alert('Error: Address must be 256 characters or less.');
+        return;
+    }
+    if (isNaN(price) || price < 0 || price > 99999999) {
+        alert('Error: Price must be a valid number between 0 and 99999999');
+        return;
+    }
+
 
     // Simulate sending to backend and getting a new ID
     const newTrainerId = Date.now(); // Use timestamp as a unique ID for this example
@@ -50,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="p-6 flex-grow flex flex-col">
           <h3 class="trainer-name text-xl font-bold text-[#0d141c]">${name}</h3>
           <p class="trainer-gender text-sm text-gray-500">${gender}</p>
-          <p class="trainer-price text-lg font-semibold text-gray-700 mt-2">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price)} / hour</p>
+          <p class="trainer-price text-lg font-semibold text-gray-700 mt-2">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price)} / hour</p>
           <p class="trainer-phone text-sm text-gray-500 mt-2">Tel: ${phone}</p>
       </div>
     `;
