@@ -242,3 +242,18 @@ CREATE OR REPLACE TRIGGER tgr_id_before_insert
 BEFORE INSERT ON training_session
 FOR EACH ROW
 EXECUTE FUNCTION set_id();
+
+CREATE OR REPLACE VIEW view_customer_profile AS 
+SELECT 
+    c.c_id AS id,
+    c.c_name AS name,
+    c.c_email AS email,
+    c.c_gender AS gender,
+    mt.mt_name AS membership_type,
+    m.m_telephone AS telephone,
+    m.m_alamat AS alamat, 
+    m.m_start_date AS start_date,
+    m.m_expired_date AS expired_date
+FROM customer c
+NATURAL LEFT JOIN membership m
+NATURAL LEFT JOIN membership_type mt

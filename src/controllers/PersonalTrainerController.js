@@ -122,9 +122,37 @@ const getPersonalTrainerAvailability = async (req, res) => {
     }
 };
 
+const profile = async(req, res) => {
+    try {
+        const id = req.id;
+        const personalTrainer = await personalTrainerModel.getProfile(id);
+        if(!personalTrainer) {
+            res.status(400).json(response.buildResponseFailed('failed to get personal profile', 'personal trainer does not exist', null));
+            return;
+        }
+
+        res.status(200).json(response.buildResponseSuccess("successfully get personal trainer profile", personalTrainer));
+    }catch(error) {
+        res.status(500).json(response.buildResponseFailed("failed to get personal trainer profile", error.message, null));
+    }
+}
+
+const getAvailableDate = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const personalTrainer = await personalTrainerModel.getAvailableDate(id);
+        const result = personalTrainer.map(item => item.date);
+        res.status(200).json(response.buildResponseSuccess("successfully get personal trainer available date", result));
+    } catch(error) {
+        res.status(500).json(response.buildResponseFailed("failed to get personal trainer available date", error.message, null));
+    }
+}
+
 router.post('/login', loginPersonalTrainer);
 router.post('/', authenticate, authorize('employee'), addPersonalTrainer);
 router.get('/data', authenticate, getAllPersonalTrainer);
+router.get('/profile', authenticate, profile);
 router.get('/:id/availability', authenticate, getPersonalTrainerAvailability);
+router.get('/:id/availabledate', authenticate, getAvailableDate);
 
 module.exports = router;

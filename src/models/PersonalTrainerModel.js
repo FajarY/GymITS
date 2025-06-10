@@ -56,11 +56,6 @@ const getAll = async () => {
 }
 
 const getAvailableTime = async (personal_trainer_id, date) => {
-    const query = `
-        SELECT available_slot
-        FROM get_available_slots('${personal_trainer_id}')
-        WHERE available_slot && tsrange(DATE '${date}', DATE '${date}' + INTERVAL '1 day', '[)')
-    `
     try {
         const available_time = await db
         .select('*')
@@ -73,9 +68,38 @@ const getAvailableTime = async (personal_trainer_id, date) => {
     }
 }
 
+const getProfile = async (personal_trainer_id) => {
+    const [trainer] = await db('personal_trainer')
+    .select(
+        'pt_name AS name',
+        'pt_gender AS gender',
+        'pt_price_per_hour AS price_per_hour',
+        'pt_alamat AS alamat',
+        'pt_telephone AS telephone'
+    )
+    .where({pt_id: personal_trainer_id});
+    
+    return trainer
+}
+
+
+const getAvailableDate = async (personal_trainer_id) => {
+    const rawQuery = `
+        SELECT at_date AS date
+        FROM available_time 
+        NATURAL JOIN personal_trainer 
+        WHERE pt_id = ? AND at_date > CURRENT_DATE
+    `
+    const trainer = await db.raw(rawQuery, [personal_trainer_id]);
+
+    return trainer.rows
+}
+
 module.exports = {
     create,
     getByID,
     getAll,
-    getAvailableTime
+    getAvailableDate,
+    getAvailableTime,
+    getProfile
 }

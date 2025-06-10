@@ -21,7 +21,7 @@ const authenticate = async (req, res, next) => {
 
         token = authHeader.slice(7); 
     }
-
+   
     try {
         const decoded = jwt.validateToken(token);
 

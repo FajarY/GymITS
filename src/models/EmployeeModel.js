@@ -19,7 +19,22 @@ const getByID = async (id) => {
     }
 }
 
+const getProfile = async (id) => {
+    const [employee] = await db('employee')
+    .select(
+        'e_id as id',
+        'e_name as name',
+        'e_alamat as alamat',
+        'e_telephone as telephone',
+        'e_gender as gender'
+    )
+    .where({ e_id: id });
+    
+    return employee;
+}
+
 
 module.exports = {
-    getByID
+    getByID,
+    getProfile
 }
