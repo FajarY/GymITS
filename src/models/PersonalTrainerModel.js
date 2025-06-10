@@ -40,7 +40,42 @@ const getByID = async (id) => {
     }
 }
 
+const getAll = async () => {
+    try {
+        const personalTrainer = await db('personal_trainer')
+        .select(
+            'pt_id as id',
+            'pt_name as name',
+            'pt_price_per_hour as price_per_hour'
+        );
+
+        return personalTrainer;
+    } catch (error) {
+        throw new Error('fail to get personal trainer');
+    }
+}
+
+const getAvailableTime = async (personal_trainer_id, date) => {
+    const query = `
+        SELECT available_slot
+        FROM get_available_slots('${personal_trainer_id}')
+        WHERE available_slot && tsrange(DATE '${date}', DATE '${date}' + INTERVAL '1 day', '[)')
+    `
+    try {
+        const available_time = await db
+        .select('*')
+        .from(db.raw('get_available_slots(?)', [personal_trainer_id]))
+        .whereRaw("available_slot && tsrange(?::date, ?::date + interval '1 day', '[)')", [date, date]);
+
+        return available_time;
+    }catch(error) {
+        throw new Error('fail to get personal trainer available time');
+    }
+}
+
 module.exports = {
     create,
-    getByID
+    getByID,
+    getAll,
+    getAvailableTime
 }

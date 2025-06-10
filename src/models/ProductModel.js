@@ -32,13 +32,13 @@ const getAll = async() => {
     }
 }
 
-const addProductStock = async(id, amount, employeeID) => {
-    console.log(id, amount, employeeID)
+const addProductStock = async(id, amount, employee_id) => {
+    console.log(id, amount, employee_id)
     try {
         const product = await db('product_employee').
         insert({
             p_id: id,
-            added_by_e_id: employeeID,
+            added_by_e_id: employee_id,
             add_amount: amount
         }).returning('*');
 
@@ -48,8 +48,27 @@ const addProductStock = async(id, amount, employeeID) => {
     }
 }
 
+const updatesProduct = async (employee_id, product_id, updates) => {
+    try {
+        const product = await db('product')
+        .where({p_id: product_id})
+        .update(updates)
+        .returning(['p_id', 'p_name', 'p_price', 'p_stock'])
+
+        return {
+            id: product[0].p_id,
+            name: product[0].p_name,
+            price: product[0].p_price,
+            stock: product[0].p_stock
+        }
+    } catch(error) {
+        throw new Error('fail to update product');
+    }
+}
+
 module.exports = {
     addNewProduct,
     addProductStock,
-    getAll
+    getAll,
+    updatesProduct
 }
