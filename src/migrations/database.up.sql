@@ -171,34 +171,74 @@ BEGIN
     ELSIF TG_TABLE_NAME = 'training_session' THEN
         SELECT MAX(ts_id) INTO last_id FROM training_session;
         NEW.ts_id := increment_id(last_id, 'TS');
+    ELSIF TG_TABLE_NAME = 'personal_trainer_appointment' THEN
+        SELECT MAX(pt_a_id) INTO last_id FROM personal_trainer_appointment;
+        NEW.pt_a_id := increment_id(last_id, 'PTA');
+    ELSIF TG_TABLE_NAME = 'available_time' THEN
+        SELECT MAX(at_id) INTO last_id FROM available_time;
+        NEW.at_id := increment_id(last_id, 'AT');    
+    ELSIF TG_TABLE_NAME = 'receipt' THEN
+        SELECT MAX(r_id) INTO last_id FROM receipt;
+        NEW.r_id := increment_id(last_id, 'R');    
+    ELSIF TG_TABLE_NAME = 'membership_type' THEN
+        SELECT MAX(mt_id) INTO last_id FROM membership_type;
+        NEW.mt_id := increment_id(last_id, 'MT');    
+    ELSIF TG_TABLE_NAME = 'membership' THEN
+        SELECT MAX(m_id) INTO last_id FROM membership;
+        NEW.m_id := increment_id(last_id, 'M');    
+
     END IF; 
 
     RETURN NEW;
 END;
 $$;
 
+CREATE OR REPLACE TRIGGER tgr_id_before_insert
+BEFORE INSERT ON membership
+FOR EACH ROW
+EXECUTE FUNCTION set_id();
 
-CREATE TRIGGER tgr_id_before_insert
+CREATE OR REPLACE TRIGGER tgr_id_before_insert
+BEFORE INSERT ON membership_type
+FOR EACH ROW
+EXECUTE FUNCTION set_id();
+
+CREATE OR REPLACE TRIGGER tgr_id_before_insert
+BEFORE INSERT ON receipt
+FOR EACH ROW
+EXECUTE FUNCTION set_id();
+
+CREATE OR REPLACE TRIGGER tgr_id_before_insert
+BEFORE INSERT ON available_time
+FOR EACH ROW
+EXECUTE FUNCTION set_id();
+
+CREATE OR REPLACE TRIGGER tgr_id_before_insert
+BEFORE INSERT ON personal_trainer_appointment
+FOR EACH ROW
+EXECUTE FUNCTION set_id();
+
+CREATE OR REPLACE TRIGGER tgr_id_before_insert
 BEFORE INSERT ON customer
 FOR EACH ROW
 EXECUTE FUNCTION set_id();
 
-CREATE TRIGGER tgr_id_before_insert
+CREATE OR REPLACE TRIGGER tgr_id_before_insert
 BEFORE INSERT ON personal_trainer
 FOR EACH ROW
 EXECUTE FUNCTION set_id();
 
-CREATE TRIGGER tgr_id_before_insert
+CREATE OR REPLACE TRIGGER tgr_id_before_insert
 BEFORE INSERT ON employee
 FOR EACH ROW
 EXECUTE FUNCTION set_id();
 
-CREATE TRIGGER tgr_id_before_insert
+CREATE OR REPLACE TRIGGER tgr_id_before_insert
 BEFORE INSERT ON product
 FOR EACH ROW
 EXECUTE FUNCTION set_id();
 
-CREATE TRIGGER tgr_id_before_insert
+CREATE OR REPLACE TRIGGER tgr_id_before_insert
 BEFORE INSERT ON training_session
 FOR EACH ROW
 EXECUTE FUNCTION set_id();
