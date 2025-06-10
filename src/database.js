@@ -1,4 +1,6 @@
+const dotenv = require('dotenv');
 const knex = require('knex')
+dotenv.config();
 
 const pg = knex({
   client: 'pg',

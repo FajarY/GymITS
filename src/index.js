@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -16,6 +17,8 @@ const app = express()
 
 const staticPath = path.join(__dirname, '../', 'public');
 
+app.use(express.json())
+app.use(cookieParser())
 app.use('/customer', customer);
 app.use('/personaltrainer', personalTrainer);
 app.use('/employee', employee);

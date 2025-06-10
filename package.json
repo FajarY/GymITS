@@ -5,16 +5,21 @@
   "main": "src/index.js",
   "scripts": {
     "tailwind": "npx @tailwindcss/cli -i input.css -o ./public/output.css --watch",
-    "start": "docker compose up -d && node ."
+    "start": "docker compose up -d && nodemon .",
+    "up": "node ./src/migrations/migrate.js",
+    "down": "node ./src/migrations/down.js",
+    "seed": "node ./src/migrations/seeding.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "knex": "^3.1.0",
+    "nodemon": "^3.1.10",
     "pg": "^8.16.0",
     "tailwindcss": "^4.1.8"
   },
