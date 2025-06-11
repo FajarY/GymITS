@@ -69,11 +69,17 @@ async function getAppointments(id) {
   return result.rows; 
 }
 
+async function customerOnGym() {
+  const [result] = await db('view_customer_on_gym').select('count');
+  return result;
+}
+
 module.exports = 
 {
     createCustomer,
     getCustomerByEmail,
     isCustomerExistByEmail,
     getProfile,
-    getAppointments
+    getAppointments,
+    customerOnGym
 }

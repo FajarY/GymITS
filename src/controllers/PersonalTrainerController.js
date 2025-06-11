@@ -104,19 +104,11 @@ const getPersonalTrainerAvailability = async (req, res) => {
             }
         });
 
-        const timeSlots = Array.from({ length: 24 }, (_, hour) => {
-            const startTime = new Date(`${date}T${String(hour).padStart(2, '0')}:00:00`);
-            const endTime = new Date(startTime);
-            endTime.setHours(hour + 1);
-
-            return {
-                start_time: startTime.toISOString(),
-                end_time: endTime.toISOString(),
-                available: availableHours.has(hour),
-            };
+        const timeAvailability = Array.from({ length: 24 }, (_, hour) => {
+            return availableHours.has(hour);
         });
 
-        res.status(200).json(response.buildResponseSuccess("successfully get personal trainer availability.", timeSlots));
+        res.status(200).json(response.buildResponseSuccess("successfully get personal trainer availability.", timeAvailability));
     } catch (error) {
         res.status(500).json(response.buildResponseFailed("failed to get personal trainer available time.", error.message, null));
     }
@@ -148,11 +140,27 @@ const getAvailableDate = async (req, res) => {
     }
 }
 
+async function trainerAppointments(req, res) {
+    try {
+        const id = req.id;
+        const personalTrainer = await personalTrainerModel.getAppointments(id)
+        if(!personalTrainer) {
+            res.status(401).json(response.buildResponseFailed('failed to get personal trianer appointments', 'something wrong', null));
+            return;
+        }
+        
+        res.status(200).json(response.buildResponseSuccess('successfully get personal trianer appointments', personalTrainer));
+    }  catch (error) {
+        res.status(500).json(response.buildResponseFailed('failed to get personal trianer appointments', error.message, null));
+    }
+}
+
 router.post('/login', loginPersonalTrainer);
 router.post('/', authenticate, authorize('employee'), addPersonalTrainer);
 router.get('/data', authenticate, getAllPersonalTrainer);
 router.get('/profile', authenticate, profile);
 router.get('/:id/availability', authenticate, getPersonalTrainerAvailability);
 router.get('/:id/availabledate', authenticate, getAvailableDate);
+router.get('/appointments', authenticate, authorize('trainer'), trainerAppointments);
 
 module.exports = router;
