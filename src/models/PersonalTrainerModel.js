@@ -56,11 +56,6 @@ const getAll = async () => {
 }
 
 const getAvailableTime = async (personal_trainer_id, date) => {
-    const query = `
-        SELECT available_slot
-        FROM get_available_slots('${personal_trainer_id}')
-        WHERE available_slot && tsrange(DATE '${date}', DATE '${date}' + INTERVAL '1 day', '[)')
-    `
     try {
         const available_time = await db
         .select('*')
@@ -73,9 +68,70 @@ const getAvailableTime = async (personal_trainer_id, date) => {
     }
 }
 
+const getProfile = async (personal_trainer_id) => {
+    const [trainer] = await db('personal_trainer')
+    .select(
+        'pt_name AS name',
+        'pt_gender AS gender',
+        'pt_price_per_hour AS price_per_hour',
+        'pt_alamat AS alamat',
+        'pt_telephone AS telephone'
+    )
+    .where({pt_id: personal_trainer_id});
+    
+    return trainer
+}
+
+
+const getAvailableDate = async (personal_trainer_id) => {
+    const rawQuery = `
+        SELECT at_date AS date
+        FROM available_time 
+        NATURAL JOIN personal_trainer 
+        WHERE pt_id = ? AND at_date > CURRENT_DATE
+    `
+    const trainer = await db.raw(rawQuery, [personal_trainer_id]);
+
+    return trainer.rows
+}
+
+const getAppointments = async (id) => {
+      const rawQuery = `
+    SELECT
+        c.c_name AS customer_name,
+        pta.pt_a_date AS date,
+        TO_CHAR(LOWER(pta.pt_start_end_time), 'HH12:MI AM') || ' - ' || 
+        TO_CHAR(UPPER(pta.pt_start_end_time), 'HH12:MI AM') AS formatted_time,
+        CASE
+            WHEN UPPER(pta.pt_start_end_time) > NOW() THEN 'UPCOMING'
+            ELSE 'COMPLETED'
+        END AS status
+    FROM 
+        personal_trainer_appointment pta
+    JOIN 
+        customer c ON pta.c_id = c.c_id
+    JOIN 
+        personal_trainer pt ON pta.pt_id = pt.pt_id
+    WHERE 
+        pta.pt_id = ?
+    ORDER BY 
+        CASE
+            WHEN UPPER(pta.pt_start_end_time) > NOW() THEN 1
+            ELSE 2
+        END,
+        UPPER(pta.pt_start_end_time) ASC;
+  `;
+
+  const appointments = await db.raw(rawQuery, [id]);
+  return appointments.rows;
+}
+
 module.exports = {
     create,
     getByID,
     getAll,
-    getAvailableTime
+    getAvailableDate,
+    getAvailableTime,
+    getProfile,
+    getAppointments
 }

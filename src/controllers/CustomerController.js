@@ -5,6 +5,7 @@ const customerModel = require('../models/CustomerModel');
 const response = require('../utils/response');
 const jwt = require('../utils/jwt');
 const trainingController = require('./CustomerTrainingController');
+const { authenticate, authorize } = require('../middleware/Authentication');
 
 if(!process.env.BCRYPT_SALT_ROUNDS)
 {
@@ -107,8 +108,52 @@ async function registerCustomer(req, res)
     }
 }
 
+async function profileCustomer(req, res) {
+    try {
+        const id = req.id;
+        const customer = await customerModel.getProfile(id);
+        if(!customer) {
+            res.status(400).json(response.buildResponseFailed('failed to get customer profile', 'customer does not exist', null));
+            return;
+        }
+        
+        res.status(200).json(response.buildResponseSuccess('customer registered successfully', customer));
+    } catch (error) {
+        
+        res.status(500).json(response.buildResponseFailed('failed to get customer profile', error.message, null));
+    }
+}
+
+async function customerAppointments(req, res) {
+    try {
+        const id = req.id;
+        const customer = await customerModel.getAppointments(id)
+        if(!customer) {
+            res.status(401).json(response.buildResponseFailed('failed to get customer appointments', 'something wrong', null));
+            return;
+        }
+        
+        res.status(200).json(response.buildResponseSuccess('successfully get customer appointments', customer));
+    }  catch (error) {
+        res.status(500).json(response.buildResponseFailed('failed to get customer appointments', error.message, null));
+    }
+}
+
+async function customerOnGym(req, res) {
+    try {
+        const customers = await customerModel.customerOnGym();
+        console.log(customers)
+        res.status(200).json(response.buildResponseSuccess('successfully get customer count', customers));
+    } catch(error) {
+        res.status(500).json(response.buildResponseFailed('failed to get customers', error.message, null));
+    }
+}
+
 router.post('/login', loginCustomer);
 router.post('/register', registerCustomer);
 router.use('/training', trainingController);
+router.get('/profile', authenticate, authorize('customer'), profileCustomer);
+router.get('/appointments', authenticate, authorize('customer'), customerAppointments)
+router.get('/countOnGym', customerOnGym);   
 
 module.exports = router;
