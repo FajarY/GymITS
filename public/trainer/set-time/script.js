@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- STATE MANAGEMENT ---
     // Simulating the current time as per your example for consistency
-    const now = new Date(2025, 5, 9, 15, 40, 0); 
+    const now = new Date(); 
     let currentDate = new Date(now.getFullYear(), now.getMonth(), 1); // Start calendar on the 1st of the current month
     let selectedDate = null;
     let selectedTimeSlots = [];
