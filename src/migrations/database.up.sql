@@ -116,7 +116,7 @@ CREATE TABLE membership_type_receipt (
     mtr_month_amount INT NOT NULL,
     mt_id CHAR(8) NOT NULL,
     r_id CHAR(8) NOT NULL,
-    FOREIGN KEY (mt_id) REFERENCES membership_type(mt_id)
+    FOREIGN KEY (mt_id) REFERENCES membership_type(mt_id),
     FOREIGN KEY (r_id) REFERENCES receipt(r_id)
 );
 
