@@ -254,11 +254,9 @@ SELECT
     m.m_expired_date AS expired_date
 FROM customer c
 NATURAL LEFT JOIN membership m
-NATURAL LEFT JOIN membership_type mt
+NATURAL LEFT JOIN membership_type mt;
 
 CREATE OR REPLACE VIEW view_customer_on_gym AS
 SELECT COUNT(DISTINCT c_id)  
 FROM training_session
-WHERE ts_end_time IS NULL AND ts_start_time > CURRENT_DATE + CURRENT_TIME 
-
-SELECT count FROM view_customer_on_gym
+WHERE ts_end_time IS NULL AND ts_start_time > CURRENT_DATE + CURRENT_TIME;
