@@ -88,13 +88,6 @@ CREATE TABLE training_session (
     FOREIGN KEY (c_id) REFERENCES customer(c_id)
 );
 
-CREATE TABLE personal_trainer_appointment (
-    pt_a_id CHAR(8) PRIMARY KEY NOT NULL,
-    c_id CHAR(8) NOT NULL,
-    FOREIGN KEY (c_id) REFERENCES customer(c_id),
-    FOREIGN KEY (pt_a_id) REFERENCES personal_trainer_appointment(pt_a_id)
-);
-
 CREATE TABLE personal_trainer_receipt (
     pt_id CHAR(8) NOT NULL,
     r_id CHAR(8) NOT NULL,
@@ -112,8 +105,9 @@ CREATE TABLE available_time (
     at_start_time TIME NOT NULL,
     at_end_time TIME NOT NULL,
     pt_id CHAR(8) NOT NULL,
-    pt_a_id CHAR(8),
-    FOREIGN KEY (pt_id) REFERENCES personal_trainer(pt_id)
+    c_id CHAR(8),
+    FOREIGN KEY (pt_id) REFERENCES personal_trainer(pt_id),
+    FOREIGN KEY (c_id) REFERENCES customer(c_id)
 );
 
 CREATE TABLE membership_type_receipt (
@@ -121,7 +115,9 @@ CREATE TABLE membership_type_receipt (
     mtr_price_per_month DECIMAL(10,2) NOT NULL,
     mtr_month_amount INT NOT NULL,
     mt_id CHAR(8) NOT NULL,
-    FOREIGN KEY (mt_id) REFERENCES membership_type(mt_id)
+    r_id CHAR(8) NOT NULL,
+    FOREIGN KEY (mt_id) REFERENCES membership_type(mt_id),
+    FOREIGN KEY (r_id) REFERENCES receipt(r_id)
 );
 
 CREATE OR REPLACE FUNCTION increment_id(
@@ -169,9 +165,6 @@ BEGIN
     ELSIF TG_TABLE_NAME = 'training_session' THEN
         SELECT MAX(ts_id) INTO last_id FROM training_session;
         NEW.ts_id := increment_id(last_id, 'TS');
-    ELSIF TG_TABLE_NAME = 'personal_trainer_appointment' THEN
-        SELECT MAX(pt_a_id) INTO last_id FROM personal_trainer_appointment;
-        NEW.pt_a_id := increment_id(last_id, 'PTA');
     ELSIF TG_TABLE_NAME = 'available_time' THEN
         SELECT MAX(at_id) INTO last_id FROM available_time;
         NEW.at_id := increment_id(last_id, 'AT');    
@@ -208,11 +201,6 @@ EXECUTE FUNCTION set_id();
 
 CREATE OR REPLACE TRIGGER tgr_id_before_insert
 BEFORE INSERT ON available_time
-FOR EACH ROW
-EXECUTE FUNCTION set_id();
-
-CREATE OR REPLACE TRIGGER tgr_id_before_insert
-BEFORE INSERT ON personal_trainer_appointment
 FOR EACH ROW
 EXECUTE FUNCTION set_id();
 
@@ -254,11 +242,9 @@ SELECT
     m.m_expired_date AS expired_date
 FROM customer c
 NATURAL LEFT JOIN membership m
-NATURAL LEFT JOIN membership_type mt
+NATURAL LEFT JOIN membership_type mt;
 
 CREATE OR REPLACE VIEW view_customer_on_gym AS
 SELECT COUNT(DISTINCT c_id)  
 FROM training_session
-WHERE ts_end_time IS NULL AND ts_start_time > CURRENT_DATE + CURRENT_TIME 
-
-SELECT count FROM view_customer_on_gym
+WHERE ts_end_time IS NULL AND ts_start_time > CURRENT_DATE + CURRENT_TIME;
