@@ -66,9 +66,33 @@ const updatesProduct = async (employee_id, product_id, updates) => {
     }
 }
 
+async function isProductExistAndCheckStock(id, amount)
+{
+    try
+    {
+        const [product] = await db('product')
+        .where({p_id: id});
+
+        if(product == undefined)
+        {
+            return 0;
+        }
+        if(product.p_stock < amount)
+        {
+            return 1;
+        }
+        return 2;
+    }
+    catch(error)
+    {
+        throw new Error('Failed when querying product exist');
+    }
+}
+
 module.exports = {
     addNewProduct,
     addProductStock,
     getAll,
-    updatesProduct
+    updatesProduct,
+    isProductExistAndCheckStock
 }

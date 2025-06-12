@@ -4,6 +4,8 @@ const productModel = require('../models/ProductModel');
 const { authenticate, authorize } = require('../middleware/Authentication');
 const { update } = require('../database');
 const router = express.Router();
+const receiptModel = require('../models/ReceiptModel');
+const receiptProductModel = require('../models/ReceiptProductModel');
 
 const getListProdcut = async (req, res) => {
     try {
@@ -83,8 +85,90 @@ const updateProduct = async(req, res) => {
 }
 
 router.get('/data', getListProdcut)
+router.post('/purchase', authenticate, authorize('customer'), purchaseProduct);
 router.post('/',authenticate, authorize('employee'), addNewProduct)
 router.post('/:id', authenticate, authorize('employee'),addStockToProduct)
 router.patch('/:id', authenticate, authorize('employee'), updateProduct)
+
+async function purchaseProduct(req, res)
+{
+    if(!req.body)
+    {
+        res.status(400).json(response.buildResponseFailed('request body is missing', 'invalid request body', null));
+        return;
+    }
+
+    const c_id = req.decodedToken.id;
+    const { purchase } = req.body;
+    if(!purchase || !Array.isArray(purchase))
+    {
+        res.status(400).json(response.buildResponseFailed('missing required fields', 'invalid request body', null));
+        return;
+    }
+
+    var sanitizedPurchase = [];
+    try
+    {
+        for(var i = 0; i < purchase.length; i++)
+        {
+            if(!purchase[i].id || !purchase[i].amount)
+            {
+                res.status(400).json(response.buildResponseFailed('missing required fields', 'invalid request body', null));
+                return;
+            }
+
+            const amount = Number(purchase[i].amount);
+            const existStatus = await productModel.isProductExistAndCheckStock(purchase[i].id, amount);
+            if(existStatus == 0)
+            {
+                res.status(400).json(response.buildResponseFailed('product id does not exist', 'invalid product id', null));
+                return;
+            }
+            else if(existStatus == 1)
+            {
+                res.status(400).json(response.buildResponseFailed('failed when purchasing', 'the amount to buy exceeds stock', null));
+                return;
+            }
+            sanitizedPurchase.push({p_id: purchase[i].id, rp_amount: amount});
+        }
+    }
+    catch(error)
+    {
+        res.status(500).json(response.buildResponseFailed('error when purchasing product', 'the type of purchase fields may be incorrect', null));
+        return;
+    }
+
+    try
+    {
+        const data = await receiptModel.createReceipt(c_id);
+
+        if(!data)
+        {
+            res.status(500).json(response.buildResponseFailed('error when purchasing product', 'there was a problem when creating receipt', null));
+            return;
+        }
+        const r_id = data.r_id;
+        for(var i = 0; i < sanitizedPurchase.length; i++)
+        {
+            sanitizedPurchase[i].r_id = r_id;
+        }
+        
+        const return_arr = await receiptProductModel.insertPurchases(sanitizedPurchase);
+        
+        if(return_arr.length != sanitizedPurchase.length)
+        {
+            res.status(500).json(response.buildResponseFailed('error when purchasing product', 'the inserted length is not the same as the purchase', null));
+            return;
+        }
+
+        res.status(201).json(response.buildResponseSuccess('succesfully purchased product', {
+            purchased: return_arr
+        }));
+    }
+    catch(error)
+    {
+        res.status(500).json(response.buildResponseFailed('error when purchasing product', error.message, null));
+    }
+}
 
 module.exports = router;

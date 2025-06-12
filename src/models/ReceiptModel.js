@@ -35,6 +35,20 @@ const getAllReceipt = async (id) => {
     return result.rows
 }
 
+async function createReceipt(c_id)
+{
+    const [data] = await db('receipt').insert(
+        {
+            r_date: new Date(Date.now()),
+            r_final_price: 0.0,
+            c_id: c_id
+        }
+    ).returning('r_id');
+
+    return data;
+}
+
 module.exports = {
-    getAllReceipt
+    getAllReceipt,
+    createReceipt
 }
