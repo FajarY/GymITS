@@ -106,6 +106,7 @@ CREATE TABLE available_time (
     at_end_time TIME NOT NULL,
     pt_id CHAR(8) NOT NULL,
     c_id CHAR(8),
+    UNIQUE (pt_id, at_date, at_start_time),
     FOREIGN KEY (pt_id) REFERENCES personal_trainer(pt_id),
     FOREIGN KEY (c_id) REFERENCES customer(c_id)
 );
