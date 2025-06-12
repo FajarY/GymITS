@@ -1,20 +1,33 @@
-import { userLogin } from "../requestScript";
+import { userLogin } from "../requestScript.js";
 
-const loginForm = document.getElementById('loginForm');
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm");
 
-loginForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    
-    // get user data
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+  if (loginForm) {
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
 
-    try {
-        const result = userLogin(email, password);
-        console.log('login success!')
-    }
-    catch(error) {
-        console.log('login failed!', error);
-    }
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const [res, data] = await userLogin(email, password);
+
+        // console.log("Response:", res);
+        // console.log("Data:", data);
+
+        if (res && res.ok) {
+          console.log("Login successful:", data);
+        //   alert("Login Successful!");
+          window.location.href = "/dashboard/user";
+        } else {
+          console.error("Login failed:", data);
+          alert(`Login Failed: ${data.message || "Invalid credentials"}`);
+        }
+      } catch (error) {
+        console.error("Error during login:", error);
+        alert("Error!");
+      }
+    });
+  }
 });
-
