@@ -84,31 +84,14 @@ const getAllPersonalTrainer = async (req, res) => {
 const getPersonalTrainerAvailability = async (req, res) => {
     try {
         const personal_trainer_id = req.params.id;
-        const date = req.query.date;
+        const now = new Date();
 
-        if (!date) {
-            res.status(400).json(response.buildResponseFailed("date is empty.", null));
-            return;
-        }
+        const month = Number(req.query.month) || now.getMonth() + 1;
+        const year = Number(req.query.year) || now.getFullYear();
 
-        const available_time = await personalTrainerModel.getAvailableTime(personal_trainer_id, date);
-        
-        const availableHours = new Set();
-        available_time.forEach(({ available_slot }) => {
-            const [startStr, endStr] = available_slot.replace(/[\[\]()"]/g, '').split(',');
-            const startHour = new Date(startStr).getHours();
-            const endHour = new Date(endStr).getHours();
+        const available_time = await personalTrainerModel.getAvailableTime(personal_trainer_id, month, year);
 
-            for (let hour = startHour; hour < endHour; hour++) {
-                availableHours.add(hour);
-            }
-        });
-
-        const timeAvailability = Array.from({ length: 24 }, (_, hour) => {
-            return availableHours.has(hour);
-        });
-
-        res.status(200).json(response.buildResponseSuccess("successfully get personal trainer availability.", timeAvailability));
+        res.status(200).json(response.buildResponseSuccess("successfully get personal trainer availability.", available_time));
     } catch (error) {
         res.status(500).json(response.buildResponseFailed("failed to get personal trainer available time.", error.message, null));
     }
@@ -126,17 +109,6 @@ const profile = async(req, res) => {
         res.status(200).json(response.buildResponseSuccess("successfully get personal trainer profile", personalTrainer));
     }catch(error) {
         res.status(500).json(response.buildResponseFailed("failed to get personal trainer profile", error.message, null));
-    }
-}
-
-const getAvailableDate = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const personalTrainer = await personalTrainerModel.getAvailableDate(id);
-        const result = personalTrainer.map(item => item.date);
-        res.status(200).json(response.buildResponseSuccess("successfully get personal trainer available date", result));
-    } catch(error) {
-        res.status(500).json(response.buildResponseFailed("failed to get personal trainer available date", error.message, null));
     }
 }
 
@@ -160,7 +132,6 @@ router.post('/', authenticate, authorize('employee'), addPersonalTrainer);
 router.get('/data', authenticate, getAllPersonalTrainer);
 router.get('/profile', authenticate, profile);
 router.get('/:id/availability', authenticate, getPersonalTrainerAvailability);
-router.get('/:id/availabledate', authenticate, getAvailableDate);
 router.get('/appointments', authenticate, authorize('trainer'), trainerAppointments);
 
 module.exports = router;

@@ -55,17 +55,20 @@ const getAll = async () => {
     }
 }
 
-const getAvailableTime = async (personal_trainer_id, date) => {
-    try {
-        const available_time = await db
-        .select('*')
-        .from(db.raw('get_available_slots(?)', [personal_trainer_id]))
-        .whereRaw("available_slot && tsrange(?::date, ?::date + interval '1 day', '[)')", [date, date]);
-
-        return available_time;
-    }catch(error) {
-        throw new Error('fail to get personal trainer available time');
-    }
+const getAvailableTime = async (personal_trainer_id, month, year) => {
+    rawQuery = `
+        SELECT at_date, availabilityTrainer(?, at_date) AS map_time
+        FROM (
+            SELECT at_date
+            FROM available_time
+            WHERE pt_id = ?
+            AND EXTRACT(MONTH FROM at_date) = ?
+            AND EXTRACT(YEAR FROM at_date) = ?
+            GROUP BY at_date
+        ) AS temp;
+    `
+    const available_time = await db.raw(rawQuery, [personal_trainer_id, personal_trainer_id, month, year]);
+    return available_time.rows;
 }
 
 const getProfile = async (personal_trainer_id) => {

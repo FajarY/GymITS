@@ -319,3 +319,7 @@ BEFORE INSERT ON receipt_product
 FOR EACH ROW
 EXECUTE PROCEDURE
 PROCESS_PRODUCT_RECEIPT();
+
+CREATE OR REPLACE VIEW view_membership_type AS
+SELECT CONCAT(mt_name, ' - Rp.',ROUND(mt_price_per_month, 0), '/bulan')
+FROM membership_type;
