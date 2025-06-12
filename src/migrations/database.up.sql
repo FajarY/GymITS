@@ -248,3 +248,74 @@ CREATE OR REPLACE VIEW view_customer_on_gym AS
 SELECT COUNT(DISTINCT c_id)  
 FROM training_session
 WHERE ts_end_time IS NULL AND ts_start_time > CURRENT_DATE + CURRENT_TIME;
+
+CREATE OR REPLACE FUNCTION ADD_TO_STOCK()
+RETURNS TRIGGER
+LANGUAGE PLPGSQL
+AS
+$$
+BEGIN
+	UPDATE product
+		SET p_stock = p_stock + NEW.add_amount
+		WHERE p_id = NEW.p_id;
+	RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE TRIGGER UPDATE_STOCK_PRODUCT
+AFTER INSERT ON product_employee
+FOR EACH ROW
+EXECUTE PROCEDURE
+ADD_TO_STOCK();
+
+CREATE OR REPLACE FUNCTION PROCESS_PRODUCT_RECEIPT()
+RETURNS TRIGGER
+LANGUAGE PLPGSQL
+AS
+$$
+DECLARE
+	membership_type_id CHAR(8);
+	membership_type_name VARCHAR(64);
+	discount_product DECIMAL(4, 2);
+BEGIN
+	SELECT mt_id INTO membership_type_id FROM membership MB WHERE MB.c_id = 
+		(SELECT c_id FROM receipt WHERE r_id = NEW.r_id);
+		
+	IF membership_type_id IS NOT NULL THEN
+		SELECT mt_name INTO membership_type_name FROM membership_type MT WHERE MT.mt_id = membership_type_id;
+	END IF;
+	
+	discount_product := 0.0;
+	
+	IF membership_type_name IS NOT NULL THEN
+		IF membership_type_name = 'Bronze' THEN
+			discount_product := 0.1;
+		ELSIF membership_type_name = 'Silver' THEN
+			discount_product := 0.2;
+		ELSIF membership_type_name = 'Gold' THEN
+			discount_product := 0.3;
+		END IF;
+	END IF;
+	
+	NEW.rp_discount := discount_product;
+	
+	SELECT p_price INTO NEW.rp_price
+		FROM product PROD WHERE PROD.p_id = NEW.p_id;
+	
+	UPDATE receipt
+		SET r_final_price = r_final_price + (NEW.rp_price * (1.0 - NEW.rp_discount) * NEW.rp_amount)
+		WHERE r_id = NEW.r_id;
+	
+	UPDATE product
+		SET p_stock = p_stock - NEW.rp_amount
+		WHERE p_id = NEW.p_id;
+		
+	RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE TRIGGER UPDATE_RECEIPT_TOTAL_PRICE_PRODUCT
+BEFORE INSERT ON receipt_product
+FOR EACH ROW
+EXECUTE PROCEDURE
+PROCESS_PRODUCT_RECEIPT();
