@@ -2,7 +2,7 @@ const db = require('../database')
 
 async function getCustomerMembership(c_id)
 {
-    const [membership] = db('membership').select('m_id as id', 'm_telephone as telephone', 'm_alamat as alamat', 'm_start_date as start_date', 'm_expired_date as expired_date').where({
+    const [membership] = await db('membership').select('m_id as id', 'm_telephone as telephone', 'm_alamat as alamat', 'm_start_date as start_date', 'm_expired_date as expired_date', 'mt_id').where({
         c_id: c_id
     });
 
@@ -30,10 +30,22 @@ async function updateCustomerMembershipSafe(m_id, c_id, telephone, alamat, start
             m_id: m_id,
             c_id: c_id
         }
-    );
+    ).update({
+        m_id: m_id,
+        c_id: c_id,
+        m_telephone: telephone,
+        m_alamat: alamat,
+        m_start_date: start_date,
+        m_expired_date: expired_date,
+        mt_id: mt_id
+    }).returning('*');
+
+    return membership;
 }
 
 module.exports = 
 {
-    getCustomerMembership
+    getCustomerMembership,
+    createCustomerMembership,
+    updateCustomerMembershipSafe
 }

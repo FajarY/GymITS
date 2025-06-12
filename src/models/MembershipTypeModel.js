@@ -7,7 +7,17 @@ async function getAllMembershipTypes()
     return arr;
 }
 
+async function getData(mt_id)
+{
+    const [data] = await db('membership_type').where(
+        {mt_id: mt_id}
+    );
+
+    return data;
+}
+
 module.exports = 
 {
-    getAllMembershipTypes
+    getAllMembershipTypes,
+    getData
 }

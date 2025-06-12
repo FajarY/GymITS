@@ -176,8 +176,10 @@ BEGIN
         NEW.mt_id := increment_id(last_id, 'MT');    
     ELSIF TG_TABLE_NAME = 'membership' THEN
         SELECT MAX(m_id) INTO last_id FROM membership;
-        NEW.m_id := increment_id(last_id, 'M');    
-
+        NEW.m_id := increment_id(last_id, 'M');
+    ELSIF TG_TABLE_NAME = 'membership_type_receipt' THEN
+        SELECT MAX(mtr_id) INTO last_id FROM membership_type_receipt;
+        NEW.mtr_id := increment_id(last_id, 'MTR'); 
     END IF; 
 
     RETURN NEW;
