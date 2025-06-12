@@ -1,4 +1,4 @@
-import { userRegister } from "../requestScript";
+import { userRegister } from "../requestScript.js";
 
 const registerForm = document.getElementById('registerForm');
 
@@ -11,15 +11,27 @@ registerForm.addEventListener('submit', async (event) => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
+    console.log('registering user:', fullName);
+    console.log('gender', gender);
+    console.log('email', email);
+    console.log('password', password);
+
     try {
-        const result = await userRegister(
+        const [rest, data] = await userRegister(
             fullName,
             gender,
             email,
             password
         );
 
-        console.log('registration success!', result);
+        if (rest.status === 201) {
+            alert('Registration successful! Please login.');
+            window.location.href = '/login';
+        }
+        else {
+            alert('Registration failed: ' + data.error);
+            console.error('Error details:', data);
+        }
     }
 
     catch(error) {
