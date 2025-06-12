@@ -74,6 +74,37 @@ async function customerOnGym() {
   return result;
 }
 
+//Fajar Query Join 1
+async function efficiencyAllMembersip()
+{
+  const rawQuery =
+  `
+  SELECT c_name, SUM(used_percentage) as percentage
+  FROM
+    (SELECT c_name, (total_training_time / membership_time) * 100.0 as used_percentage
+    FROM
+      (SELECT SUM(training_time) as total_training_time, c_name, membership_time
+      FROM
+        (SELECT EXTRACT('epoch' FROM ts_end_time - ts_start_time) as training_time, c_name, ((m_expired_date - m_start_date) * 86400.0) as membership_time
+        FROM
+          (SELECT ts_id, ts_end_time, ts_start_time, cs.c_name, c_id, m_start_date, m_expired_date
+            FROM membership mb
+            NATURAL JOIN training_session ts
+            NATURAL JOIN customer cs
+            WHERE ts_end_time > m_start_date AND ts_start_time < m_expired_date))
+      GROUP BY c_name, membership_time)
+    UNION
+    SELECT c_name, 0.0 as used_percentage
+    FROM
+      customer cs)
+  GROUP BY c_name
+  `;
+
+  const result = await db.raw(rawQuery);
+
+  return result.rows;
+}
+
 module.exports = 
 {
     createCustomer,
@@ -81,5 +112,6 @@ module.exports =
     isCustomerExistByEmail,
     getProfile,
     getAppointments,
-    customerOnGym
+    customerOnGym,
+    efficiencyAllMembersip
 }

@@ -129,6 +129,22 @@ const getAppointments = async (id) => {
   return appointments.rows;
 }
 
+//Fajar Query Join 2
+async function getEfficiencyAllPTAvailableTimes()
+{
+    const rawQuery =
+    `
+    SELECT pt_id, pt_name, (CAST(COUNT(c_id) AS DECIMAL(10, 2)) / CAST(COUNT(pt_id) AS DECIMAL(10, 2))) * 100.0 as efficiency
+        FROM available_time
+        NATURAL JOIN personal_trainer
+        GROUP BY pt_id, pt_name
+        ORDER BY pt_id
+    `;
+
+    const data = await db.raw(rawQuery);
+    return data.rows;
+}
+
 module.exports = {
     create,
     getByID,
@@ -136,5 +152,6 @@ module.exports = {
     getAvailableDate,
     getAvailableTime,
     getProfile,
-    getAppointments
+    getAppointments,
+    getEfficiencyAllPTAvailableTimes
 }

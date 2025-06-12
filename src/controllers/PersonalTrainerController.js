@@ -127,11 +127,33 @@ async function trainerAppointments(req, res) {
     }
 }
 
+async function efficiencyAllPTAvailableTimes(req, res)
+{
+    try
+    {
+        const data = await personalTrainerModel.getEfficiencyAllPTAvailableTimes();
+
+        if(!data)
+        {
+            res.status(500).json(response.buildResponseFailed('failed to get personal trainer efficiency times', 'something wrong', null));
+            return;
+        }
+
+        res.status(200).json(response.buildResponseSuccess('successfully get all personal trainer efficiency of available times', data));
+    }
+    catch(error)
+    {
+        res.status(500).json(response.buildResponseFailed('failed to get all PT Available times efficiency', error.message, null));
+    }
+}
+
 router.post('/login', loginPersonalTrainer);
 router.post('/', authenticate, authorize('employee'), addPersonalTrainer);
 router.get('/data', authenticate, getAllPersonalTrainer);
 router.get('/profile', authenticate, profile);
 router.get('/:id/availability', authenticate, getPersonalTrainerAvailability);
 router.get('/appointments', authenticate, authorize('trainer'), trainerAppointments);
+
+router.get('/efficiencyAllPTAvailableTimes', efficiencyAllPTAvailableTimes)
 
 module.exports = router;

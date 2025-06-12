@@ -149,11 +149,28 @@ async function customerOnGym(req, res) {
     }
 }
 
+//Fajar Query Join 1
+async function efficiencyAllMembersipCustomer(req, res)
+{
+    try
+    {
+        const data = await customerModel.efficiencyAllMembersip();
+
+        res.status(200).json(response.buildResponseSuccess('successfully get all  customer membership efficiency', data));
+    }
+    catch(error)
+    {
+        res.status(500).json(response.buildResponseFailed('failed to get efficiency of membership on all customers', error.message, null));
+    }
+}
+
 router.post('/login', loginCustomer);
 router.post('/register', registerCustomer);
 router.use('/training', trainingController);
 router.get('/profile', authenticate, authorize('customer'), profileCustomer);
 router.get('/appointments', authenticate, authorize('customer'), customerAppointments)
-router.get('/countOnGym', customerOnGym);   
+router.get('/countOnGym', customerOnGym);
+
+router.get('/efficiencyAllMemberships', efficiencyAllMembersipCustomer)
 
 module.exports = router;
