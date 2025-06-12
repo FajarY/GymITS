@@ -55,19 +55,56 @@ const getAll = async () => {
     }
 }
 
-const getAvailableTime = async (personal_trainer_id, month, year) => {
-    rawQuery = `
-        SELECT at_date, availabilityTrainer(?, at_date) AS map_time
-        FROM (
-            SELECT at_date
-            FROM available_time
-            WHERE pt_id = ?
-            AND EXTRACT(MONTH FROM at_date) = ?
-            AND EXTRACT(YEAR FROM at_date) = ?
-            GROUP BY at_date
-        ) AS temp;
+const getAllUsed = async (id) => {
+    const rawQuery = `
+        SELECT  
+            pt.pt_id AS id,
+            pt.pt_name AS name, 
+            pt.pt_price_per_hour AS price_per_hour 
+        FROM personal_trainer pt
+        NATURAL JOIN available_time at
+        WHERE c_id = ? AND at.c_id IS NOT NULL  
+        GROUP BY pt.pt_id, pt.pt_name, pt.pt_price_per_hour
     `
-    const available_time = await db.raw(rawQuery, [personal_trainer_id, personal_trainer_id, month, year]);
+    try {
+        const personalTrainer = await db.raw(rawQuery, [id]);
+
+        return personalTrainer.rows;
+    } catch (error) {
+        throw new Error('fail to get personal trainer');
+    }
+}
+
+const getAvailableTime = async (personal_trainer_id, month, year, day) => {
+    let available_time;
+    if (day) {
+        rawQuery = `
+            SELECT at_date, availabilityTrainer(?, at_date) AS map_time
+            FROM (
+                SELECT at_date
+                FROM available_time
+                WHERE pt_id = ?
+                AND EXTRACT(MONTH FROM at_date) = ?
+                AND EXTRACT(YEAR FROM at_date) = ?
+                AND EXTRACT(DAY FROM at_date) = ?
+                GROUP BY at_date
+            ) AS temp;
+        `
+        available_time = await db.raw(rawQuery, [personal_trainer_id, personal_trainer_id, month, year, day]);
+    } else {
+        rawQuery = `
+            SELECT at_date, availabilityTrainer(?, at_date) AS map_time
+            FROM (
+                SELECT at_date
+                FROM available_time
+                WHERE pt_id = ?
+                AND EXTRACT(MONTH FROM at_date) = ?
+                AND EXTRACT(YEAR FROM at_date) = ?
+                GROUP BY at_date
+            ) AS temp;
+        `
+        available_time = await db.raw(rawQuery, [personal_trainer_id, personal_trainer_id, month, year]);
+    }
     return available_time.rows;
 }
 
@@ -85,7 +122,6 @@ const getProfile = async (personal_trainer_id) => {
     return trainer
 }
 
-
 const getAvailableDate = async (personal_trainer_id) => {
     const rawQuery = `
         SELECT at_date AS date
@@ -99,30 +135,38 @@ const getAvailableDate = async (personal_trainer_id) => {
 }
 
 const getAppointments = async (id) => {
-      const rawQuery = `
+    const rawQuery = `
     SELECT
-        c.c_name AS customer_name,
-        pta.pt_a_date AS date,
-        TO_CHAR(LOWER(pta.pt_start_end_time), 'HH12:MI AM') || ' - ' || 
-        TO_CHAR(UPPER(pta.pt_start_end_time), 'HH12:MI AM') AS formatted_time,
+        pt.pt_name,
+        TO_CHAR(at.at_date, 'FMMonth DD, YYYY') AS appointment_date,
+        CONCAT(
+            TO_CHAR(at.at_start_time, 'HH12:MI AM'),
+            ' - ',
+            TO_CHAR(at.at_end_time, 'HH12:MI AM')
+        ) AS appointment_time,
         CASE
-            WHEN UPPER(pta.pt_start_end_time) > NOW() THEN 'UPCOMING'
-            ELSE 'COMPLETED'
+            WHEN (at.at_date + at.at_start_time) > CURRENT_TIMESTAMP THEN 'Upcoming'
+            ELSE 'Completed'
         END AS status
-    FROM 
-        personal_trainer_appointment pta
-    JOIN 
-        customer c ON pta.c_id = c.c_id
-    JOIN 
-        personal_trainer pt ON pta.pt_id = pt.pt_id
-    WHERE 
-        pta.pt_id = ?
-    ORDER BY 
+    FROM
+        available_time AS at
+    JOIN
+        personal_trainer AS pt ON at.pt_id = pt.pt_id
+    WHERE
+        at.c_id = {CUSTOMER_ID} -- <-- Change this!
+    ORDER BY
         CASE
-            WHEN UPPER(pta.pt_start_end_time) > NOW() THEN 1
+            WHEN (at.at_date + at.at_start_time) > CURRENT_TIMESTAMP THEN 1
             ELSE 2
         END,
-        UPPER(pta.pt_start_end_time) ASC;
+        CASE
+            WHEN (at.at_date + at.at_start_time) > CURRENT_TIMESTAMP THEN (at.at_date + at.at_start_time)
+            ELSE NULL
+        END ASC,
+        CASE
+            WHEN (at.at_date + at.at_start_time) <= CURRENT_TIMESTAMP THEN (at.at_date + at.at_start_time)
+            ELSE NULL
+        END DESC;
   `;
 
   const appointments = await db.raw(rawQuery, [id]);
@@ -145,13 +189,36 @@ async function getEfficiencyAllPTAvailableTimes()
     return data.rows;
 }
 
+const addAvailableTime = async (id, date, times) => {
+
+    const base = `INSERT INTO available_time(at_date, at_start_time, at_end_time, pt_id) VALUES\n`
+    let values = []  
+    for(let i = 0; i < times.length; i++) {
+        const start = `${(times[i] + 8 ).toString().padStart(2, '0')}:00:00`;
+        const end = `${(times[i] + 9).toString().padStart(2, '0')}:00:00`;
+
+        values.push(`('${date}', '${start}', '${end}', '${id}')`);
+    }
+
+    if (values.length === 0) return 0;
+
+    const rawQuery = base + values.join(',\n') + ';';
+    const result = await db.raw(rawQuery);
+    
+    return result.rowCount
+}
+
+
+
 module.exports = {
     create,
     getByID,
     getAll,
+    getAllUsed,
     getAvailableDate,
     getAvailableTime,
     getProfile,
     getAppointments,
-    getEfficiencyAllPTAvailableTimes
+    getEfficiencyAllPTAvailableTimes,
+    addAvailableTime,
 }

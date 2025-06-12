@@ -73,7 +73,15 @@ const addPersonalTrainer = async (req, res) => {
 
 const getAllPersonalTrainer = async (req, res) => {
     try {
-        const personalTrainer = await personalTrainerModel.getAll();
+        const id = req.id;
+        const filter = req.query.filter;
+
+        let personalTrainer;
+        if (filter == 'used') {
+            personalTrainer = await personalTrainerModel.getAllUsed(id);
+        } else {
+            personalTrainer = await personalTrainerModel.getAll();
+        }
         res.status(200).json(response.buildResponseSuccess("successfully get all personal trainer", personalTrainer));
         return;
     }catch(error) {
@@ -84,12 +92,17 @@ const getAllPersonalTrainer = async (req, res) => {
 const getPersonalTrainerAvailability = async (req, res) => {
     try {
         const personal_trainer_id = req.params.id;
-        const now = new Date();
 
-        const month = Number(req.query.month) || now.getMonth() + 1;
-        const year = Number(req.query.year) || now.getFullYear();
+        const day = parseInt(req.query.day) || null;
+        const month = parseInt(req.query.month) || null;
+        const year = parseInt(req.query.year) || null;
 
-        const available_time = await personalTrainerModel.getAvailableTime(personal_trainer_id, month, year);
+        if (!month || !year) {
+            res.status(400).json(response.buildResponseFailed("atleast there is value in month and year", "invalid query", null));
+            return;
+        }
+
+        const available_time = await personalTrainerModel.getAvailableTime(personal_trainer_id, month, year, day);
 
         res.status(200).json(response.buildResponseSuccess("successfully get personal trainer availability.", available_time));
     } catch (error) {
@@ -147,6 +160,30 @@ async function efficiencyAllPTAvailableTimes(req, res)
     }
 }
 
+const addAvailableTime = async (req, res) => {
+    try {
+        const id = req.id;
+        const {date, times} = req.body;
+        
+        if (!date || !times) {
+            res.status(400).json(response.buildResponseFailed('missing required fields', 'invalid request body', null));
+            return;
+        }
+        
+        for(let i = 0; i < times.length; i++) {
+            if(times[i] < 0 || times[i] > 13) {
+                res.status(400).json(response.buildResponseFailed("times must be in range 0 to 13", "invalid request body", null));
+                return;
+            }
+        }
+        
+        const inserted = await personalTrainerModel.addAvailableTime(id, date, times);
+        res.status(201).json(response.buildResponseSuccess('successfully add available time', {inserted}));
+    } catch (error) {
+        res.status(500).json(response.buildResponseFailed('failed to add available time', error.message, null));
+    }
+}
+
 router.post('/login', loginPersonalTrainer);
 router.post('/', authenticate, authorize('employee'), addPersonalTrainer);
 router.get('/data', authenticate, getAllPersonalTrainer);
@@ -155,5 +192,6 @@ router.get('/:id/availability', authenticate, getPersonalTrainerAvailability);
 router.get('/appointments', authenticate, authorize('trainer'), trainerAppointments);
 
 router.get('/efficiencyAllPTAvailableTimes', efficiencyAllPTAvailableTimes)
+router.post('/available-time', authenticate, authorize('trainer'), addAvailableTime);
 
 module.exports = router;
