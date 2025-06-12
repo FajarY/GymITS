@@ -9,12 +9,7 @@ const getAllReceipt = async (id) => {
 
             p.p_id AS product_id,
             p.p_name AS product_name,
-            CASE 
-                WHEN rp.rp_discount > 0 
-                THEN p.p_price * rp.rp_amount * rp.rp_discount 
-                ELSE p.p_price * rp.rp_amount 
-            END AS total_per_product,
-
+            p.p_price * rp.rp_amount * (1 - rp.rp_discount) AS total_per_product,
 
             mtr.mtr_id AS membership_id,
             mt.mt_name AS membership_type,
@@ -22,11 +17,7 @@ const getAllReceipt = async (id) => {
 
             pt.pt_id AS personal_trainer_id,
             pt.pt_name AS personal_trainer_name,
-            CASE 
-                WHEN ptr.ptr_discount > 0 
-                THEN ptr.ptr_price_per_hour * ptr.ptr_hour_amount * ptr.ptr_discount 
-                ELSE ptr.ptr_price_per_hour * ptr.ptr_hour_amount 
-            END AS total_personal_trainer
+            ptr.ptr_price_per_hour * ptr.ptr_hour_amount * (1 - ptr.ptr_discount) AS total_personal_trainer
         FROM receipt r
         NATURAL LEFT JOIN customer
         NATURAL LEFT JOIN receipt_product rp 
