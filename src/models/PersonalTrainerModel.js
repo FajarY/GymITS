@@ -193,7 +193,7 @@ const getIncome = async (id) => {
 }
 
 const getTrainerLog = async () => {
-    const result = await db('trainer_log')
+    const result = await db.admin('trainer_log')
     .select('*')
 
     return result

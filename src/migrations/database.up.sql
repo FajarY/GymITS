@@ -72,10 +72,10 @@ CREATE TABLE receipt_product (
 );
 
 CREATE TABLE product_employee (
+    pe_id CHAR(8) NOT NULL PRIMARY KEY,
     p_id CHAR(8) NOT NULL,
     added_by_e_id CHAR(8) NOT NULL,
     add_amount INT NOT NULL,
-    PRIMARY KEY (p_id, added_by_e_id),
     FOREIGN KEY (p_id) REFERENCES product(p_id),
     FOREIGN KEY (added_by_e_id) REFERENCES employee(e_id)
 );
@@ -128,6 +128,111 @@ CREATE TABLE trainer_log(
 	log_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE OR REPLACE VIEW view_trainer_profile AS
+SELECT
+    pt.pt_id AS trainer_id,
+    pt.pt_name AS name,
+    pt.pt_alamat AS alamat,
+    pt.pt_telephone AS telephone,
+    pt.pt_gender AS gender,
+    pt.pt_price_per_hour AS price_per_hour
+FROM
+    personal_trainer AS pt;
+
+
+CREATE OR REPLACE VIEW view_employee_profile AS
+SELECT
+    e.e_id AS id,
+    e.e_name AS name,
+    e.e_alamat AS alamat,
+    e.e_telephone AS telephone,
+    e.e_gender AS gender
+FROM
+    employee AS e;
+
+
+CREATE OR REPLACE VIEW view_customer_profile AS 
+SELECT 
+    c.c_id AS id,
+    c.c_name AS name,
+    c.c_email AS email,
+    c.c_gender AS gender,
+    mt.mt_name AS membership_type,
+    m.m_telephone AS telephone,
+    m.m_alamat AS alamat, 
+    m.m_start_date AS start_date,
+    m.m_expired_date AS expired_date
+FROM customer c
+NATURAL LEFT JOIN membership m
+NATURAL LEFT JOIN membership_type mt;
+
+CREATE OR REPLACE VIEW view_customer_on_gym AS
+SELECT COUNT(DISTINCT c_id)  
+FROM training_session
+WHERE ts_end_time IS NULL AND ts_start_time > CURRENT_DATE + CURRENT_TIME;
+
+
+CREATE OR REPLACE VIEW PRODUCT_TOTAL_DISCOUNT_OUTPUT AS
+SELECT p_id, p_name, total_discount_output, (total_discount_output / total_raw_price) * 100.0 as discount_percent_from_total
+FROM
+	(SELECT p_id, p_name, SUM(raw_price_all) as total_raw_price, SUM(discount_output_all) as total_discount_output
+	FROM
+		(SELECT p_id, p_name, rp_price * rp_amount as raw_price_all, rp_price * rp_discount * rp_amount as discount_output_all
+		FROM
+			(SELECT p_id, p_name, rp_price, rp_amount, rp_discount
+				FROM receipt_product
+				NATURAL JOIN product))
+	GROUP BY p_id, p_name);
+
+
+CREATE OR REPLACE VIEW ALL_PEOPLE_ON_DATABASE AS
+SELECT name, gender, CONCAT(role,
+						   CASE WHEN SUB.mt_id IS NULL
+						   THEN ''
+						   ELSE CONCAT(' ', (SELECT(MT.mt_name) FROM membership_type MT WHERE MT.mt_id = SUB.mt_id))
+						   END) as role
+FROM
+(SELECT c_name as name, c_gender as gender, 'Customer' as role, mt_id
+	FROM customer
+	NATURAL LEFT JOIN membership) SUB
+UNION
+SELECT e_name AS name, e_gender AS gender, 'Employee' AS role
+FROM employee
+UNION
+SELECT pt_name AS name, pt_gender AS gender, 'Personal Trainer'
+FROM personal_trainer;
+
+CREATE OR REPLACE VIEW product_summary_sales AS
+SELECT 
+    p.p_id,
+    p.p_name,
+    COALESCE(SUM(rp.rp_amount), 0) AS total_unit_sold,
+    COALESCE(SUM(rp.rp_amount * rp.rp_price * (1 - rp.rp_discount)), 0) AS total_revenue,
+    (p.p_stock - COALESCE(SUM(rp.rp_amount), 0)) AS current_stock
+FROM 
+    product p
+LEFT JOIN 
+    receipt_product rp ON p.p_id = rp.p_id
+GROUP BY 
+    p.p_id, p.p_name, p.p_stock
+ORDER BY 
+    total_revenue DESC;
+
+CREATE OR REPLACE VIEW membership_status_summary AS
+SELECT 
+	m.m_id,
+	c.c_name,
+	m.m_telephone,
+	m.m_start_date,
+	m.m_expired_date,
+	mt.mt_name,
+	CASE
+		WHEN CURRENT_DATE BETWEEN m.m_start_date AND m.m_expired_date THEN 'active'
+		ELSE 'expired'
+	END AS status
+FROM membership m
+JOIN customer c ON c.c_id = m.c_id
+JOIN membership_type as mt ON m.mt_id = mt.mt_id;
 
 CREATE USER customer WITH PASSWORD 'pass123';
 CREATE USER trainer WITH PASSWORD 'ptpass';
@@ -145,13 +250,20 @@ GRANT INSERT, SELECT ON membership TO customer;
 GRANT SELECT ON membership_type TO customer;
 GRANT SELECT ON product TO customer;
 GRANT SELECT ON personal_trainer TO customer;
+GRANT SELECT ON available_time TO customer;
+GRANT SELECT ON view_customer_on_gym TO customer;
 
 GRANT UPDATE ON available_time TO customer;
+GRANT UPDATE ON training_session TO customer;
+GRANT UPDATE ON receipt TO customer;
+GRANT UPDATE ON product TO customer;
 
 -- personal trainer
 GRANT SELECT ON personal_trainer TO trainer;
 GRANT SELECT ON available_time TO trainer;
 GRANT SELECT ON customer TO trainer;
+GRANT SELECT ON view_trainer_profile TO trainer;
+GRANT SELECT ON personal_trainer_receipt TO trainer;
 
 GRANT INSERT, UPDATE ON available_time TO trainer;
 
@@ -250,6 +362,9 @@ BEGIN
     ELSIF TG_TABLE_NAME = 'membership_type_receipt' THEN
         SELECT MAX(mtr_id) INTO last_id FROM membership_type_receipt;
         NEW.mtr_id := increment_id(last_id, 'MTR'); 
+    ELSIF TG_TABLE_NAME = 'product_employee' THEN
+        SELECT MAX(pe_id) INTO last_id FROM product_employee;
+        NEW.pe_id := increment_id(last_id, 'PE'); 
     END IF; 
 
     RETURN NEW;
@@ -306,58 +421,13 @@ BEFORE INSERT ON membership_type_receipt
 FOR EACH ROW
 EXECUTE FUNCTION set_id();
 
-CREATE OR REPLACE VIEW view_customer_profile AS 
-SELECT 
-    c.c_id AS id,
-    c.c_name AS name,
-    c.c_email AS email,
-    c.c_gender AS gender,
-    mt.mt_name AS membership_type,
-    m.m_telephone AS telephone,
-    m.m_alamat AS alamat, 
-    m.m_start_date AS start_date,
-    m.m_expired_date AS expired_date
-FROM customer c
-NATURAL LEFT JOIN membership m
-NATURAL LEFT JOIN membership_type mt;
+CREATE OR REPLACE TRIGGER tgr_id_before_insert
+BEFORE INSERT ON product_employee
+FOR EACH ROW
+EXECUTE FUNCTION set_id();
 
-CREATE OR REPLACE VIEW view_customer_on_gym AS
-SELECT COUNT(DISTINCT c_id)  
-FROM training_session
-WHERE ts_end_time IS NULL AND ts_start_time > CURRENT_DATE + CURRENT_TIME;
 
 -- fajar 
-
-CREATE OR REPLACE VIEW PRODUCT_TOTAL_DISCOUNT_OUTPUT AS
-SELECT p_id, p_name, total_discount_output, (total_discount_output / total_raw_price) * 100.0 as discount_percent_from_total
-FROM
-	(SELECT p_id, p_name, SUM(raw_price_all) as total_raw_price, SUM(discount_output_all) as total_discount_output
-	FROM
-		(SELECT p_id, p_name, rp_price * rp_amount as raw_price_all, rp_price * rp_discount * rp_amount as discount_output_all
-		FROM
-			(SELECT p_id, p_name, rp_price, rp_amount, rp_discount
-				FROM receipt_product
-				NATURAL JOIN product))
-	GROUP BY p_id, p_name);
-
-
-CREATE OR REPLACE VIEW ALL_PEOPLE_ON_DATABASE AS
-SELECT name, gender, CONCAT(role,
-						   CASE WHEN SUB.mt_id IS NULL
-						   THEN ''
-						   ELSE CONCAT(' ', (SELECT(MT.mt_name) FROM membership_type MT WHERE MT.mt_id = SUB.mt_id))
-						   END) as role
-FROM
-(SELECT c_name as name, c_gender as gender, 'Customer' as role, mt_id
-	FROM customer
-	NATURAL LEFT JOIN membership) SUB
-UNION
-SELECT e_name AS name, e_gender AS gender, 'Employee' AS role
-FROM employee
-UNION
-SELECT pt_name AS name, pt_gender AS gender, 'Personal Trainer'
-FROM personal_trainer;
-
 CREATE OR REPLACE FUNCTION ADD_TO_STOCK()
 RETURNS TRIGGER
 LANGUAGE PLPGSQL
@@ -484,39 +554,6 @@ END;
 $$;
 
 -- Ryan
-CREATE OR REPLACE VIEW product_summary_sales AS
-SELECT 
-    p.p_id,
-    p.p_name,
-    COALESCE(SUM(rp.rp_amount), 0) AS total_unit_sold,
-    COALESCE(SUM(rp.rp_amount * rp.rp_price * (1 - rp.rp_discount)), 0) AS total_revenue,
-    (p.p_stock - COALESCE(SUM(rp.rp_amount), 0)) AS current_stock
-FROM 
-    product p
-LEFT JOIN 
-    receipt_product rp ON p.p_id = rp.p_id
-GROUP BY 
-    p.p_id, p.p_name, p.p_stock
-ORDER BY 
-    total_revenue DESC;
-
-CREATE OR REPLACE VIEW membership_status_summary AS
-SELECT 
-	m.m_id,
-	c.c_name,
-	m.m_telephone,
-	m.m_start_date,
-	m.m_expired_date,
-	mt.mt_name,
-	CASE
-		WHEN CURRENT_DATE BETWEEN m.m_start_date AND m.m_expired_date THEN 'active'
-		ELSE 'expired'
-	END AS status
-FROM membership m
-JOIN customer c ON c.c_id = m.c_id
-JOIN membership_type as mt ON m.mt_id = mt.mt_id;
-
-
 CREATE OR REPLACE FUNCTION process_personal_trainer_receipt()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -612,27 +649,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- randi 
-CREATE OR REPLACE VIEW view_trainer_profile AS
-SELECT
-    pt.pt_id AS trainer_id,
-    pt.pt_name AS name,
-    pt.pt_alamat AS alamat,
-    pt.pt_telephone AS telephone,
-    pt.pt_gender AS gender,
-    pt.pt_price_per_hour AS price_per_hour
-FROM
-    personal_trainer AS pt;
 
-
-CREATE OR REPLACE VIEW view_employee_profile AS
-SELECT
-    e.e_id AS id,
-    e.e_name AS name,
-    e.e_alamat AS alamat,
-    e.e_telephone AS telephone,
-    e.e_gender AS gender
-FROM
-    employee AS e;
 
 CREATE OR REPLACE FUNCTION cegah_sesi_member_tidak_aktif()
 RETURNS TRIGGER

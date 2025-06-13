@@ -199,7 +199,7 @@ const getNewTrainerLog = async (req, res) => {
         const log = await personalTrainerModel.getTrainerLog()
         res.status(200).json(response.buildResponseSuccess('successfully to get tariner log', log));
     } catch (error) {
-        res.status(500).json(response.buildResponseSuccess('failed to get tariner log', log));
+        res.status(500).json(response.buildResponseSuccess('failed to get tariner log', null));
     }
 }
 

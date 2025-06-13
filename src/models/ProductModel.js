@@ -64,6 +64,7 @@ const addProductStock = async(id, amount, employee_id) => {
 
         return product[0];
     } catch(error) {
+        console.log(error)
         throw new Error('fail to add stock product');
     }
 }
