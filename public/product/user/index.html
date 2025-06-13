@@ -4,19 +4,14 @@
     <title>GymITS - Products</title>
   </head>
   <body>
-    <!-- Main container with extra padding at the bottom to make space for the sticky bar -->
     <div
       class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden pb-28"
       style='font-family: "Space Grotesk", "Noto Sans", sans-serif'
     >
       <div class="layout-container flex h-full grow flex-col">
-        <!-- =================================================================
-        NAVIGATION BAR
-        ================================================================== -->
         <header
           class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf4] px-10 py-3"
         >
-          <!-- Navbar content is the same as other pages -->
           <div class="flex items-center gap-4 text-[#0d141c]">
             <div class="size-4">
               <svg
@@ -63,25 +58,22 @@
           </div>
         </header>
 
-        <!-- =================================================================
-        MAIN CONTENT: PRODUCTS GRID
-        ================================================================== -->
         <div class="px-10 lg:px-40 flex-1 py-5">
           <div class="max-w-[960px] mx-auto">
-            <div class="flex flex-wrap justify-between gap-3 p-4">
+            <div class="flex flex-wrap justify-between items-center gap-4 p-4">
               <p
                 class="text-[#0d141c] tracking-light text-[32px] font-bold leading-tight min-w-72"
               >
                 Our Products
               </p>
+              <button id="filter-purchased-btn" class="px-4 py-2 text-sm font-medium text-white bg-[#3490f3] rounded-lg hover:bg-[#2579d5] transition">
+                  Show My Purchases
+              </button>
             </div>
-            <!-- Grid container for all product cards -->
             <div
               id="product-grid"
               class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4"
             >
-              <!-- Product Card 1 -->
-              <!-- data-* attributes are used to store product info for JavaScript -->
               <div
                 class="product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden"
                 data-product-id="1"
@@ -122,7 +114,6 @@
                 </div>
               </div>
 
-              <!-- Product Card 2 -->
               <div
                 class="product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden"
                 data-product-id="2"
@@ -163,7 +154,6 @@
                 </div>
               </div>
 
-              <!-- Product Card 3 -->
               <div
                 class="product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden"
                 data-product-id="3"
@@ -203,16 +193,12 @@
                   </div>
                 </div>
               </div>
-              <!-- Add more product cards as needed -->
-            </div>
+              </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- =================================================================
-    STICKY FOOTER: TOTAL & BUY BUTTON
-    ================================================================== -->
     <div
       class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-lg-top"
     >
@@ -234,7 +220,6 @@
       </div>
     </div>
 
-    <!-- Link to the external JavaScript file -->
     <script src="script.js"></script>
   </body>
 </html>

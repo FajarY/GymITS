@@ -1,7 +1,7 @@
 <html>
   <head>
     <link rel="stylesheet" href="../../output.css" />
-    <title>GymITS - Find a Trainer</title>
+    <title>GymITS - Laporan Trainer</title>
   </head>
   <body>
     <div
@@ -9,6 +9,7 @@
       style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'
     >
       <div class="layout-container flex h-full grow flex-col">
+        <!-- Navigasi (Versi Trainer) -->
         <header
           class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf4] px-10 py-3"
         >
@@ -30,7 +31,7 @@
               </svg>
             </div>
             <a
-              href="/dashboard/user"
+              href="/dashboard/trainer"
               class="text-[#0d141c] text-lg font-bold leading-tight tracking-[-0.015em] cursor-pointer"
             >
               GymITS
@@ -40,48 +41,48 @@
             <div class="flex items-center gap-9">
               <a
                 class="text-[#0d141c] text-sm font-medium leading-normal"
-                href="/receipt"
-                >Receipt</a
-              >
-            </div>
-            <div class="flex items-center gap-9">
-              <a
-                class="text-[#0d141c] text-sm font-medium leading-normal"
-                href="/profile/user"
+                href="/profile/trainer"
                 >Profile</a
               >
             </div>
             <div
               class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-              style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA_FEpA415mYDgkIUjRCHqFqXsuUJLr9MRU-azl8V1dUy0QG28Lv1_v3K-uXZe6cJzAP_DJT5jfMnCdwiYSpToDmFL9fwcIfYQi9qTvTyjXv4GehrbcrnNeIcrO1bVeRRTTcao0UqxGurmqM_2CklAk9XFkRH9mUD0maR7VU3lyyThrcbp_UmD1SmIC3kWGfS2lqJ71JILZre_AcBYPJwpJrgzbDTkfQl5WbZRthWAHPX8oSU0LV95GnQhEfJfg3uwR9wpe0TClUVo");'
+              style='background-image: url("https://placehold.co/100x100/e2e8f0/475569?text=T");'
             ></div>
           </div>
         </header>
 
-        <!-- Main Content -->
-        <main class="flex flex-1 flex-col items-center py-12 px-4">
-            <div class="w-full max-w-6xl">
-                <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
-                    <div>
-                        <h1 class="text-4xl font-bold text-[#0d141c]">Find a Personal Trainer</h1>
-                        <p class="text-gray-500 mt-1">Browse our experts and book your next session.</p>
-                    </div>
-                     <button id="filter-trainers-btn" class="px-4 py-2 text-sm font-medium text-white bg-[#3490f3] rounded-lg hover:bg-[#2579d5] transition self-start md:self-center">
-                        Show My Previous Trainers
-                    </button>
-                </div>
-                <!-- This container will be populated by JavaScript -->
-                <div id="trainer-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    <p id="loading-message" class="col-span-full text-center text-gray-500">Loading trainers...</p>
-                </div>
-                 <div id="no-results" class="hidden text-center py-12 col-span-full">
-                    <h3 class="text-xl font-bold text-gray-700">No Trainers Found</h3>
-                </div>
+        <!-- Konten Utama -->
+        <main class="px-40 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+            <div class="flex flex-wrap justify-between gap-3 p-4">
+              <h1 class="text-[#0d141c] tracking-light text-[32px] font-bold leading-tight min-w-72">Laporan & Analitik</h1>
             </div>
-        </main>
 
+            <!-- Kartu Efisiensi Jadwal -->
+            <div class="p-4 @container">
+              <div class="flex flex-col items-stretch justify-start rounded-xl @xl:flex-row @xl:items-start">
+                <div
+                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
+                  style='background-image: url("https://placehold.co/600x400/F59E0B/white?text=Analitik");'
+                ></div>
+                <div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 py-4 @xl:px-4">
+                  <p class="text-[#0d141c] text-3xl font-bold leading-tight tracking-[-0.015em]">Efisiensi Jadwal</p>
+                  <div class="flex items-end gap-3 justify-between">
+                    <a
+                      href="/appointment/efficiency"
+                      class="flex w-64 h-14 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8 bg-[#3490f3] text-slate-50 text-lg font-medium leading-normal"
+                    >
+                      <span class="truncate">Lihat Laporan</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </main>
       </div>
     </div>
-  <script type="module" src="./script.js"></script>
   </body>
 </html>

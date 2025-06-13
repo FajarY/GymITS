@@ -1,65 +1,39 @@
+// Updated mock data to reflect database structure and use pt_id as key
 const trainersData = {
-    'john-doe': { 
+    'PT001': { 
         name: 'John Doe', 
-        specialty: 'Strength Training', 
-        specialtyColor: 'text-[#3490f3]', 
-        description: 'Expert in building muscle mass and creating effective weight loss programs.', 
+        price_per_hour: 250000, 
         imageUrl: 'https://placehold.co/400x300/3490F3/FFFFFF?text=John+D', 
         availability: { 
-            10: ['08:00', '09:00', '10:00'], 
-            12: ['08:00', '09:00'], 
-            15: ['14:00', '15:00', '16:00'], 
-            17: ['17:00', '18:00'], 
-            20: ['09:00', '10:00'],
-            22: ['08:00', '14:00', '15:00'],
-            25: ['16:00', '17:00', '18:00']
+            10: ['08:00', '09:00', '10:00'], 12: ['08:00', '09:00'], 15: ['14:00', '15:00', '16:00'], 
+            17: ['17:00', '18:00'], 20: ['09:00', '10:00'], 22: ['08:00', '14:00', '15:00'], 25: ['16:00', '17:00', '18:00']
         } 
     },
-    'jane-smith': { 
+    'PT002': { 
         name: 'Jane Smith', 
-        specialty: 'Yoga & Flexibility', 
-        specialtyColor: 'text-green-600', 
-        description: 'Certified yoga instructor focusing on Vinyasa flows and improving mobility.', 
+        price_per_hour: 300000,
         imageUrl: 'https://placehold.co/400x300/10B981/FFFFFF?text=Jane+S', 
         availability: { 
-            11: ['07:00', '08:00'], 
-            13: ['18:00', '19:00'], 
-            16: ['07:00', '08:00', '09:00'], 
-            18: ['18:00', '19:00', '20:00'], 
-            21: ['07:00', '18:00'],
-            23: ['08:00', '09:00'],
-            26: ['18:00', '19:00']
+            11: ['07:00', '08:00'], 13: ['18:00', '19:00'], 16: ['07:00', '08:00', '09:00'], 
+            18: ['18:00', '19:00', '20:00'], 21: ['07:00', '18:00'], 23: ['08:00', '09:00'], 26: ['18:00', '19:00']
         } 
     },
-    'mike-johnson': { 
+    'PT003': { 
         name: 'Mike Johnson', 
-        specialty: 'Cardio & HIIT', 
-        specialtyColor: 'text-amber-600', 
-        description: 'High-intensity interval training specialist to boost your endurance and burn calories.', 
+        price_per_hour: 275000,
         imageUrl: 'https://placehold.co/400x300/F59E0B/FFFFFF?text=Mike+J', 
         availability: { 
-            12: ['08:00', '09:00'], 
-            17: ['17:00', '18:00', '19:00'], 
-            24: ['08:00'],
-            14: ['15:00', '16:00'],
-            19: ['17:00', '18:00'],
-            27: ['08:00', '09:00', '10:00']
+            12: ['08:00', '09:00'], 17: ['17:00', '18:00', '19:00'], 24: ['08:00'],
+            14: ['15:00', '16:00'], 19: ['17:00', '18:00'], 27: ['08:00', '09:00', '10:00']
         } 
     },
-    'sarah-lee': { 
+    'PT004': { 
         name: 'Sarah Lee', 
-        specialty: 'CrossFit', 
-        specialtyColor: 'text-red-600', 
-        description: 'Level 2 CrossFit coach specializing in functional fitness and Olympic lifts.', 
+        price_per_hour: 325000,
         imageUrl: 'https://placehold.co/400x300/EF4444/FFFFFF?text=Sarah+L', 
         availability: { 
-            13: ['06:00', '07:00'], 
-            15: ['17:00', '18:00'], 
-            18: ['06:00', '07:00', '17:00'], 
-            20: ['17:00', '18:00'], 
-            22: ['06:00', '17:00'],
-            28: ['06:00', '07:00', '18:00'],
-            30: ['17:00', '18:00']
+            13: ['06:00', '07:00'], 15: ['17:00', '18:00'], 18: ['06:00', '07:00', '17:00'], 
+            20: ['17:00', '18:00'], 22: ['06:00', '17:00'], 28: ['06:00', '07:00', '18:00'], 30: ['17:00', '18:00']
         } 
     },
 };
@@ -81,14 +55,14 @@ async function fetchTrainerDetails(id) {
 let selectedDate = null;
 let selectedTime = null;
 let currentTrainer = null;
+let currentTrainerId = null;
 
 // --- DOM ELEMENT REFERENCES ---
 const loader = document.getElementById("loader");
 const content = document.getElementById("content");
 const trainerImage = document.getElementById("trainer-image");
 const trainerName = document.getElementById("trainer-name");
-const trainerSpecialty = document.getElementById("trainer-specialty");
-const trainerDescription = document.getElementById("trainer-description");
+const trainerPrice = document.getElementById("trainer-price"); // <-- New reference
 const calendarContainer = document.getElementById("calendar-container");
 const timeSlotsGrid = document.getElementById("time-slots-grid");
 const timeSlotPlaceholder = document.getElementById("time-slot-placeholder");
@@ -134,10 +108,10 @@ function renderCalendar(availability) {
   for (let day = 1; day <= daysInMonth; day++) {
     const isAvailable = availability[day] && availability[day].length > 0;
     const isPast = day < today;
-    let dayClasses = "p-2 text-gray-400"; // Default for past or unavailable days
+    let dayClasses = "p-2 text-center rounded-full text-gray-400"; // Default for past or unavailable days
     if (isAvailable && !isPast) {
       dayClasses =
-        "calendar-day cursor-pointer bg-blue-50 hover:bg-blue-200 rounded-full p-2";
+        "calendar-day cursor-pointer bg-blue-50 hover:bg-blue-200 rounded-full p-2 text-center";
     }
     calendarHTML += `<div class="${dayClasses}" data-day="${day}">${day}</div>`;
   }
@@ -179,9 +153,8 @@ function populatePage(trainerData) {
   trainerImage.src = trainerData.imageUrl;
   trainerImage.alt = trainerData.name;
   trainerName.textContent = trainerData.name;
-  trainerSpecialty.textContent = trainerData.specialty;
-  trainerSpecialty.className = `text-lg font-medium mt-1 ${trainerData.specialtyColor}`;
-  trainerDescription.textContent = trainerData.description;
+  // Set the price per hour
+  trainerPrice.textContent = `${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(trainerData.price_per_hour)} / hour`;
   renderCalendar(trainerData.availability);
   loader.classList.add("hidden");
   content.classList.remove("hidden");
@@ -247,13 +220,11 @@ function handleConfirmBooking() {
     `Booking confirmed for ${currentTrainer.name} on ${selectedDate} at ${selectedTime}`
   );
   
-  // Store the booking in localStorage (since we can't use persistent storage)
   const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
   const newBooking = {
     id: Date.now().toString(),
-    trainerId: currentTrainer.id || currentTrainer.name.toLowerCase().replace(' ', '-'),
+    trainerId: currentTrainerId, // Use the ID from the URL
     trainerName: currentTrainer.name,
-    specialty: currentTrainer.specialty,
     date: selectedDate.toISOString(),
     time: selectedTime,
     status: 'confirmed'
@@ -264,7 +235,6 @@ function handleConfirmBooking() {
   
   hideConfirmationModal();
   
-  // Show success message and redirect after a delay
   alert('Appointment booked successfully!');
   setTimeout(() => {
     window.location.href = '/appointment/my-appointment/';
@@ -272,25 +242,32 @@ function handleConfirmBooking() {
 }
 
 // --- PAGE INITIALIZATION ---
+
+/**
+* Gets the trainer ID from the current page's URL query string.
+* @returns {string|null} The trainer ID or null if not found.
+*/
+function getTrainerIdFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id');
+}
+
 async function initializePage() {
-  // Get the selected trainer ID from localStorage
-  const trainerId = localStorage.getItem('selectedTrainerId');
+  // --- FIX: Get trainer ID from URL instead of localStorage ---
+  currentTrainerId = getTrainerIdFromURL();
   
-  if (!trainerId) {
+  if (!currentTrainerId) {
     loader.textContent = "Error: No trainer selected. Please go back and select a trainer.";
     return;
   }
 
-  // Clear the stored trainer ID since we've retrieved it
-  localStorage.removeItem('selectedTrainerId');
-
-  if (!trainersData[trainerId]) {
+  if (!trainersData[currentTrainerId]) {
     loader.textContent = "Error: Trainer not found.";
     return;
   }
 
   try {
-    const trainerData = await fetchTrainerDetails(trainerId);
+    const trainerData = await fetchTrainerDetails(currentTrainerId);
     populatePage(trainerData);
   } catch (error) {
     loader.textContent = "Could not find trainer details.";
@@ -300,29 +277,22 @@ async function initializePage() {
 
 // --- ATTACH EVENT LISTENERS ---
 function attachEventListeners() {
-  // Calendar click handler
   if (calendarContainer) {
     calendarContainer.addEventListener("click", handleDateSelection);
   }
-  
-  // Time slots click handler  
   if (timeSlotsGrid) {
     timeSlotsGrid.addEventListener("click", handleTimeSelection);
   }
-  
-  // Confirm appointment button
   if (confirmAppointmentBtn) {
     confirmAppointmentBtn.addEventListener("click", showConfirmationModal);
   }
   
-  // Modal buttons
   const modalCloseBtn = document.getElementById("modal-close-btn");
   const modalConfirmBtn = document.getElementById("modal-confirm-btn");
   
   if (modalCloseBtn) {
     modalCloseBtn.addEventListener("click", hideConfirmationModal);
   }
-  
   if (modalConfirmBtn) {
     modalConfirmBtn.addEventListener("click", handleConfirmBooking);
   }

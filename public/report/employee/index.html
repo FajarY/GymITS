@@ -1,14 +1,28 @@
 <html>
   <head>
-  <link rel="stylesheet" href="../../output.css">
+    <link rel="stylesheet" href="../../output.css" />
+    <title>GymITS - Laporan</title>
   </head>
   <body>
-    <div class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden" style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'>
+    <div
+      class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden"
+      style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'
+    >
       <div class="layout-container flex h-full grow flex-col">
-        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf4] px-10 py-3">
+        <!-- =================================================================
+        NAVIGASI (Versi Karyawan)
+        ================================================================== -->
+        <header
+          class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf4] px-10 py-3"
+        >
+          <!-- Logo dan Nama Situs -->
           <div class="flex items-center gap-4 text-[#0d141c]">
             <div class="size-4">
-              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                viewBox="0 0 48 48"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z"
                   fill="currentColor"
@@ -19,75 +33,50 @@
                 ></path>
               </svg>
             </div>
-            <a href="/dashboard/employee" class="text-[#0d141c] text-lg font-bold leading-tight tracking-[-0.015em] cursor-pointer">
+            <a
+              href="/dashboard/employee"
+              class="text-[#0d141c] text-lg font-bold leading-tight tracking-[-0.015em] cursor-pointer"
+            >
               GymITS
             </a>
           </div>
+          <!-- Link Profil -->
           <div class="flex flex-1 justify-end gap-8">
-            <div class="flex items-center gap-9"><a class="text-[#0d141c] text-sm font-medium leading-normal" href="/profile/employee">Profile</a></div>
+            <div class="flex items-center gap-9">
+              <a
+                class="text-[#0d141c] text-sm font-medium leading-normal"
+                href="/profile/employee"
+                >Profile</a
+              >
+            </div>
             <div
               class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
               style='background-image: url("https://placehold.co/100x100/e2e8f0/475569?text=E");'
             ></div>
           </div>
         </header>
-        <div class="px-40 flex flex-1 justify-center py-5">
+
+        <!-- =================================================================
+        KONTEN UTAMA
+        ================================================================== -->
+        <main class="px-40 flex flex-1 justify-center py-5">
           <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
             <div class="flex flex-wrap justify-between gap-3 p-4">
-              <p class="text-[#0d141c] tracking-light text-[32px] font-bold leading-tight min-w-72">Welcome back, Employee!</p>
+              <h1 class="text-[#0d141c] tracking-light text-[32px] font-bold leading-tight min-w-72">Laporan & Analitik</h1>
             </div>
-            <!-- Product Management Card -->
+
+            <!-- Kartu Efisiensi Membership -->
             <div class="p-4 @container">
               <div class="flex flex-col items-stretch justify-start rounded-xl @xl:flex-row @xl:items-start">
                 <div
                   class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
-                  style='background-image: url("https://placehold.co/600x400/3490f3/white?text=Products");'
+                  style='background-image: url("https://placehold.co/600x400/10B981/white?text=Efisiensi");'
                 ></div>
                 <div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 py-4 @xl:px-4">
-                  <p class="text-[#0d141c] text-3xl font-bold leading-tight tracking-[-0.015em]">Manajemen Produk</p>
+                  <p class="text-[#0d141c] text-3xl font-bold leading-tight tracking-[-0.015em]">Efisiensi Membership</p>
                   <div class="flex items-end gap-3 justify-between">
                     <a
-                      href="/product/add"
-                      class="flex w-64 h-14 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8 bg-[#3490f3] text-slate-50 text-lg font-medium leading-normal"
-                    >
-                      <span class="truncate">Buka Manajemen</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- PT Management Card -->
-            <div class="p-4 @container">
-              <div class="flex flex-col items-stretch justify-start rounded-xl @xl:flex-row @xl:items-start">
-                <div
-                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
-                  style='background-image: url("https://placehold.co/600x400/4a5568/white?text=Trainers");'
-                ></div>
-                <div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 py-4 @xl:px-4">
-                  <p class="text-[#0d141c] text-3xl font-bold leading-tight tracking-[-0.015em]">Manajemen Personal Trainer</p>
-                  <div class="flex items-end gap-3 justify-between">
-                    <a
-                      href="/trainer/add"
-                      class="flex w-64 h-14 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8 bg-[#3490f3] text-slate-50 text-lg font-medium leading-normal"
-                    >
-                      <span class="truncate">Buka Manajemen</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Reports Card -->
-            <div class="p-4 @container">
-              <div class="flex flex-col items-stretch justify-start rounded-xl @xl:flex-row @xl:items-start">
-                <div
-                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
-                  style='background-image: url("https://placehold.co/600x400/10B981/white?text=Reports");'
-                ></div>
-                <div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 py-4 @xl:px-4">
-                  <p class="text-[#0d141c] text-3xl font-bold leading-tight tracking-[-0.015em]">Laporan & Analitik</p>
-                  <div class="flex items-end gap-3 justify-between">
-                    <a
-                      href="/report/employee"
+                      href="/membership/efficiency"
                       class="flex w-64 h-14 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8 bg-[#3490f3] text-slate-50 text-lg font-medium leading-normal"
                     >
                       <span class="truncate">Lihat Laporan</span>
@@ -96,8 +85,30 @@
                 </div>
               </div>
             </div>
+
+            <!-- Kartu Ringkasan Produk -->
+            <div class="p-4 @container">
+              <div class="flex flex-col items-stretch justify-start rounded-xl @xl:flex-row @xl:items-start">
+                <div
+                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
+                  style='background-image: url("https://placehold.co/600x400/8B5CF6/white?text=Ringkasan");'
+                ></div>
+                <div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 py-4 @xl:px-4">
+                  <p class="text-[#0d141c] text-3xl font-bold leading-tight tracking-[-0.015em]">Ringkasan Penjualan Produk</p>
+                  <div class="flex items-end gap-3 justify-between">
+                    <a
+                      href="/product/summary"
+                      class="flex w-64 h-14 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8 bg-[#3490f3] text-slate-50 text-lg font-medium leading-normal"
+                    >
+                      <span class="truncate">Lihat Ringkasan</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
-        </div>
+        </main>
       </div>
     </div>
   </body>
