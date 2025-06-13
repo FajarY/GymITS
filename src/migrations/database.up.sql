@@ -375,15 +375,23 @@ LANGUAGE PLPGSQL
 AS
 $$
 DECLARE
+	customer_id CHAR(8);
 	membership_type_id CHAR(8);
 	membership_type_name VARCHAR(64);
 	discount_product DECIMAL(4, 2);
 BEGIN
-	SELECT mt_id INTO membership_type_id FROM membership MB WHERE MB.c_id = 
-		(SELECT c_id FROM receipt WHERE r_id = NEW.r_id);
-		
+	SELECT c_id INTO customer_id FROM receipt WHERE r_id = NEW.r_id;
+	SELECT mt_id INTO membership_type_id FROM membership MB WHERE MB.c_id = customer_id;
+	
 	IF membership_type_id IS NOT NULL THEN
 		SELECT mt_name INTO membership_type_name FROM membership_type MT WHERE MT.mt_id = membership_type_id;
+		
+		IF CURRENT_DATE < (SELECT m_start_date FROM membership MB WHERE mb.c_id = customer_id)
+		OR
+		CURRENT_DATE > (SELECT m_expired_date FROM membership MB WHERE mb.c_id = customer_id) THEN
+			membership_type_id := NULL;
+			membership_type_name := NULL;
+		END IF;
 	END IF;
 	
 	discount_product := 0.0;
@@ -454,7 +462,7 @@ BEGIN
 		WHERE pe.p_id = product_id;
 
 	RETURN QUERY
-	SELECT pe.added_by_e_id, SUM(pe.add_percentage) as add_percentage
+	SELECT pe.added_by_e_id, SUM(pe.add_percentage) * 100.0 as add_percentage
 	FROM
 		(SELECT pe.added_by_e_id, CAST(add_amount AS DECIMAL(10, 2)) / CAST(add_total AS DECIMAL(10, 2)) as add_percentage
 		FROM product_employee pe
@@ -643,7 +651,7 @@ BEGIN
         RAISE EXCEPTION 'Akses ditolak: Customer "%" (%) tidak memiliki membership.', v_customer_name, NEW.c_id;
     END IF;
 
-    IF v_expired_date < CURRENT_DATE THEN
+    IF NEW.ts_start_time > v_expired_date THEN
         RAISE EXCEPTION 'Akses ditolak: Membership customer "%" (%) telah kedaluwarsa pada tanggal %.', 
             v_customer_name, NEW.c_id, TO_CHAR(v_expired_date, 'DD-Mon-YYYY');
     END IF;
@@ -651,6 +659,7 @@ BEGIN
     RETURN NEW;
 END;
 $$;
+
 
 CREATE OR REPLACE TRIGGER trg_validasi_membership_sebelum_sesi
 BEFORE INSERT ON training_session
