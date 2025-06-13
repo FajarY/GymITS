@@ -104,6 +104,16 @@ const productSummary = async(req, res) => {
     }
 }
 
+const percentageAddOnProductByemployee = async(req, res) => {
+    try {
+        const id = req.params.id
+        const result = await productModel.percentageAddOnProductByemployee(id);
+        res.status(200).json(response.buildResponseSuccess("successfully get summary", result));
+    } catch (error) {
+        res.status(500).json(response.buildResponseFailed("failed to get summary", error.message, null));
+    }
+}
+
 router.get('/data', getListProdcut)
 router.get('/bought',authenticate, getListProductFiltered)
 router.post('/purchase', authenticate, authorize('customer'), purchaseProduct);
@@ -111,6 +121,7 @@ router.post('/',authenticate, authorize('employee'), addNewProduct);
 router.post('/:id', authenticate, authorize('employee'),addStockToProduct);
 router.patch('/:id', authenticate, authorize('employee'), updateProduct);
 router.get('/summary/data', authenticate, productSummary);
+router.get('/:id/employee/summary', authenticate, percentageAddOnProductByemployee)
 
 async function purchaseProduct(req, res)
 {

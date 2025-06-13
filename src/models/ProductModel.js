@@ -115,6 +115,11 @@ const productSummary =  async () => {
     return result;
 }
 
+const percentageAddOnProductByemployee = async(product_id) => {
+    const result = await db.admin.raw('SELECT * FROM PERCENTAGE_ADD_ON_PRODUCT_BY_EMPLOYEE(?)', [product_id]);
+    return result.rows;
+}
+
 module.exports = {
     addNewProduct,
     addProductStock,
@@ -122,5 +127,6 @@ module.exports = {
     getAllBought,
     updatesProduct,
     isProductExistAndCheckStock,
-    productSummary
+    productSummary,
+    percentageAddOnProductByemployee
 }
