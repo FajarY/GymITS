@@ -158,7 +158,7 @@ RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF TG_TABLE_NAME = 'personal_trianer' THEN 
+    IF TG_TABLE_NAME = 'personal_trainer' THEN 
         IF SUBSTRING(NEW.pt_telephone, 1, 3) != '+62' THEN
             NEW.pt_telephone := '+62' || SUBSTRING(NEW.pt_telephone, 2, 15);
         END IF;
