@@ -2,7 +2,7 @@ const db = require('../database')
 
 async function getCustomerMembership(c_id)
 {
-    const [membership] = await db('membership').select('m_id as id', 'm_telephone as telephone', 'm_alamat as alamat', 'm_start_date as start_date', 'm_expired_date as expired_date', 'mt_id').where({
+    const [membership] = await db.customer('membership').select('m_id as id', 'm_telephone as telephone', 'm_alamat as alamat', 'm_start_date as start_date', 'm_expired_date as expired_date', 'mt_id').where({
         c_id: c_id
     });
 
@@ -11,7 +11,7 @@ async function getCustomerMembership(c_id)
 
 async function createCustomerMembership(c_id, telephone, alamat, start_date, expired_date, mt_id)
 {
-    const [membership] = await db('membership').insert({
+    const [membership] = await db.customer('membership').insert({
         m_telephone: telephone,
         m_alamat: alamat,
         m_start_date: start_date,
@@ -25,7 +25,7 @@ async function createCustomerMembership(c_id, telephone, alamat, start_date, exp
 
 async function updateCustomerMembershipSafe(m_id, c_id, telephone, alamat, start_date, expired_date, mt_id)
 {
-    const [membership] = await db('membership').where(
+    const [membership] = await db.customer('membership').where(
         {
             m_id: m_id,
             c_id: c_id
@@ -44,7 +44,7 @@ async function updateCustomerMembershipSafe(m_id, c_id, telephone, alamat, start
 }
 
 const getInformation = async () => {
-    const result = db('membership_status_summary').select('*');
+    const result = db.admin('membership_status_summary').select('*');
     return result;
 }
 

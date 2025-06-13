@@ -194,6 +194,15 @@ const income = async (req, res) => {
     }
 }
 
+const getNewTrainerLog = async (req, res) => {
+    try {
+        const log = await personalTrainerModel.getTrainerLog()
+        res.status(200).json(response.buildResponseSuccess('successfully to get tariner log', log));
+    } catch (error) {
+        res.status(500).json(response.buildResponseSuccess('failed to get tariner log', log));
+    }
+}
+
 router.post('/login', loginPersonalTrainer);
 router.post('/', authenticate, authorize('employee'), addPersonalTrainer);
 router.get('/data', authenticate, getAllPersonalTrainer);
@@ -201,6 +210,7 @@ router.get('/profile', authenticate, profile);
 router.get('/:id/availability', authenticate, getPersonalTrainerAvailability);
 router.get('/appointments', authenticate, authorize('trainer'), trainerAppointments);
 router.get('/income', authenticate, authorize('trainer'), income);
+router.get('/log', authenticate, authorize('employee'), getNewTrainerLog);
 
 router.get('/efficiencyAllPTAvailableTimes', efficiencyAllPTAvailableTimes)
 router.post('/available-time', authenticate, authorize('trainer'), addAvailableTime);

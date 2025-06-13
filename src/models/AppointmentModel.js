@@ -1,7 +1,7 @@
 const db = require('../database');
 
 const addPersonalTrainerReceipt = async (pt_id, times, date, customer_id) => {
-    const result = await db.transaction( async (trx) => {
+    const result = await db.customer.transaction( async (trx) => {
         try {
             const validateQuery = `
                 SELECT COUNT(*) AS valid 

@@ -192,6 +192,13 @@ const getIncome = async (id) => {
     return result.rows[0];
 }
 
+const getTrainerLog = async () => {
+    const result = await db('trainer_log')
+    .select('*')
+
+    return result
+}
+
 module.exports = {
     create,
     getByID,
@@ -204,4 +211,5 @@ module.exports = {
     getEfficiencyAllPTAvailableTimes,
     addAvailableTime,
     getIncome,
+    getTrainerLog
 }

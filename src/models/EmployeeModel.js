@@ -2,7 +2,7 @@ const db = require('../database')
 
 const getByID = async (id) => {
     try {
-        const [employee] = await db('employee')
+        const [employee] = await db.admin('employee')
         .select(
             'e_id as id',
             'e_name as name',
@@ -20,7 +20,7 @@ const getByID = async (id) => {
 }
 
 const getProfile = async (id) => {
-    const [employee] = await db('view_employee_profile')
+    const [employee] = await db.admin('view_employee_profile')
     .select('*')
     .where({ id: id });
     

@@ -2,7 +2,7 @@ const db = require('../database');
 
 async function createCustomer(name, gender, email, password)
 {
-    const [c_id] = await db('customer').insert({
+    const [c_id] = await db.customer('customer').insert({
         c_name: name,
         c_gender: gender,
         c_email: email,
@@ -14,7 +14,7 @@ async function createCustomer(name, gender, email, password)
 
 async function getCustomerByEmail(email)
 {
-    const [customer] = await db('customer')
+    const [customer] = await db.customer('customer')
         .select('c_id as id', 'c_name as name', 'c_gender as gender', 'c_email as email', 'c_password as password')
         .where({c_email: email});
 
@@ -23,7 +23,7 @@ async function getCustomerByEmail(email)
 
 async function isCustomerExistByEmail(email)
 {
-    const [customer] = await db('customer')
+    const [customer] = await db.customer('customer')
         .select('c_email as email')
         .where({c_email: email});
     
@@ -32,7 +32,7 @@ async function isCustomerExistByEmail(email)
 
 async function getProfile(id) 
 {
-    const [customer] = await db('view_customer_profile')
+    const [customer] = await db.customer('view_customer_profile')
         .select('*')
         .where({id: id});
 
@@ -74,7 +74,7 @@ async function getAppointments(id) {
         END DESC;
   `;
 
-  const result = await db.raw(rawQuery, [id]);
+  const result = await db.customer.raw(rawQuery, [id]);
   return result.rows; 
 }
 
@@ -92,17 +92,17 @@ const getTrainingStatistic = async (id) => {
         GROUP BY c.c_id, c.c_name;
     `;
 
-    const statistic = await db.raw(rawQuery, [id]);
+    const statistic = await db.admin.raw(rawQuery, [id]);
     return statistic.rows;
 }
 
 const totalSpending = async (id) => {
-    const result = await db.raw('SELECT * FROM get_total_spending(?)', [id]);
+    const result = await db.customer.raw('SELECT * FROM get_total_spending(?)', [id]);
     return result.rows[0];
 }
 
 async function customerOnGym() {
-  const [result] = await db('view_customer_on_gym').select('count');
+  const [result] = await db.customer('view_customer_on_gym').select('count');
   return result;
 }
 
@@ -132,7 +132,7 @@ async function efficiencyAllMembersip()
   GROUP BY c_name
   `;
 
-  const result = await db.raw(rawQuery);
+  const result = await db.admin.raw(rawQuery);
 
   return result.rows;
 }

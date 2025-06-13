@@ -121,6 +121,14 @@ CREATE TABLE membership_type_receipt (
     FOREIGN KEY (r_id) REFERENCES receipt(r_id)
 );
 
+CREATE TABLE trainer_log(
+	log_id SERIAL PRIMARY KEY,
+	pt_id CHAR(8),
+	added_by CHAR(8),
+	log_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 CREATE USER customer WITH PASSWORD 'pass123';
 CREATE USER trainer WITH PASSWORD 'ptpass';
 CREATE USER admin WITH PASSWORD 'adminpass';
@@ -552,13 +560,6 @@ BEGIN
 	RETURN NEW;
 END;
 $$;
-
-CREATE TABLE trainer_log(
-	log_id SERIAL PRIMARY KEY,
-	pt_id CHAR(8),
-	added_by CHAR(8),
-	log_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 CREATE OR REPLACE FUNCTION log_new_trainer()
 RETURNS TRIGGER

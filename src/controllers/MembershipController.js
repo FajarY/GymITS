@@ -147,6 +147,6 @@ const customerMembershipInformation = async (req, res) => {
 }
 
 router.post('/purchase', authenticate, authorize('customer'), purchaseMembership);
-router.get('/information', authenticate, customerMembershipInformation);
+router.get('/information', authenticate, authorize('employee'), customerMembershipInformation);
 
 module.exports = router;
