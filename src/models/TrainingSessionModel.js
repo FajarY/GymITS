@@ -2,7 +2,7 @@ const db = require('../database');
 
 async function createTrainingSession(customerId, startTime)
 {
-    const [ts_id] = await db('training_session').insert({
+    const [ts_id] = await db.customer('training_session').insert({
         ts_start_time: startTime,
         c_id: customerId
     }).returning('ts_id');
@@ -12,7 +12,7 @@ async function createTrainingSession(customerId, startTime)
 
 async function getTrainingSessionIdList(customerId)
 {
-    const arr = await db('training_session').select(
+    const arr = await db.customer('training_session').select(
         'ts_id as id'
     ).where({c_id: customerId});
 
@@ -21,7 +21,7 @@ async function getTrainingSessionIdList(customerId)
 
 async function getTrainingSessionDataSafe(trainingSessionId, customerId)
 {
-    const [trainingSession] = await db('training_session').select(
+    const [trainingSession] = await db.customer('training_session').select(
         'ts_id as id', 'ts_start_time as start_time', 'ts_end_time as end_time', 'c_id' 
     ).where({ts_id: trainingSessionId, c_id: customerId});
 
@@ -30,7 +30,7 @@ async function getTrainingSessionDataSafe(trainingSessionId, customerId)
 
 async function endTrainingSessionSafe(customerId, trainingSessionId, endTime)
 {
-    const [trainingSession] = await db('training_session').where({ts_id: trainingSessionId, c_id: customerId}).update(
+    const [trainingSession] = await db.customer('training_session').where({ts_id: trainingSessionId, c_id: customerId}).update(
         {
             ts_end_time: endTime
         }, ['ts_id', 'ts_start_time', 'ts_end_time']

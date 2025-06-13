@@ -2,7 +2,7 @@ const db = require('../database')
 
 const create = async (name, alamat, password, telephone, gender, price_per_hour, employeeID) => {
     try {
-        const [pt_id] = await db('personal_trainer')
+        const [pt_id] = await db.admin('personal_trainer')
         .insert({
             pt_name: name,
             pt_alamat: alamat,
@@ -22,7 +22,7 @@ const create = async (name, alamat, password, telephone, gender, price_per_hour,
 
 const getByID = async (id) => {
     try {
-        const [personalTrainer] = await db('personal_trainer')
+        const [personalTrainer] = await db.trainer('personal_trainer')
         .select(
             'pt_id as id',
             'pt_name as name',
@@ -42,7 +42,7 @@ const getByID = async (id) => {
 
 const getAll = async () => {
     try {
-        const personalTrainer = await db('personal_trainer')
+        const personalTrainer = await db.admin('personal_trainer')
         .select(
             'pt_id as id',
             'pt_name as name',
@@ -67,7 +67,7 @@ const getAllUsed = async (id) => {
         GROUP BY pt.pt_id, pt.pt_name, pt.pt_price_per_hour
     `
     try {
-        const personalTrainer = await db.raw(rawQuery, [id]);
+        const personalTrainer = await db.admin.raw(rawQuery, [id]);
 
         return personalTrainer.rows;
     } catch (error) {
@@ -90,7 +90,7 @@ const getAvailableTime = async (personal_trainer_id, month, year, day) => {
                 GROUP BY at_date
             ) AS temp;
         `
-        available_time = await db.raw(rawQuery, [personal_trainer_id, personal_trainer_id, month, year, day]);
+        available_time = await db.admin.raw(rawQuery, [personal_trainer_id, personal_trainer_id, month, year, day]);
     } else {
         rawQuery = `
             SELECT at_date, availabilityTrainer(?, at_date) AS map_time
@@ -103,13 +103,13 @@ const getAvailableTime = async (personal_trainer_id, month, year, day) => {
                 GROUP BY at_date
             ) AS temp;
         `
-        available_time = await db.raw(rawQuery, [personal_trainer_id, personal_trainer_id, month, year]);
+        available_time = await db.admin.raw(rawQuery, [personal_trainer_id, personal_trainer_id, month, year]);
     }
     return available_time.rows;
 }
 
 const getProfile = async (personal_trainer_id) => {
-    const [trainer] = await db('view_trainer_profile')
+    const [trainer] = await db.admin('view_trainer_profile')
     .select('*')
     .where({trainer_id: personal_trainer_id});
     
@@ -123,7 +123,7 @@ const getAvailableDate = async (personal_trainer_id) => {
         NATURAL JOIN personal_trainer 
         WHERE pt_id = ? AND at_date > CURRENT_DATE
     `
-    const trainer = await db.raw(rawQuery, [personal_trainer_id]);
+    const trainer = await db.admin.raw(rawQuery, [personal_trainer_id]);
 
     return trainer.rows
 }
@@ -148,7 +148,7 @@ const getAppointments = async (id) => {
         ORDER BY at.at_date, at.at_start_time;
     `;
 
-  const appointments = await db.raw(rawQuery, [id]);
+  const appointments = await db.trainer.raw(rawQuery, [id]);
   return appointments.rows;
 }
 
@@ -164,7 +164,7 @@ async function getEfficiencyAllPTAvailableTimes()
         ORDER BY pt_id
     `;
 
-    const data = await db.raw(rawQuery);
+    const data = await db.admin.raw(rawQuery);
     return data.rows;
 }
 
@@ -182,13 +182,13 @@ const addAvailableTime = async (id, date, times) => {
     if (values.length === 0) return 0;
 
     const rawQuery = base + values.join(',\n') + ';';
-    const result = await db.raw(rawQuery);
+    const result = await db.trainer.raw(rawQuery);
     
     return result.rowCount
 }
 
 const getIncome = async (id) => {
-    const result = await db.raw('SELECT get_trainer_income(?) AS income', [id]);
+    const result = await db.trainer.raw('SELECT get_trainer_income(?) AS income', [id]);
     return result.rows[0];
 }
 

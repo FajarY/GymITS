@@ -2,7 +2,7 @@ const db = require('../database');
 
 async function insertPurchases(receipt_product_arr)
 {
-    const arr = await db('receipt_product').insert(
+    const arr = await db.customer('receipt_product').insert(
         receipt_product_arr
     ).returning('*');
 

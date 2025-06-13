@@ -2,7 +2,7 @@ const db = require('../database')
 
 const addNewProduct  = async (name, price) => {
     try {
-        const product = await db('product').
+        const product = await db.admin('product').
         insert({
             p_name: name,
             p_price: price,
@@ -18,7 +18,7 @@ const addNewProduct  = async (name, price) => {
 
 const getAll = async() => {
     try {
-        const products = await db('product')
+        const products = await db.admin('product')
         .select(
             'p_id as id',
             'p_name as name',
@@ -49,13 +49,13 @@ const getAllBought = async(id) => {
             r.c_id = ?
     ` 
 
-    const products = await db.raw(rawQuery, [id]);
+    const products = await db.admin.raw(rawQuery, [id]);
     return products.rows;
 }
 
 const addProductStock = async(id, amount, employee_id) => {
     try {
-        const product = await db('product_employee').
+        const product = await db.admin('product_employee').
         insert({
             p_id: id,
             added_by_e_id: employee_id,
@@ -70,7 +70,7 @@ const addProductStock = async(id, amount, employee_id) => {
 
 const updatesProduct = async (employee_id, product_id, updates) => {
     try {
-        const product = await db('product')
+        const product = await db.admin('product')
         .where({p_id: product_id})
         .update(updates)
         .returning(['p_id', 'p_name', 'p_price', 'p_stock'])
@@ -90,7 +90,7 @@ async function isProductExistAndCheckStock(id, amount)
 {
     try
     {
-        const [product] = await db('product')
+        const [product] = await db.admin('product')
         .where({p_id: id});
 
         if(product == undefined)
@@ -110,7 +110,7 @@ async function isProductExistAndCheckStock(id, amount)
 }
 
 const productSummary =  async () => {
-    const result = await db('product_summary_sales').select('*');
+    const result = await db.admin('product_summary_sales').select('*');
     return result;
 }
 

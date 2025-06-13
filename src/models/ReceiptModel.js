@@ -31,13 +31,13 @@ const getAllReceipt = async (id) => {
         ORDER BY receipt_id
     `
 
-    const result = await db.raw(rawQuery, [id])
+    const result = await db.customer.raw(rawQuery, [id])
     return result.rows
 }
 
 async function createReceipt(c_id)
 {
-    const [data] = await db('receipt').insert(
+    const [data] = await db.customer('receipt').insert(
         {
             r_date: new Date(Date.now()),
             r_final_price: 0.0,
