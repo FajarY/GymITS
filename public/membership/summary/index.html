@@ -1,0 +1,140 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../output.css" />
+    <title>GymITS - Ringkasan Membership</title>
+  </head>
+  <body>
+    <div
+      class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden"
+      style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'
+    >
+      <div class="layout-container flex h-full grow flex-col">
+        <!-- =================================================================
+        NAVIGASI (Versi Karyawan)
+        ================================================================== -->
+        <header
+          class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf4] px-10 py-3"
+        >
+          <!-- Logo dan Nama Situs -->
+          <div class="flex items-center gap-4 text-[#0d141c]">
+            <div class="size-4">
+              <svg
+                viewBox="0 0 48 48"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z"
+                  fill="currentColor"
+                ></path>
+                <path
+                  d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+            </div>
+            <a
+              href="/dashboard/employee"
+              class="text-[#0d141c] text-lg font-bold leading-tight tracking-[-0.015em] cursor-pointer"
+            >
+              GymITS
+            </a>
+          </div>
+          <!-- Link Profil -->
+          <div class="flex flex-1 justify-end gap-8">
+            <div class="flex items-center gap-9">
+              <a
+                class="text-[#0d141c] text-sm font-medium leading-normal"
+                href="/profile/employee"
+                >Profile</a
+              >
+            </div>
+            <div
+              class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+              style='background-image: url("https://placehold.co/100x100/e2e8f0/475569?text=E");'
+            ></div>
+          </div>
+        </header>
+
+        <!-- =================================================================
+        KONTEN UTAMA
+        ================================================================== -->
+        <main class="px-10 lg:px-40 flex-1 py-5">
+          <div class="max-w-7xl mx-auto">
+            <div class="flex flex-wrap justify-between items-center gap-3 p-4">
+              <h1 class="text-[#0d141c] tracking-light text-[32px] font-bold leading-tight min-w-72">
+                Ringkasan Status Membership
+              </h1>
+            </div>
+
+            <!-- Tabel Ringkasan -->
+            <div class="mt-4 bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th class="p-4 text-sm font-semibold text-slate-600">ID Membership</th>
+                                <th class="p-4 text-sm font-semibold text-slate-600">Nama Customer</th>
+                                <th class="p-4 text-sm font-semibold text-slate-600">Telephone</th>
+                                <th class="p-4 text-sm font-semibold text-slate-600">Tanggal Mulai</th>
+                                <th class="p-4 text-sm font-semibold text-slate-600">Tanggal Berakhir</th>
+                                <th class="p-4 text-sm font-semibold text-slate-600">Tipe</th>
+                                <th class="p-4 text-sm font-semibold text-slate-600">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <!-- Contoh Data dari VIEW -->
+                            <tr>
+                                <td class="p-4 font-mono text-sm text-gray-500">M0000001</td>
+                                <td class="p-4 font-medium text-gray-800">Andi Saputra</td>
+                                <td class="p-4 text-gray-600">081234567890</td>
+                                <td class="p-4 text-gray-600">2025-01-15</td>
+                                <td class="p-4 text-gray-600">2026-01-15</td>
+                                <td class="p-4 text-gray-600">Gold</td>
+                                <td class="p-4">
+                                    <span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">active</span>
+                                </td>
+                            </tr>
+                             <tr>
+                                <td class="p-4 font-mono text-sm text-gray-500">M0000002</td>
+                                <td class="p-4 font-medium text-gray-800">Citra Lestari</td>
+                                <td class="p-4 text-gray-600">081222334455</td>
+                                <td class="p-4 text-gray-600">2025-05-20</td>
+                                <td class="p-4 text-gray-600">2025-06-20</td>
+                                <td class="p-4 text-gray-600">Bronze</td>
+                                <td class="p-4">
+                                     <span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">active</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-mono text-sm text-gray-500">M0000003</td>
+                                <td class="p-4 font-medium text-gray-800">Budi Setiawan</td>
+                                <td class="p-4 text-gray-600">081255667788</td>
+                                <td class="p-4 text-gray-600">2024-06-01</td>
+                                <td class="p-4 text-gray-600">2025-06-01</td>
+                                <td class="p-4 text-gray-600">Silver</td>
+                                <td class="p-4">
+                                     <span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-200 rounded-full">expired</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-4 font-mono text-sm text-gray-500">M0000004</td>
+                                <td class="p-4 font-medium text-gray-800">Eko Prasetyo</td>
+                                <td class="p-4 text-gray-600">081211223344</td>
+                                <td class="p-4 text-gray-600">2025-06-10</td>
+                                <td class="p-4 text-gray-600">2026-06-10</td>
+                                <td class="p-4 text-gray-600">Gold</td>
+                                 <td class="p-4">
+                                    <span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">active</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

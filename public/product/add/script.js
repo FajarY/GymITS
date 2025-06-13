@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // --- Get all necessary elements from the DOM ---
+  // --- Mendapatkan semua elemen yang diperlukan dari DOM ---
   const createProductBtn = document.getElementById('create-product-btn');
   const createProductModal = document.getElementById('create-product-modal');
   const createProductForm = document.getElementById('create-product-form');
@@ -13,19 +13,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const productListContainer = document.getElementById('product-list');
 
-  // --- Event Listeners to OPEN modals ---
+  // --- Event Listener untuk MEMBUKA modal ---
   createProductBtn.addEventListener('click', () => {
     createProductModal.classList.remove('hidden');
   });
 
-  // Use event delegation to handle clicks on "Add Stock" buttons
+  // Menggunakan event delegation untuk menangani klik pada tombol "Add Stock"
   productListContainer.addEventListener('click', (event) => {
+      // Kita hanya peduli pada tombol "Add Stock" di sini. Tombol "Detail" adalah link dan berfungsi sendiri.
       if (event.target.classList.contains('add-stock-btn')) {
           const card = event.target.closest('.product-card');
           const productId = card.dataset.productId;
           const productName = card.querySelector('.product-name').textContent;
 
-          // Set data for the modal
+          // Mengatur data untuk modal
           stockProductName.textContent = productName;
           stockProductIdInput.value = productId;
           
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   });
 
-  // --- Event Listeners to CLOSE modals ---
+  // --- Event Listener untuk MENUTUP modal ---
   function closeModal() {
     createProductModal.classList.add('hidden');
     addStockModal.classList.add('hidden');
@@ -43,19 +44,25 @@ document.addEventListener('DOMContentLoaded', () => {
   createProductModal.addEventListener('click', (e) => e.target === createProductModal && closeModal());
   addStockModal.addEventListener('click', (e) => e.target === addStockModal && closeModal());
 
-  // --- Handle FORM Submissions ---
+  // --- Menangani Pengiriman FORM ---
 
-  // 1. Create Product Form
+  // 1. Form Pembuatan Produk
   createProductForm.addEventListener('submit', (event) => {
     event.preventDefault();
     const name = document.getElementById('productName').value;
-    const price = document.getElementById('productPrice').value;
+    const price = parseFloat(document.getElementById('productPrice').value);
 
-    // Simulate sending to backend and getting a new ID
-    const newProductId = Date.now(); // Use timestamp as a unique ID for this example
-    console.log(`Creating product: ${name}, Price: ${price}, ID: ${newProductId}`);
+    // --- ATURAN VALIDASI untuk Harga ---
+    if (price < 0 || price > 99999999) {
+        alert("Error: Harga harus antara 0 dan 99,999,999.");
+        return; // Hentikan fungsi
+    }
+
+    // Simulasi pengiriman ke backend dan mendapatkan ID baru
+    const newProductId = Date.now(); // Gunakan timestamp sebagai ID unik untuk contoh ini
+    console.log(`Membuat produk: ${name}, Harga: ${price}, ID: ${newProductId}`);
     
-    // Create the new product card HTML
+    // Membuat HTML kartu produk baru dengan kedua tombol
     const newCard = document.createElement('div');
     newCard.className = 'product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden';
     newCard.setAttribute('data-product-id', newProductId);
@@ -67,28 +74,39 @@ document.addEventListener('DOMContentLoaded', () => {
               <p class="product-price text-lg font-semibold text-gray-700 mt-2">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price)}</p>
               <p class="text-sm text-gray-500 mt-2">Current Stock: <span class="product-stock font-bold">0</span></p>
           </div>
-          <button class="add-stock-btn mt-6 w-full h-12 cursor-pointer rounded-lg bg-slate-200 text-slate-800 font-medium transition hover:bg-slate-300">
-              Add Stock
-          </button>
+          <div class="mt-6 flex flex-col sm:flex-row gap-2">
+            <button class="add-stock-btn w-full px-4 py-3 rounded-lg bg-slate-200 text-slate-800 font-medium transition hover:bg-slate-300">
+                Add Stock
+            </button>
+            <a href="/product/add/detail/?id=${newProductId}" class="detail-btn w-full px-4 py-3 rounded-lg bg-indigo-500 text-white font-medium transition hover:bg-indigo-600 text-center flex items-center justify-center">
+                Detail
+            </a>
+          </div>
       </div>
     `;
 
-    // Add the new card to the list and reset the form
+    // Menambahkan kartu baru ke daftar dan mereset form
     productListContainer.appendChild(newCard);
     createProductForm.reset();
     closeModal();
   });
 
 
-  // 2. Add Stock Form
+  // 2. Form Penambahan Stok
   addStockForm.addEventListener('submit', (event) => {
     event.preventDefault();
     const productId = stockProductIdInput.value;
     const quantity = parseInt(document.getElementById('stockQuantity').value, 10);
 
-    console.log(`Adding ${quantity} stock to product ID: ${productId}`);
+    // --- ATURAN VALIDASI untuk Kuantitas Stok ---
+    if (quantity < 1 || quantity > 9999) {
+        alert("Error: Kuantitas stok yang ditambahkan harus antara 1 dan 9,999.");
+        return; // Hentikan fungsi
+    }
 
-    // Find the correct product card to update
+    console.log(`Menambahkan ${quantity} stok ke produk ID: ${productId}`);
+
+    // Menemukan kartu produk yang benar untuk diperbarui
     const productCardToUpdate = document.querySelector(`.product-card[data-product-id='${productId}']`);
     if (productCardToUpdate) {
       const stockElement = productCardToUpdate.querySelector('.product-stock');
