@@ -1,0 +1,121 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../../output.css" />
+    <title>GymITS - Trainer Availability</title>
+  </head>
+  <body>
+    <div
+      class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden"
+      style='font-family: "Space Grotesk", "Noto Sans", sans-serif'
+    >
+      <div class="layout-container flex h-full grow flex-col">
+        <header
+          class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf4] px-10 py-3"
+        >
+          <div class="flex items-center gap-4 text-[#0d141c]">
+            <div class="size-4">
+              <svg
+                viewBox="0 0 48 48"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z"
+                  fill="currentColor"
+                ></path>
+                <path
+                  d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+            </div>
+            <a
+              href="/dashboard/user"
+              class="text-[#0d141c] text-lg font-bold leading-tight tracking-[-0.015em] cursor-pointer"
+            >
+              GymITS
+            </a>
+          </div>
+          <div class="flex flex-1 justify-end gap-8">
+            <div class="flex items-center gap-9">
+              <a
+                class="text-[#0d141c] text-sm font-medium leading-normal"
+                href="/receipt"
+                >Receipt</a
+              >
+            </div>
+            <div class="flex items-center gap-9">
+              <a
+                class="text-[#0d141c] text-sm font-medium leading-normal"
+                href="/profile/user"
+                >Profile</a
+              >
+            </div>
+            <div
+              class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+              style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA_FEpA415mYDgkIUjRCHqFqXsuUJLr9MRU-azl8V1dUy0QG28Lv1_v3K-uXZe6cJzAP_DJT5jfMnCdwiYSpToDmFL9fwcIfYQi9qTvTyjXv4GehrbcrnNeIcrO1bVeRRTTcao0UqxGurmqM_2CklAk9XFkRH9mUD0maR7VU3lyyThrcbp_UmD1SmIC3kWGfS2lqJ71JILZre_AcBYPJwpJrgzbDTkfQl5WbZRthWAHPX8oSU0LV95GnQhEfJfg3uwR9wpe0TClUVo");'
+            ></div>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex flex-1 flex-col items-center py-12 px-4">
+            <div id="loader" class="text-center text-gray-500">Loading trainer details...</div>
+            <div id="content" class="hidden w-full max-w-6xl">
+                <!-- Top Section: Trainer Profile -->
+                <div class="bg-white rounded-xl shadow-md p-8 mb-8 flex flex-col md:flex-row items-center gap-8">
+                    <img id="trainer-image" src="" alt="" class="w-40 h-40 rounded-full object-cover border-4 border-slate-100">
+                    <div class="text-center md:text-left">
+                        <a href="/appointment/personal-trainer/" class="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#3490f3] transition mb-2 justify-center md:justify-start">
+                           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            Back to All Trainers
+                        </a>
+                        <h1 id="trainer-name" class="text-4xl font-bold text-[#0d141c]"></h1>
+                        <p id="trainer-price" class="text-lg font-medium mt-1 text-gray-700"></p>
+                    </div>
+                </div>
+
+                <!-- Bottom Section: Booking -->
+                <div class="bg-white rounded-xl shadow-md p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Calendar -->
+                    <div>
+                        <h2 class="text-2xl font-bold mb-4">Select a Date</h2>
+                        <div id="calendar-container"></div>
+                    </div>
+                    <!-- Time Slots -->
+                    <div>
+                        <h2 class="text-2xl font-bold mb-4">Select a Time</h2>
+                        <div id="time-slots-container" class="h-full min-h-[200px] flex flex-col justify-center">
+                            <p id="time-slot-placeholder" class="text-gray-500 text-center">Please select a date to see available times.</p>
+                            <div id="time-slots-grid" class="hidden grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+                        </div>
+                         <button id="confirm-appointment-btn" class="w-full mt-6 bg-[#3490f3] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#2579d5] transition disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>
+                            Confirm Appointment
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal-backdrop" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div id="confirm-modal" class="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg transform scale-95 opacity-0">
+            <h2 class="text-2xl font-bold text-center text-[#0d141c]">Confirm Your Booking</h2>
+            <div class="text-center text-gray-600 mt-4 space-y-2 bg-slate-50 p-4 rounded-lg">
+                <p>You are booking a session with:</p>
+                <p id="modal-trainer-name" class="font-bold text-lg text-[#0d141c]"></p>
+                <p id="modal-date" class="font-semibold"></p>
+                <p id="modal-time" class="font-semibold"></p>
+            </div>
+            <div class="mt-8 flex justify-center gap-4">
+                <button id="modal-close-btn" class="w-full bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 transition">Edit</button>
+                <button id="modal-confirm-btn" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition">Book Session</button>
+            </div>
+        </div>
+    </div>
+
+  <script type="module" src="./script.js"></script>
+  </body>
+</html>

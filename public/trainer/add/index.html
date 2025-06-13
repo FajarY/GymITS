@@ -1,0 +1,142 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../../output.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>GymITS - Add Personal Trainer</title>
+  </head>
+  <body>
+    <div
+      class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden"
+      style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'
+    >
+      <div class="layout-container flex h-full grow flex-col">
+        <!-- =================================================================
+        NAVIGATION BAR
+        ================================================================== -->
+        <header
+          class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf4] px-10 py-3"
+        >
+          <!-- Logo and Site Name -->
+          <div class="flex items-center gap-4 text-[#0d141c]">
+            <div class="size-4">
+              <svg
+                viewBox="0 0 48 48"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z"
+                  fill="currentColor"
+                ></path>
+                <path
+                  d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+            </div>
+            <a
+              href="/dashboard/employee"
+              class="text-[#0d141c] text-lg font-bold leading-tight tracking-[-0.015em] cursor-pointer"
+            >
+              GymITS
+            </a>
+          </div>
+          <!-- Profile Link -->
+          <div class="flex flex-1 justify-end gap-8">
+            <div class="flex items-center gap-9">
+              <a
+                class="text-[#0d141c] text-sm font-medium leading-normal"
+                href="/profile/employee"
+                >Profile</a
+              >
+            </div>
+            <div
+              class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+              style='background-image: url("https://placehold.co/100x100/e2e8f0/475569?text=E");'
+            ></div>
+          </div>
+        </header>
+
+        <!-- =================================================================
+        MAIN CONTENT: TRAINER MANAGEMENT
+        ================================================================== -->
+        <main class="px-10 lg:px-40 flex-1 py-5">
+          <div class="max-w-[960px] mx-auto">
+            <!-- Header and Create Button -->
+            <div class="flex flex-wrap justify-between items-center gap-3 p-4">
+              <h1 class="text-[#0d141c] tracking-light text-[32px] font-bold leading-tight min-w-72">
+                Manage Personal Trainers
+              </h1>
+              <button id="create-trainer-btn" class="flex h-12 cursor-pointer items-center justify-center rounded-lg px-8 bg-[#3490f3] text-slate-50 text-lg font-medium leading-normal transition hover:bg-[#2579d5]">
+                Create New Trainer
+              </button>
+            </div>
+
+            <!-- Grid for Trainer Cards -->
+            <div id="trainer-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+              <!-- Trainer Card Example -->
+              <div class="trainer-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden" data-trainer-id="1">
+                <img src="https://placehold.co/400x300/4a5568/white?text=Trainer" alt="Trainer Image" class="w-full h-48 object-cover">
+                <div class="p-6 flex-grow flex flex-col">
+                    <h3 class="trainer-name text-xl font-bold text-[#0d141c]">Budi Santoso</h3>
+                    <p class="trainer-gender text-sm text-gray-500">Male</p>
+                    <p class="trainer-price text-lg font-semibold text-gray-700 mt-2">Rp 150,000 / hour</p>
+                    <p class="trainer-phone text-sm text-gray-500 mt-2">Tel: 081234567890</p>
+                </div>
+              </div>
+               <!-- More trainers will be added here by JavaScript -->
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- =================================================================
+    MODAL: Create New Trainer
+    ================================================================== -->
+    <div id="create-trainer-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
+      <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-lg max-h-full overflow-y-auto">
+        <h2 class="text-2xl font-bold mb-6">Create a New Personal Trainer</h2>
+        <form id="create-trainer-form">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div class="mb-4">
+                    <label for="trainerName" class="block text-gray-700 text-sm font-bold mb-2">Full Name</label>
+                    <input type="text" id="trainerName" maxlength="128" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
+                </div>
+                 <div class="mb-4">
+                    <label for="trainerPhone" class="block text-gray-700 text-sm font-bold mb-2">Telephone</label>
+                    <input type="tel" id="trainerPhone" maxlength="16" pattern="[0-9]*" title="Please enter only numbers." class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
+                </div>
+                 <div class="mb-4">
+                    <label for="trainerPassword" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" id="trainerPassword" maxlength="32" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
+                </div>
+                <div class="mb-4">
+                    <label for="trainerGender" class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
+                    <select id="trainerGender" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                <div class="md:col-span-2 mb-4">
+                    <label for="trainerAddress" class="block text-gray-700 text-sm font-bold mb-2">Address</label>
+                    <textarea id="trainerAddress" rows="3" maxlength="256" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required></textarea>
+                </div>
+                 <div class="md:col-span-2 mb-6">
+                    <label for="trainerPrice" class="block text-gray-700 text-sm font-bold mb-2">Price per Hour (Rp)</label>
+                    <input type="number" id="trainerPrice" min="0" max="99999999" step="0.01" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" required>
+                </div>
+            </div>
+          <div class="flex items-center justify-end gap-4 mt-4">
+            <button id="cancel-create-btn" type="button" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
+            <button type="submit" class="bg-[#3490f3] hover:bg-[#2579d5] text-white font-bold py-2 px-4 rounded">Create Trainer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Link to the external JavaScript file -->
+    <script src="script.js"></script>
+  </body>
+</html>
