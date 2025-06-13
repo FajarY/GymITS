@@ -2,6 +2,7 @@
   <head>
     <link rel="stylesheet" href="../../output.css" />
     <title>GymITS - Training Session</title>
+    <script defer type="module" src="script.js"></script>
   </head>
   <body>
     <div
@@ -68,12 +69,12 @@
                 <div class="grid grid-cols-3 divide-x divide-gray-200">
                     <div class="px-2 flex flex-col justify-center items-center">
                         <p class="text-xs sm:text-sm tracking-widest text-gray-500">SESSIONS THIS MONTH</p>
-                        <p id="session-count" class="text-5xl font-bold text-[#0d141c] mt-2">8</p>
+                        <p id="session-count" class="text-5xl font-bold text-[#0d141c] mt-2">-</p>
                     </div>
                     <div class="px-2 flex flex-col justify-center items-center">
                         <p class="text-xs sm:text-sm tracking-widest text-gray-500">CURRENT STREAK</p>
                         <div class="flex items-center gap-2 mt-2">
-                           <p id="training-streak" class="text-5xl font-bold text-amber-500">5</p>
+                           <p id="training-streak" class="text-5xl font-bold text-amber-500">-</p>
                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10 text-amber-500">
                               <path fill-rule="evenodd" d="M12.963 2.286a.75.75 0 00-1.071 1.071L12 4.44l-1.963-1.963a.75.75 0 00-1.071 1.071l1.963 1.963-1.963 1.963a.75.75 0 101.071 1.071l1.963-1.963 1.963 1.963a.75.75 0 101.071-1.071L13.072 5.511l1.963-1.963a.75.75 0 000-1.071l-1.963-1.963z" clip-rule="evenodd" />
                               <path fill-rule="evenodd" d="M10.875 1.5C10.208 1.5 9.61 1.833 9.253 2.404L6.96 6.22a.75.75 0 00.627 1.118h.028l.001-.001h.002l.001-.001a.75.75 0 00.627-1.118L10.79 2.596a.375.375 0 01.354-.202h.748c.196 0 .373.084.5.228l2.625 3.062a.75.75 0 00.98-.98L12.247 2.404A1.875 1.875 0 0010.875 1.5z" clip-rule="evenodd" />
@@ -84,7 +85,7 @@
                     </div>
                     <div class="px-2 flex flex-col justify-center items-center">
                         <p class="text-xs sm:text-sm tracking-widest text-gray-500">TOTAL TRAINING TIME</p>
-                        <p id="total-training-time" class="text-2xl font-bold text-[#0d141c] mt-2">11 Jam, 45 Menit</p>
+                        <p id="total-training-time" class="text-2xl font-bold text-[#0d141c] mt-2">-</p>
                     </div>
                 </div>
             </div>
@@ -140,6 +141,5 @@
         </div>
       </div>
     </div>
-    <script src="script.js"></script>
   </body>
 </html>

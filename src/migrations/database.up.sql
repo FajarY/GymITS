@@ -245,7 +245,7 @@ GRANT INSERT, SELECT ON membership_type_receipt TO customer;
 GRANT INSERT, SELECT ON receipt_product TO customer;
 GRANT INSERT, SELECT ON personal_trainer_receipt TO customer;
 GRANT INSERT, SELECT ON receipt TO customer;
-GRANT INSERT, SELECT ON membership TO customer;
+GRANT INSERT, SELECT, UPDATE ON membership TO customer;
 
 GRANT SELECT ON membership_type TO customer;
 GRANT SELECT ON product TO customer;

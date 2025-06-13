@@ -172,7 +172,31 @@ async function streakTrainingSession(req, res)
     }
 }
 
+async function getAllActiveTrainingSessions(req, res)
+{
+    const id = req.decodedToken.id;
+
+    try
+    {
+        const data = await trainingModel.getActiveTrainingSession(id);
+
+        if(!data)
+        {
+            res.status(500).json(response.buildResponseFailed('error when getting active training sessions', 'unknown server error', null));
+            return;
+        }
+
+        res.status(200).json(response.buildResponseSuccess('succesfully get active training sessions', data));
+    }
+    catch(error)
+    {
+        res.status(500).json(response.buildResponseFailed('error when getting active training sessions', error.message, null));
+            return;
+    }
+}
+
 router.get('/list', authentication.authenticate, authentication.authorize('customer'), getTrainingSessionIdList);
+router.get('/listActive', authentication.authenticate, authentication.authorize('customer'), getAllActiveTrainingSessions);
 router.get('/data/:id', authentication.authenticate, authentication.authorize('customer'), getTrainingSessionData);
 router.post('/start', authentication.authenticate, authentication.authorize('customer'), startTrainingSession);
 router.post('/end/:id', authentication.authenticate, authentication.authorize('customer'), endTrainingSession);

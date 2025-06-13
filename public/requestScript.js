@@ -13,6 +13,8 @@ async function tryFetchJson(url, req)
     {
         console.error(err);
     }
+
+    return undefined;
 }
 
 async function userLogin(email, password) {

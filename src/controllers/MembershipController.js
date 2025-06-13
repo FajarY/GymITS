@@ -9,6 +9,27 @@ const membershipTypeModel = require('../models/MembershipTypeModel');
 const receiptModel = require('../models/ReceiptModel');
 const membershipTypeReceiptModel = require('../models/MembershipTypeReceiptModel');
 
+async function getMembershipTypeList(req, res)
+{
+    try
+    {
+        const data = await membershipTypeModel.getAllMembershipTypes();
+
+        if(!data)
+        {
+            res.status(500).json(response.buildResponseFailed('error when getting membership types', 'unknown server error', null));
+            return;
+        }
+
+        res.status(200).json(response.buildResponseSuccess('successfully get all membership types', data));
+    }
+    catch(error)
+    {
+        res.status(500).json(response.buildResponseFailed('error when getting membership types', error, null));
+        return;
+    }
+}
+
 async function purchaseMembership(req, res)
 {
     const id = req.decodedToken.id;
@@ -123,7 +144,7 @@ async function purchaseMembership(req, res)
             return;
         }
 
-        const updatedData = await membershipModel.updateCustomerMembershipSafe(customerMembership.id, id, customerMembership.telephone, customerMembership.alamat, update_start_date, update_expired_date, update_membership_type);
+        const updatedData = await membershipModel.updateCustomerMembershipSafe(customerMembership.id, id, telephone, alamat, update_start_date, update_expired_date, update_membership_type);
 
         res.status(200).json(response.buildResponseSuccess('membership purchased successfully', {
             membership_id: updatedData.m_id,
@@ -146,6 +167,7 @@ const customerMembershipInformation = async (req, res) => {
     }
 }
 
+router.get('/typeList', authenticate, getMembershipTypeList);
 router.post('/purchase', authenticate, authorize('customer'), purchaseMembership);
 router.get('/information', authenticate, authorize('employee'), customerMembershipInformation);
 

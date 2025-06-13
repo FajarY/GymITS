@@ -51,6 +51,12 @@ async function getStreak(c_id)
     return result.rows[0];
 }
 
+async function getActiveTrainingSession(c_id)
+{
+    const result = await db.customer.raw('SELECT ts_id FROM training_session WHERE c_id = ? AND ts_end_time IS NULL', [c_id]);
+    return result.rows;
+}
+
 module.exports = 
 {
     createTrainingSession,
@@ -58,5 +64,6 @@ module.exports =
     getTrainingSessionDataSafe,
     endTrainingSessionSafe,
     totalTrainingSession,
-    getStreak
+    getStreak,
+    getActiveTrainingSession
 }
