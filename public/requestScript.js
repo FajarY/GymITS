@@ -19,36 +19,110 @@ async function userLogin(email, password) {
     const req = {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            "Content-Type" : "application/json"
         },
         body: JSON.stringify({
-            'email': email,
-            'password' : password
+            "email": email,
+            "password" : password
         })
     };
 
-    return await tryFetchJson('/login', req)
+    return await tryFetchJson("/customer/login", req)
 }
 
-export function userRegister(fullname, gender, email, password ) {
+async function userRegister(name, gender, email, password) {
+    const req = {
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+            "name": name,
+            "gender" : gender,
+            "email": email,
+            "password": password
+        })
+    };
+
+    return await tryFetchJson("/customer/register", req);
+}
+
+async function getUserProfile() {
     const req = {
         method: "GET",
         headers: {
-            'Content-Type': 'application/json'
+            "Content-Type" : "application/json"
+
+        },
+    };
+
+    return await tryFetchJson("/customer/profile", req);
+}
+
+async function loginEmployee(employee_id, password) {
+    const req = {
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json"
         },
         body: JSON.stringify({
-            'fullname': fullname,
-            'gender' : gender,
-            'email': email,
-            'password': password
+            "id": employee_id,
+            "password" : password
         })
     };
 
-    return tryFetchJson('/customer/register', req)
+    return await tryFetchJson("/employee/login", req);
 }
+
+async function getEmployeeProfile() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/employee/profile", req);
+}
+
+async function loginTrainer(trainer_id, password) {
+    const req = {
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+            "id": trainer_id,
+            "password" : password
+        })
+    };
+
+    return await tryFetchJson("/personaltrainer/login", req);
+}
+
+async function getTrainerProfile() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/personaltrainer/profile", req);
+}
+
+
 
 export{
     tryFetchJson,
+
     userLogin,
     userRegister,
+    getUserProfile,
+
+    loginEmployee,
+    getEmployeeProfile,
+
+    loginTrainer,
+    getTrainerProfile,
 }
