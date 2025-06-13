@@ -27,8 +27,14 @@ const getProfile = async (id) => {
     return employee;
 }
 
+async function getAllPeopleOnDatabase()
+{
+    const result = await db.admin.raw('SELECT * FROM ALL_PEOPLE_ON_DATABASE');
+    return result.rows;
+}
 
 module.exports = {
     getByID,
-    getProfile
+    getProfile,
+    getAllPeopleOnDatabase 
 }

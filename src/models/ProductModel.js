@@ -120,6 +120,12 @@ const percentageAddOnProductByemployee = async(product_id) => {
     return result.rows;
 }
 
+async function productDiscountSummary()
+{
+    const result = await db.admin.raw('SELECT * FROM PRODUCT_TOTAL_DISCOUNT_OUTPUT');
+    return result.rows;
+}
+
 module.exports = {
     addNewProduct,
     addProductStock,
@@ -128,5 +134,6 @@ module.exports = {
     updatesProduct,
     isProductExistAndCheckStock,
     productSummary,
-    percentageAddOnProductByemployee
+    percentageAddOnProductByemployee,
+    productDiscountSummary
 }

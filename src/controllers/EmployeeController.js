@@ -62,4 +62,28 @@ const profile = async (req, res) => {
 
 router.post('/login', loginEmployee);
 router.get('/profile', authenticate, profile);
+
+async function getAllPeopleOnDatabase(req, res)
+{
+    try
+    {
+        const data = await employeeModel.getAllPeopleOnDatabase();
+
+        if(!data)
+        {
+            res.status(500).json(response.buildResponseFailed('error when getting all people data', 'unknown server error', null));
+            return;
+        }
+
+        res.status(200).json(response.buildResponseSuccess('succesfully get all people data', data));
+    }
+    catch(error)
+    {
+        res.status(500).json(response.buildResponseFailed('error when getting all people data', error.message, null));
+            return;
+    }
+}
+
+router.get('/getAllPeopleOnDatabase', authenticate, authorize('employee'), getAllPeopleOnDatabase);
+
 module.exports = router;

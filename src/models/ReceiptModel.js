@@ -48,7 +48,14 @@ async function createReceipt(c_id)
     return data;
 }
 
+async function getRevenueOnDateAndGender(date, gender)
+{
+    const result = await db.customer.raw('SELECT * FROM REVENUE_ON_AND_GENDER(?, ?)', [date, gender]);
+    return result.rows[0];
+}
+
 module.exports = {
     getAllReceipt,
-    createReceipt
+    createReceipt,
+    getRevenueOnDateAndGender
 }

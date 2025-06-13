@@ -39,10 +39,24 @@ async function endTrainingSessionSafe(customerId, trainingSessionId, endTime)
     return trainingSession;
 }
 
+async function totalTrainingSession(c_id)
+{
+    const result = await db.customer.raw('SELECT * FROM hitung_total_jam_training_customer(?)', [c_id]);
+    return result.rows[0];
+}
+
+async function getStreak(c_id)
+{
+    const result = await db.customer.raw('SELECT * FROM hitung_streak_training_customer(?)', [c_id]);
+    return result.rows[0];
+}
+
 module.exports = 
 {
     createTrainingSession,
     getTrainingSessionIdList,
     getTrainingSessionDataSafe,
-    endTrainingSessionSafe
+    endTrainingSessionSafe,
+    totalTrainingSession,
+    getStreak
 }

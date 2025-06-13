@@ -92,7 +92,7 @@ const getTrainingStatistic = async (id) => {
         GROUP BY c.c_id, c.c_name;
     `;
 
-    const statistic = await db.admin.raw(rawQuery, [id]);
+    const statistic = await db.customer.raw(rawQuery, [id]);
     return statistic.rows;
 }
 
@@ -102,7 +102,7 @@ const totalSpending = async (id) => {
 }
 
 async function customerOnGym() {
-  const [result] = await db.customer('view_customer_on_gym').select('count');
+  const [result] = await db.admin('view_customer_on_gym').select('count');
   return result;
 }
 

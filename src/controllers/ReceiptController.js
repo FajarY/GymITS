@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const receiptModel = require('../models/ReceiptModel');
 const response = require('../utils/response')
-const { authenticate } = require('../middleware/Authentication');
+const { authenticate, authorize } = require('../middleware/Authentication');
 
 const getAllReceipt = async (req, res) => {
     try {
@@ -60,5 +60,41 @@ const getAllReceipt = async (req, res) => {
     }
 }
 
-router.get('/history', authenticate, getAllReceipt)
+async function getRevenueOnDay(req, res)
+{
+    if(!req.body)
+    {
+        res.status(400).json(response.buildResponseFailed('error when getting revenue on date and gender', 'body cannot be empty!', null));
+        return;
+    }
+
+    const {date, gender} = req.body;
+    if(!date || !gender)
+    {
+        res.status(400).json(response.buildResponseFailed('error when getting revenue on date and gender', 'date and gender is empty!', null));
+        return;
+    }
+
+    try
+    {
+        const data = await receiptModel.getRevenueOnDateAndGender(date, gender);
+
+        if(!data)
+        {
+            res.status(500).json(response.buildResponseFailed('error when getting revenue on date and gender', 'unknown server error', null));
+            return;
+        }
+
+        res.status(200).json(response.buildResponseSuccess('succesfully getting revenue on date and gender', data));
+    }
+    catch(error)
+    {
+        res.status(500).json(response.buildResponseFailed('error when getting revenue on date and gender', error.message, null));
+            return;
+    }
+}
+
+router.get('/history', authenticate, getAllReceipt);
+router.get('/revenueOnDay', authenticate, authorize('employee'), getRevenueOnDay);
+
 module.exports = router;

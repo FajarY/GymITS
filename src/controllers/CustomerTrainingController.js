@@ -126,9 +126,57 @@ async function endTrainingSession(req, res)
     }
 }
 
+async function totalTrainingSession(req, res)
+{
+    const id = req.decodedToken.id;
+
+    try
+    {
+        const data = await trainingModel.totalTrainingSession(id);
+
+        if(!data)
+        {
+            res.status(500).json(response.buildResponseFailed('error when getting total training session', 'unknown server error', null));
+            return;
+        }
+
+        res.status(200).json(response.buildResponseSuccess('succesfully get total training session', data));
+    }
+    catch(error)
+    {
+        res.status(500).json(response.buildResponseFailed('error when getting total training session', error.message, null));
+            return;
+    }
+}
+
+async function streakTrainingSession(req, res)
+{
+    const id = req.decodedToken.id;
+
+    try
+    {
+        const data = await trainingModel.getStreak(id);
+
+        if(!data)
+        {
+            res.status(500).json(response.buildResponseFailed('error when getting training session streak', 'unknown server error', null));
+            return;
+        }
+
+        res.status(200).json(response.buildResponseSuccess('succesfully get training session streak', data));
+    }
+    catch(error)
+    {
+        res.status(500).json(response.buildResponseFailed('error when getting training session streak', error.message, null));
+            return;
+    }
+}
+
 router.get('/list', authentication.authenticate, authentication.authorize('customer'), getTrainingSessionIdList);
 router.get('/data/:id', authentication.authenticate, authentication.authorize('customer'), getTrainingSessionData);
 router.post('/start', authentication.authenticate, authentication.authorize('customer'), startTrainingSession);
 router.post('/end/:id', authentication.authenticate, authentication.authorize('customer'), endTrainingSession);
+router.get('/total', authentication.authenticate, authentication.authorize('customer'), totalTrainingSession);
+router.get('/streak', authentication.authenticate, authentication.authorize('customer'), streakTrainingSession);
 
 module.exports = router;
