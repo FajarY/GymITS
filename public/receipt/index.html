@@ -1,6 +1,7 @@
 <html>
   <head>
     <link rel="stylesheet" href="../../output.css" />
+    <title>GymITS - Struk Pembelian</title>
   </head>
   <body>
     <div
@@ -64,34 +65,43 @@
           <div
             class="layout-content-container flex flex-col max-w-[960px] flex-1"
           >
-            <div class="flex flex-wrap justify-between gap-3 p-4">
+            <div class="flex flex-wrap justify-between gap-3 p-4 items-center">
               <p
                 class="text-[#0d141c] tracking-light text-[32px] font-bold leading-tight min-w-72"
               >
-                Your Receipts
+                Riwayat Struk Anda
               </p>
             </div>
+
+            <!-- Total Spending Card -->
+            <div class="p-4">
+                <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl shadow-lg p-6">
+                    <p class="text-sm font-semibold uppercase tracking-widest">Total Pengeluaran Anda</p>
+                    <p id="total-spending-amount" class="text-4xl font-bold mt-2">Memuat...</p>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
               <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
                 <div class="flex justify-between items-start">
                   <h3 class="text-lg font-bold text-[#0d141c]">
                     Receipt #12345
                   </h3>
-                  <p class="text-sm text-gray-500">June 1, 2025</p>
+                  <p class="text-sm text-gray-500">1 Juni 2025</p>
                 </div>
                 <div class="mt-4 flex-grow">
-                  <h4 class="text-md font-semibold text-gray-700 mb-2">Products:</h4>
+                  <h4 class="text-md font-semibold text-gray-700 mb-2">Produk:</h4>
                   <ul class="space-y-2">
                     <li class="flex justify-between">
                       <span class="text-sm text-gray-600">Monthly Membership</span>
-                      <span class="text-sm font-medium text-gray-800">$50.00</span>
+                      <span class="text-sm font-medium text-gray-800">Rp 275.000</span>
                     </li>
                   </ul>
                 </div>
                 <div class="mt-6 pt-4 border-t border-gray-200">
                   <div class="flex justify-between items-center">
                     <p class="text-md font-bold text-[#0d141c]">Total</p>
-                    <p class="text-lg font-bold text-[#3490f3]">$50.00</p>
+                    <p class="text-lg font-bold text-[#3490f3]">Rp 275.000</p>
                   </div>
                 </div>
               </div>
@@ -100,110 +110,34 @@
                   <h3 class="text-lg font-bold text-[#0d141c]">
                     Receipt #12346
                   </h3>
-                  <p class="text-sm text-gray-500">June 3, 2025</p>
+                  <p class="text-sm text-gray-500">3 Juni 2025</p>
                 </div>
                 <div class="mt-4 flex-grow">
-                  <h4 class="text-md font-semibold text-gray-700 mb-2">Products:</h4>
+                  <h4 class="text-md font-semibold text-gray-700 mb-2">Produk:</h4>
                   <ul class="space-y-2">
                     <li class="flex justify-between">
                       <span class="text-sm text-gray-600">Protein Powder</span>
-                      <span class="text-sm font-medium text-gray-800">$35.00</span>
+                      <span class="text-sm font-medium text-gray-800">Rp 250.000</span>
                     </li>
                     <li class="flex justify-between">
                       <span class="text-sm text-gray-600">Shaker Bottle</span>
-                      <span class="text-sm font-medium text-gray-800">$12.50</span>
+                      <span class="text-sm font-medium text-gray-800">Rp 75.000</span>
                     </li>
                   </ul>
                 </div>
                 <div class="mt-6 pt-4 border-t border-gray-200">
                   <div class="flex justify-between items-center">
                     <p class="text-md font-bold text-[#0d141c]">Total</p>
-                    <p class="text-lg font-bold text-[#3490f3]">$47.50</p>
+                    <p class="text-lg font-bold text-[#3490f3]">Rp 325.000</p>
                   </div>
                 </div>
               </div>
-              <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
-                <div class="flex justify-between items-start">
-                  <h3 class="text-lg font-bold text-[#0d141c]">
-                    Receipt #12347
-                  </h3>
-                  <p class="text-sm text-gray-500">June 5, 2025</p>
-                </div>
-                <div class="mt-4 flex-grow">
-                  <h4 class="text-md font-semibold text-gray-700 mb-2">Products:</h4>
-                  <ul class="space-y-2">
-                    <li class="flex justify-between">
-                      <span class="text-sm text-gray-600">Coffee</span>
-                      <span class="text-sm font-medium text-gray-800">$3.00</span>
-                    </li>
-                    <li class="flex justify-between">
-                      <span class="text-sm text-gray-600">Red Bull Drinks</span>
-                      <span class="text-sm font-medium text-gray-800">$8.00</span>
-                    </li>
-                    <li class="flex justify-between">
-                      <span class="text-sm text-gray-600">Coca Cola</span>
-                      <span class="text-sm font-medium text-gray-800">$5.00</span>
-                    </li>
-                     <li class="flex justify-between">
-                      <span class="text-sm text-gray-600">Towel</span>
-                      <span class="text-sm font-medium text-gray-800">$15.00</span>
-                    </li>
-                     <li class="flex justify-between">
-                      <span class="text-sm text-gray-600">Water Bottle</span>
-                      <span class="text-sm font-medium text-gray-800">$1.50</span>
-                    </li>
-                  </ul>
-                </div>
-                <div class="mt-6 pt-4 border-t border-gray-200">
-                  <div class="flex justify-between items-center">
-                    <p class="text-md font-bold text-[#0d141c]">Total</p>
-                    <p class="text-lg font-bold text-[#3490f3]">$100.00</p>
-                  </div>
-                </div>
-              </div>
-              <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
-                <div class="flex justify-between items-start">
-                  <h3 class="text-lg font-bold text-[#0d141c]">
-                    Receipt #12348
-                  </h3>
-                  <p class="text-sm text-gray-500">June 5, 2025</p>
-                </div>
-                <div class="mt-4 flex-grow">
-                  <h4 class="text-md font-semibold text-gray-700 mb-2">Products:</h4>
-                  <ul class="space-y-2">
-                    <li class="flex justify-between">
-                      <span class="text-sm text-gray-600">Coffee</span>
-                      <span class="text-sm font-medium text-gray-800">$3.00</span>
-                    </li>
-                    <li class="flex justify-between">
-                      <span class="text-sm text-gray-600">Red Bull Drinks</span>
-                      <span class="text-sm font-medium text-gray-800">$8.00</span>
-                    </li>
-                    <li class="flex justify-between">
-                      <span class="text-sm text-gray-600">Coca Cola</span>
-                      <span class="text-sm font-medium text-gray-800">$5.00</span>
-                    </li>
-                     <li class="flex justify-between">
-                      <span class="text-sm text-gray-600">Towel</span>
-                      <span class="text-sm font-medium text-gray-800">$15.00</span>
-                    </li>
-                     <li class="flex justify-between">
-                      <span class="text-sm text-gray-600">Water Bottle</span>
-                      <span class="text-sm font-medium text-gray-800">$1.50</span>
-                    </li>
-                  </ul>
-                </div>
-                <div class="mt-6 pt-4 border-t border-gray-200">
-                  <div class="flex justify-between items-center">
-                    <p class="text-md font-bold text-[#0d141c]">Total</p>
-                    <p class="text-lg font-bold text-[#3490f3]">$100.00</p>
-                  </div>
-                </div>
-              </div>
+              <!-- More receipts... -->
             </div>
           </div>
         </div>
       </div>
     </div>
+    <script src="script.js"></script>
   </body>
 </html>
