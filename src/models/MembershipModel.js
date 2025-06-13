@@ -43,9 +43,15 @@ async function updateCustomerMembershipSafe(m_id, c_id, telephone, alamat, start
     return membership;
 }
 
+const getInformation = async () => {
+    const result = db('membership_status_summary').select('*');
+    return result;
+}
+
 module.exports = 
 {
     getCustomerMembership,
     createCustomerMembership,
-    updateCustomerMembershipSafe
+    updateCustomerMembershipSafe,
+    getInformation
 }

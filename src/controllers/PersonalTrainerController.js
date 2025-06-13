@@ -184,12 +184,23 @@ const addAvailableTime = async (req, res) => {
     }
 }
 
+const income = async (req, res) => {
+    try {
+        const id = req.id;
+        const income = await personalTrainerModel.getIncome(id); 
+        res.status(200).json(response.buildResponseSuccess('successfully to get trainer income', income));
+    } catch (error) {
+        res.status(500).json(response.buildResponseFailed('failed to get trainer income', error.message, null));
+    }
+}
+
 router.post('/login', loginPersonalTrainer);
 router.post('/', authenticate, authorize('employee'), addPersonalTrainer);
 router.get('/data', authenticate, getAllPersonalTrainer);
 router.get('/profile', authenticate, profile);
 router.get('/:id/availability', authenticate, getPersonalTrainerAvailability);
 router.get('/appointments', authenticate, authorize('trainer'), trainerAppointments);
+router.get('/income', authenticate, authorize('trainer'), income);
 
 router.get('/efficiencyAllPTAvailableTimes', efficiencyAllPTAvailableTimes)
 router.post('/available-time', authenticate, authorize('trainer'), addAvailableTime);

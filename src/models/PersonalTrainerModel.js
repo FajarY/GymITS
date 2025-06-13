@@ -109,15 +109,9 @@ const getAvailableTime = async (personal_trainer_id, month, year, day) => {
 }
 
 const getProfile = async (personal_trainer_id) => {
-    const [trainer] = await db('personal_trainer')
-    .select(
-        'pt_name AS name',
-        'pt_gender AS gender',
-        'pt_price_per_hour AS price_per_hour',
-        'pt_alamat AS alamat',
-        'pt_telephone AS telephone'
-    )
-    .where({pt_id: personal_trainer_id});
+    const [trainer] = await db('view_trainer_profile')
+    .select('*')
+    .where({trainer_id: personal_trainer_id});
     
     return trainer
 }
@@ -136,38 +130,23 @@ const getAvailableDate = async (personal_trainer_id) => {
 
 const getAppointments = async (id) => {
     const rawQuery = `
-    SELECT
-        pt.pt_name,
-        TO_CHAR(at.at_date, 'FMMonth DD, YYYY') AS appointment_date,
-        CONCAT(
-            TO_CHAR(at.at_start_time, 'HH12:MI AM'),
-            ' - ',
-            TO_CHAR(at.at_end_time, 'HH12:MI AM')
-        ) AS appointment_time,
-        CASE
-            WHEN (at.at_date + at.at_start_time) > CURRENT_TIMESTAMP THEN 'Upcoming'
-            ELSE 'Completed'
-        END AS status
-    FROM
-        available_time AS at
-    JOIN
-        personal_trainer AS pt ON at.pt_id = pt.pt_id
-    WHERE
-        at.c_id = {CUSTOMER_ID} -- <-- Change this!
-    ORDER BY
-        CASE
-            WHEN (at.at_date + at.at_start_time) > CURRENT_TIMESTAMP THEN 1
-            ELSE 2
-        END,
-        CASE
-            WHEN (at.at_date + at.at_start_time) > CURRENT_TIMESTAMP THEN (at.at_date + at.at_start_time)
-            ELSE NULL
-        END ASC,
-        CASE
-            WHEN (at.at_date + at.at_start_time) <= CURRENT_TIMESTAMP THEN (at.at_date + at.at_start_time)
-            ELSE NULL
-        END DESC;
-  `;
+        SELECT 
+            pt.pt_id,
+            pt.pt_name,
+            at.at_date,
+            at.at_start_time,
+            at.at_end_time,
+            c.c_name AS booked_by_customer,
+            CASE 
+                WHEN (at.at_date + at.at_end_time) <= CURRENT_TIMESTAMP THEN 'COMPLETED'
+                ELSE 'UPCOMING'
+            END AS appointment_status
+        FROM personal_trainer pt
+        JOIN available_time at ON pt.pt_id = at.pt_id
+        JOIN customer c ON at.c_id = c.c_id
+        WHERE pt.pt_id = ?
+        ORDER BY at.at_date, at.at_start_time;
+    `;
 
   const appointments = await db.raw(rawQuery, [id]);
   return appointments.rows;
@@ -208,7 +187,10 @@ const addAvailableTime = async (id, date, times) => {
     return result.rowCount
 }
 
-
+const getIncome = async (id) => {
+    const result = await db.raw('SELECT get_trainer_income(?) AS income', [id]);
+    return result.rows[0];
+}
 
 module.exports = {
     create,
@@ -221,4 +203,5 @@ module.exports = {
     getAppointments,
     getEfficiencyAllPTAvailableTimes,
     addAvailableTime,
+    getIncome,
 }

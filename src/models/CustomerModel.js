@@ -42,31 +42,63 @@ async function getProfile(id)
 async function getAppointments(id) {
   const rawQuery = `
     SELECT
-      c.c_name AS name,
-      c.c_id AS id,
-      pt.pt_name AS trainer_name, 
-      pta.pt_a_date appointment_date,
-      TO_CHAR(LOWER(pta.pt_start_end_time), 'HH12:MI AM') || ' - ' || TO_CHAR(UPPER(pta.pt_start_end_time), 'HH12:MI AM') AS formatted_time,
-      CASE
-        WHEN UPPER(pta.pt_start_end_time) > NOW() THEN 'UPCOMING'
-        ELSE 'COMPLETED'
-      END AS status
+        pt.pt_name,
+        TO_CHAR(at.at_date, 'FMMonth DD, YYYY') AS appointment_date,
+        CONCAT(
+            TO_CHAR(at.at_start_time, 'HH12:MI AM'),
+            ' - ',
+            TO_CHAR(at.at_end_time, 'HH12:MI AM')
+        ) AS appointment_time,
+        CASE
+            WHEN (at.at_date + at.at_start_time) > CURRENT_TIMESTAMP THEN 'Upcoming'
+            ELSE 'Completed'
+        END AS status
     FROM
-      personal_trainer_appointment pta
-    JOIN customer c ON pta.c_id = c.c_id
-    JOIN personal_trainer pt ON pta.pt_id = pt.pt_id
-    WHERE c.c_id = ?
+        available_time AS at
+    JOIN
+        personal_trainer AS pt ON at.pt_id = pt.pt_id
+    WHERE
+        at.c_id = ?
     ORDER BY
-      CASE
-        WHEN UPPER(pta.pt_start_end_time) > NOW() THEN 1
-        ELSE 2
-      END,
-      UPPER(pta.pt_start_end_time) ASC;
+        CASE
+            WHEN (at.at_date + at.at_start_time) > CURRENT_TIMESTAMP THEN 1
+            ELSE 2
+        END,
+        CASE
+            WHEN (at.at_date + at.at_start_time) > CURRENT_TIMESTAMP THEN (at.at_date + at.at_start_time)
+            ELSE NULL
+        END ASC,
+        CASE
+            WHEN (at.at_date + at.at_start_time) <= CURRENT_TIMESTAMP THEN (at.at_date + at.at_start_time)
+            ELSE NULL
+        END DESC;
   `;
-
 
   const result = await db.raw(rawQuery, [id]);
   return result.rows; 
+}
+
+const getTrainingStatistic = async (id) => {
+    const rawQuery = `
+        SELECT 
+            c.c_id,
+            c.c_name,
+            COUNT(ts.ts_id) AS total_sessions
+        FROM training_session ts
+        JOIN customer c ON ts.c_id = c.c_id
+        WHERE EXTRACT(MONTH FROM ts.ts_start_time) = EXTRACT(MONTH FROM CURRENT_DATE)
+        AND EXTRACT(YEAR FROM ts.ts_start_time) = EXTRACT(YEAR FROM CURRENT_DATE)
+        AND c.c_id = ?
+        GROUP BY c.c_id, c.c_name;
+    `;
+
+    const statistic = await db.raw(rawQuery, [id]);
+    return statistic.rows;
+}
+
+const totalSpending = async (id) => {
+    const result = await db.raw('SELECT * FROM get_total_spending(?)', [id]);
+    return result.rows[0];
 }
 
 async function customerOnGym() {
@@ -113,5 +145,7 @@ module.exports =
     getProfile,
     getAppointments,
     customerOnGym,
-    efficiencyAllMembersip
+    efficiencyAllMembersip,
+    getTrainingStatistic,
+    totalSpending
 }

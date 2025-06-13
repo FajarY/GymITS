@@ -135,6 +135,16 @@ async function purchaseMembership(req, res)
     }
 }
 
+const customerMembershipInformation = async (req, res) => {
+    try {
+        const statistic = await membershipModel.getInformation();
+        res.status(200).json(response.buildResponseSuccess('successfully get customer membership data', statistic));
+    } catch (error) {
+        res.status(500).json(response.buildResponseFailed('failed to get customer membership data', error.message, null));
+    }
+}
+
 router.post('/purchase', authenticate, authorize('customer'), purchaseMembership);
+router.get('/information', authenticate, customerMembershipInformation);
 
 module.exports = router;

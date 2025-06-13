@@ -32,8 +32,28 @@ const getAll = async() => {
     }
 }
 
+const getAllBought = async(id) => {
+    const rawQuery = `        
+        SELECT DISTINCT
+            p.p_id as id,
+            p.p_name as name,
+            p.p_price as price,
+            p.p_stock as stock
+        FROM
+            receipt AS r
+        JOIN
+            receipt_product AS rp ON r.r_id = rp.r_id
+        JOIN
+            product AS p ON rp.p_id = p.p_id
+        WHERE
+            r.c_id = ?
+    ` 
+
+    const products = await db.raw(rawQuery, [id]);
+    return products.rows;
+}
+
 const addProductStock = async(id, amount, employee_id) => {
-    console.log(id, amount, employee_id)
     try {
         const product = await db('product_employee').
         insert({
@@ -89,10 +109,17 @@ async function isProductExistAndCheckStock(id, amount)
     }
 }
 
+const productSummary =  async () => {
+    const result = await db('product_summary_sales').select('*');
+    return result;
+}
+
 module.exports = {
     addNewProduct,
     addProductStock,
     getAll,
+    getAllBought,
     updatesProduct,
-    isProductExistAndCheckStock
+    isProductExistAndCheckStock,
+    productSummary
 }

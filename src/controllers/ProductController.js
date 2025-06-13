@@ -2,7 +2,6 @@ const express = require('express');
 const response = require('../utils/response')
 const productModel = require('../models/ProductModel');
 const { authenticate, authorize } = require('../middleware/Authentication');
-const { update } = require('../database');
 const router = express.Router();
 const receiptModel = require('../models/ReceiptModel');
 const receiptProductModel = require('../models/ReceiptProductModel');
@@ -10,7 +9,19 @@ const receiptProductModel = require('../models/ReceiptProductModel');
 const getListProdcut = async (req, res) => {
     try {
         const product = await productModel.getAll();
-        res.status(201).json(response.buildResponseSuccess("successfully adding product", product));
+        res.status(200).json(response.buildResponseSuccess("successfully adding product", product));
+        return;
+    }catch(error) {
+        res.status(500).json(response.buildResponseFailed("failed create product", error.message, null));
+    }
+}
+
+const getListProductFiltered = async (req, res) => {
+        try {
+        const id = req.id;
+        
+        const product = await productModel.getAllBought(id);
+        res.status(200).json(response.buildResponseSuccess("successfully adding product", product));
         return;
     }catch(error) {
         res.status(500).json(response.buildResponseFailed("failed create product", error.message, null));
@@ -84,11 +95,22 @@ const updateProduct = async(req, res) => {
     }
 }
 
+const productSummary = async(req, res) => {
+    try {
+        const product = await productModel.productSummary();
+        res.status(200).json(response.buildResponseSuccess("successfully get prodcut summary", product));
+    } catch (error) {
+        res.status(500).json(response.buildResponseFailed("failed to get product summary", error.message, null));
+    }
+}
+
 router.get('/data', getListProdcut)
+router.get('/bought',authenticate, getListProductFiltered)
 router.post('/purchase', authenticate, authorize('customer'), purchaseProduct);
-router.post('/',authenticate, authorize('employee'), addNewProduct)
-router.post('/:id', authenticate, authorize('employee'),addStockToProduct)
-router.patch('/:id', authenticate, authorize('employee'), updateProduct)
+router.post('/',authenticate, authorize('employee'), addNewProduct);
+router.post('/:id', authenticate, authorize('employee'),addStockToProduct);
+router.patch('/:id', authenticate, authorize('employee'), updateProduct);
+router.get('/summary/data', authenticate, productSummary);
 
 async function purchaseProduct(req, res)
 {

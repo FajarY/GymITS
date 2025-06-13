@@ -164,12 +164,37 @@ async function efficiencyAllMembersipCustomer(req, res)
     }
 }
 
+const getTrainingSessionStatistic = async (req, res) => {
+    try {
+        const id = req.id;
+        const statistic = await customerModel.getTrainingStatistic(id);
+        
+        res.status(200).json(response.buildResponseSuccess('successfully get customer statistic', statistic));
+    } catch (error) {
+        res.status(500).json(response.buildResponseFailed('failed to get statistic', error.message, null));
+    }
+}
+
+const getCustomerTotalSpending = async (req, res) => {
+    try {
+        const id = req.id;
+        const spend = await customerModel.totalSpending(id);
+        
+        res.status(200).json(response.buildResponseSuccess('successfully get customer spending', {spending: spend.get_total_spending}));
+    } catch (error) {
+        res.status(500).json(response.buildResponseFailed('failed to get customer spending', error.message, null));
+    }
+}
+
 router.post('/login', loginCustomer);
 router.post('/register', registerCustomer);
 router.use('/training', trainingController);
 router.get('/profile', authenticate, authorize('customer'), profileCustomer);
 router.get('/appointments', authenticate, authorize('customer'), customerAppointments)
 router.get('/countOnGym', customerOnGym);
+
+router.get('/training-session-statistic', authenticate, authorize('customer'), getTrainingSessionStatistic);
+router.get('/total-spending', authenticate, authorize('customer'), getCustomerTotalSpending);
 
 router.get('/efficiencyAllMemberships', efficiencyAllMembersipCustomer)
 
