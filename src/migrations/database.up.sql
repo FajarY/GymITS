@@ -121,9 +121,38 @@ CREATE TABLE membership_type_receipt (
     FOREIGN KEY (r_id) REFERENCES receipt(r_id)
 );
 
+CREATE USER customer WITH PASSWORD 'pass123';
+CREATE USER trainer WITH PASSWORD 'ptpass';
+CREATE USER admin WITH PASSWORD 'adminpass';
+
+-- customer
+GRANT INSERT, SELECT ON training_session TO customer;
+GRANT INSERT, SELECT ON customer TO customer;
+GRANT INSERT, SELECT ON membership_type_receipt TO customer;
+GRANT INSERT, SELECT ON receipt_product TO customer;
+GRANT INSERT, SELECT ON personal_trainer_receipt TO customer;
+GRANT INSERT, SELECT ON receipt TO customer;
+GRANT INSERT, SELECT ON membership TO customer;
+
+GRANT SELECT ON membership_type TO customer;
+GRANT SELECT ON product TO customer;
+GRANT SELECT ON personal_trainer TO customer;
+
+GRANT UPDATE ON available_time TO customer;
+
+-- personal trainer
+GRANT SELECT ON personal_trainer TO trainer;
+GRANT SELECT ON available_time TO trainer;
+GRANT SELECT ON customer TO trainer;
+
+GRANT INSERT, UPDATE ON available_time TO trainer;
+
+-- admin
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO admin;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO admin;
+
 
 -- arya 
-
 CREATE OR REPLACE FUNCTION format_nomor_telephone()
 RETURNS TRIGGER
 LANGUAGE plpgsql

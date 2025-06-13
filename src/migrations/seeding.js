@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const db = require('../database')
+const {pg} = require('../database')
 
 const down = async () => {
     try {
@@ -8,7 +8,7 @@ const down = async () => {
         const sqlPath = path.join(__dirname, 'seeding.sql');
         const sql = fs.readFileSync(sqlPath, 'utf8');
 
-        await db.raw(sql);
+        await pg.raw(sql);
         console.log('seeding successfull.');
         process.exit(0);
     } catch (error) {
