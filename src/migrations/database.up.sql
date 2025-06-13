@@ -591,6 +591,38 @@ SELECT
 FROM
     employee AS e;
 
+CREATE OR REPLACE FUNCTION cegah_sesi_member_tidak_aktif()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_expired_date DATE;
+    v_customer_name VARCHAR;
+BEGIN
+    SELECT m.m_expired_date, c.c_name 
+    INTO v_expired_date, v_customer_name
+    FROM customer c
+    LEFT JOIN membership m ON c.c_id = m.c_id
+    WHERE c.c_id = NEW.c_id;
+
+    IF v_expired_date IS NULL THEN
+        RAISE EXCEPTION 'Akses ditolak: Customer "%" (%) tidak memiliki membership.', v_customer_name, NEW.c_id;
+    END IF;
+
+    IF v_expired_date < CURRENT_DATE THEN
+        RAISE EXCEPTION 'Akses ditolak: Membership customer "%" (%) telah kedaluwarsa pada tanggal %.', 
+            v_customer_name, NEW.c_id, TO_CHAR(v_expired_date, 'DD-Mon-YYYY');
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE TRIGGER trg_validasi_membership_sebelum_sesi
+BEFORE INSERT ON training_session
+FOR EACH ROW
+EXECUTE FUNCTION cegah_sesi_member_tidak_aktif();
+
 CREATE OR REPLACE FUNCTION update_receipt_final_price_membership()
 RETURNS TRIGGER
 LANGUAGE plpgsql
