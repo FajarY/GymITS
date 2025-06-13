@@ -252,6 +252,7 @@ GRANT SELECT ON product TO customer;
 GRANT SELECT ON personal_trainer TO customer;
 GRANT SELECT ON available_time TO customer;
 GRANT SELECT ON view_customer_on_gym TO customer;
+GRANT SELECT ON view_customer_profile TO customer;
 
 GRANT UPDATE ON available_time TO customer;
 GRANT UPDATE ON training_session TO customer;
