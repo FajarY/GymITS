@@ -42,7 +42,7 @@ async function purchaseMembership(req, res)
                 return;
             }
 
-            purchaseData = await membershipTypeReceiptModel.purchaseMembership(r_id.r_id, membership_type_id, month_amount);
+            purchaseData = await membershipTypeReceiptModel.purchaseMembership(r_id.r_id, membership_type_id, membershipType.mt_price_per_month, month_amount);
             
             if(!purchaseData)
             {
@@ -54,7 +54,7 @@ async function purchaseMembership(req, res)
             var expiredDate = new Date(Date.now());
             expiredDate.setMonth(expiredDate.getMonth() + Number(month_amount));
 
-            const membershipCreatedId = await membershipModel.createCustomerMembership(id, telephone, alamat, startDate, expiredDate, membershipType.id);
+            const membershipCreatedId = await membershipModel.createCustomerMembership(id, telephone, alamat, startDate, expiredDate, membershipType.mt_id);
 
             if(!membershipCreatedId)
             {
@@ -71,16 +71,18 @@ async function purchaseMembership(req, res)
 
         customerMembershipType = await membershipTypeModel.getData(customerMembership.mt_id);
 
-        var update_start_date = new Date(customerMembership.startDate);
-        var update_expired_date = new Date(customerMembership.expiredDate);
+        var update_start_date = new Date(customerMembership.start_date);
+        var update_expired_date = new Date(customerMembership.expired_date);
         var update_membership_type = membership_type_id;
 
-        if(update_expired_date < new Date(Date.now()))
+        const now_date = new Date(Date.now());
+        
+        if(now_date > update_start_date && now_date < update_expired_date)
         {
-            if(customerMembershipType.id != membershipType.id)
+            if(customerMembershipType.mt_id != membershipType.mt_id)
             {
-                const nowLevel = Number(customerMembershipType.substring(1));
-                const targetLevel = Number(membershipType.substring(1));
+                const nowLevel = Number(customerMembershipType.mt_id.substring(2));
+                const targetLevel = Number(membershipType.mt_id.substring(2));
 
                 if(targetLevel < nowLevel)
                 {
@@ -114,7 +116,7 @@ async function purchaseMembership(req, res)
             return;
         }
 
-        purchaseData = await membershipTypeReceiptModel.purchaseMembership(r_id.r_id, membership_type_id, month_amount);
+        purchaseData = await membershipTypeReceiptModel.purchaseMembership(r_id.r_id, membership_type_id, membershipType.mt_price_per_month, month_amount);
         if(!purchaseData)
         {
             res.status(500).json(response.buildResponseFailed('error when creating receipt', 'fatal error when creating membership_type_receipt!', null));

@@ -264,6 +264,11 @@ BEFORE INSERT ON training_session
 FOR EACH ROW
 EXECUTE FUNCTION set_id();
 
+CREATE OR REPLACE TRIGGER tgr_id_before_insert
+BEFORE INSERT ON membership_type_receipt
+FOR EACH ROW
+EXECUTE FUNCTION set_id();
+
 CREATE OR REPLACE VIEW view_customer_profile AS 
 SELECT 
     c.c_id AS id,
