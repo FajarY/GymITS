@@ -78,27 +78,9 @@
                                 <th class="p-4 text-sm font-semibold text-slate-600 text-right">Persentase Diskon</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-200">
-                            <!-- Contoh Data, diurutkan berdasarkan total diskon -->
-                            <tr>
-                                <td class="p-4 font-medium text-gray-800">Premium Whey Protein</td>
-                                <td class="p-4 text-right text-red-600">Rp 1.875.000</td>
-                                <td class="p-4 text-right">5.00%</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 font-medium text-gray-800">Pro Lifting Gloves</td>
-                                <td class="p-4 text-right text-red-600">Rp 593.750</td>
-                                <td class="p-4 text-right">4.75%</td>
-                            </tr>
-                             <tr>
-                                <td class="p-4 font-medium text-gray-800">GymITS Shaker Bottle</td>
-                                <td class="p-4 text-right text-red-600">Rp 360.000</td>
-                                <td class="p-4 text-right">4.00%</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 font-medium text-gray-800">Yoga Mat</td>
-                                <td class="p-4 text-right text-green-600">Rp 0</td>
-                                <td class="p-4 text-right">0.00%</td>
+                        <tbody id="discount-tbody" class="divide-y divide-slate-200">
+                           <tr id="loading-row">
+                                <td colspan="3" class="p-8 text-center text-gray-500">Memuat data...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -108,5 +90,6 @@
         </main>
       </div>
     </div>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

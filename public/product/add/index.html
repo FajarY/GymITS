@@ -2,7 +2,6 @@
   <head>
     <link rel="stylesheet" href="../../output.css" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module" src="script.js"></script>
     <title>GymITS - Add Product</title>
   </head>
   <body>
@@ -75,26 +74,8 @@
 
             <!-- Grid for Product Cards -->
             <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-              <!-- Product Card Example -->
-              <div class="product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden" data-product-id="1">
-                <img src="https://placehold.co/400x300/3490f3/white?text=Gym+Product" alt="Product Image" class="w-full h-48 object-cover">
-                <div class="p-6 flex-grow flex flex-col">
-                  <div class="flex-grow">
-                    <h3 class="product-name text-xl font-bold text-[#0d141c]">Premium Whey Protein</h3>
-                    <p class="product-price text-lg font-semibold text-gray-700 mt-2">Rp 250,000</p>
-                    <p class="text-sm text-gray-500 mt-2">Current Stock: <span class="product-stock font-bold">15</span></p>
-                  </div>
-                  <div class="mt-6 flex flex-col sm:flex-row gap-2">
-                    <button class="add-stock-btn w-full px-4 py-3 rounded-lg bg-slate-200 text-slate-800 font-medium transition hover:bg-slate-300">
-                        Add Stock
-                    </button>
-                    <a href="/product/add/detail/?id=1" class="detail-btn w-full px-4 py-3 rounded-lg bg-indigo-500 text-white font-medium transition hover:bg-indigo-600 text-center flex items-center justify-center">
-                        Detail
-                    </a>
-                  </div>
-                </div>
-              </div>
-               <!-- More products will be added here by JavaScript -->
+               <!-- Produk akan dimuat di sini oleh JavaScript -->
+               <p id="loading-message" class="col-span-full text-center text-gray-500">Memuat produk...</p>
             </div>
           </div>
         </main>
@@ -104,7 +85,6 @@
     <!-- =================================================================
     MODALS (Pop-up Windows)
     ================================================================== -->
-    <!-- 1. Create Product Modal -->
     <div id="create-product-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
       <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
         <h2 class="text-2xl font-bold mb-6">Create a New Product</h2>
@@ -124,8 +104,6 @@
         </form>
       </div>
     </div>
-
-    <!-- 2. Add Stock Modal -->
     <div id="add-stock-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
         <h2 class="text-2xl font-bold mb-2">Add Stock</h2>
@@ -143,6 +121,6 @@
         </form>
       </div>
     </div>
-
+    <script type="module" src="script.js"></script>
   </body>
 </html>

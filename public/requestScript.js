@@ -87,6 +87,131 @@ async function getEmployeeProfile() {
     return await tryFetchJson("/employee/profile", req);
 }
 
+async function postNewProduct(name, price) {
+    const req = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name, price })
+    };
+
+    return await tryFetchJson("/product", req);
+}
+
+async function postAddStockProduct(productId, amount) {
+    const req = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ amount })
+    };
+    return await tryFetchJson(`/product/${productId}`, req);
+}
+
+async function getProductContributionStock(productId) {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+    return await tryFetchJson(`/product/${productId}/employee/summary`, req);
+}
+
+async function getMembershipEfficiency() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/customer/efficiencyAllMemberships", req);
+}
+
+async function getMembershipSummary() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/membership/information", req);
+}
+
+async function getProductSummary() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/product/summary/data", req);
+}
+
+async function getProductDiscountOutput() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/product/productsDiscountsTotal", req);
+}
+
+async function getAllPeopleOnDatabase() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/employee/getAllPeopleOnDatabase", req);
+}
+
+async function getRevenueOnDay(date, gender) {
+    const req = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "date": date,
+            "gender": gender
+        })
+    };
+
+    return await tryFetchJson("/receipt/revenueOnDay", req);
+}
+
+async function getTrainerLog() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/personaltrainer/log", req);
+}
+
+async function getEfficiencyOfTrainerAvailableTimes() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/personaltrainer/efficiencyAllPTAvailableTimes", req);
+}
+
 async function loginTrainer(trainer_id, password) {
     const req = {
         method: "POST",
@@ -124,6 +249,17 @@ export{
 
     loginEmployee,
     getEmployeeProfile,
+    postNewProduct,
+    postAddStockProduct,
+    getProductContributionStock,
+    getMembershipEfficiency,
+    getMembershipSummary,
+    getProductSummary,
+    getProductDiscountOutput,
+    getAllPeopleOnDatabase,
+    getRevenueOnDay,
+    getTrainerLog,
+    getEfficiencyOfTrainerAvailableTimes,
 
     loginTrainer,
     getTrainerProfile,

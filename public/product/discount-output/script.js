@@ -1,0 +1,67 @@
+import { getProductDiscountOutput } from "../../requestScript.js";
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const tableBody = document.getElementById("discount-tbody");
+    const loadingRow = document.getElementById("loading-row");
+
+    /**
+     * Memformat angka sebagai mata uang Rupiah.
+     * @param {number|string} value - Angka yang akan diformat.
+     * @returns {string} String mata uang yang telah diformat.
+     */
+    function formatAsIDR(value) {
+        const numberValue = parseFloat(value);
+        if (isNaN(numberValue)) return 'N/A';
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(numberValue);
+    }
+
+    /**
+     * Merender data ringkasan diskon produk ke dalam tabel.
+     * @param {object[]} discountData - Array objek data diskon.
+     */
+    function renderDiscountTable(discountData) {
+        tableBody.innerHTML = ""; // Hapus pesan "loading"
+
+        if (!discountData || discountData.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-gray-500">Tidak ada data diskon yang ditemukan.</td></tr>`;
+            return;
+        }
+
+        // Urutkan data berdasarkan total diskon dari yang terbesar
+        const sortedData = discountData.sort((a, b) => parseFloat(b.total_discount_output) - parseFloat(a.total_discount_output));
+
+        sortedData.forEach(item => {
+            const totalDiscount = parseFloat(item.total_discount_output);
+            const percentage = parseFloat(item.discount_percent_from_total).toFixed(2) + "%";
+            
+            // Beri warna merah jika ada diskon, hijau jika tidak ada
+            const discountColor = totalDiscount > 0 ? 'text-red-600' : 'text-green-600';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="p-4 font-medium text-gray-800">${item.p_name}</td>
+                <td class="p-4 text-right font-medium ${discountColor}">${formatAsIDR(totalDiscount)}</td>
+                <td class="p-4 text-right">${percentage}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // --- INISIALISASI HALAMAN ---
+    try {
+        const [response, data] = await getProductDiscountOutput();
+
+        if (response.ok && data.status) {
+            renderDiscountTable(data.data);
+        } else {
+            loadingRow.innerHTML = `<td colspan="3" class="p-8 text-center text-red-500">Gagal memuat data: ${data.message || 'Error tidak diketahui'}</td>`;
+        }
+    } catch (error) {
+        console.error("Error fetching product discount summary:", error);
+        loadingRow.innerHTML = `<td colspan="3" class="p-8 text-center text-red-500">Terjadi kesalahan saat mengambil data.</td>`;
+    }
+});
