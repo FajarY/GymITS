@@ -56,7 +56,7 @@ async function loginCustomer(req, res)
             role: 'customer'
         });
 
-        res.cookie('token', token, {maxAge: 3600000});
+        res.cookie('token', token, {maxAge: 604800000});
         res.status(200).json(response.buildResponseSuccess('login successfully', {
             token
         }));

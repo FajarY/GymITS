@@ -35,7 +35,7 @@ const loginPersonalTrainer = async (req, res) => {
             role: "trainer"
         }
 
-        res.cookie('token', token, {maxAge: 360000});
+        res.cookie('token', token, {maxAge: 604800000});
         res.status(200).json(response.buildResponseSuccess("logged in successfully", result));
         return;
     } catch(error) {
@@ -203,14 +203,33 @@ const getNewTrainerLog = async (req, res) => {
     }
 }
 
+const getPersonalTrainer = async (req, res) => {
+    try {
+        const id = req.params.id
+        const personalTrainer = await personalTrainerModel.getByID(id);
+        const result = {
+            id: personalTrainer.id,
+            name: personalTrainer.name,
+            price_per_hour: personalTrainer.price_per_hour,
+            gender: personalTrainer.gender,
+            telephone: personalTrainer.telephone,
+        }
+        res.status(200).json(response.buildResponseSuccess('successfully to get tariner profile', result));
+    }catch (error) {
+        res.status(500).json(response.buildResponseSuccess('failed to get tariner profile', error.message,  null));
+    }
+}
+
+
 router.post('/login', loginPersonalTrainer);
 router.post('/', authenticate, authorize('employee'), addPersonalTrainer);
 router.get('/data', authenticate, getAllPersonalTrainer);
 router.get('/profile', authenticate, profile);
-router.get('/:id/availability', authenticate, getPersonalTrainerAvailability);
 router.get('/appointments', authenticate, authorize('trainer'), trainerAppointments);
 router.get('/income', authenticate, authorize('trainer'), income);
 router.get('/log', authenticate, authorize('employee'), getNewTrainerLog);
+router.get('/:id/availability', authenticate, getPersonalTrainerAvailability);
+router.get('/:id', authenticate, getPersonalTrainer);
 
 router.get('/efficiencyAllPTAvailableTimes', efficiencyAllPTAvailableTimes)
 router.post('/available-time', authenticate, authorize('trainer'), addAvailableTime);
