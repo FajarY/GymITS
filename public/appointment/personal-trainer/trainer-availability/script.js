@@ -1,305 +1,293 @@
-// Updated mock data to reflect database structure and use pt_id as key
-const trainersData = {
-    'PT001': { 
-        name: 'John Doe', 
-        price_per_hour: 250000, 
-        imageUrl: 'https://placehold.co/400x300/3490F3/FFFFFF?text=John+D', 
-        availability: { 
-            10: ['08:00', '09:00', '10:00'], 12: ['08:00', '09:00'], 15: ['14:00', '15:00', '16:00'], 
-            17: ['17:00', '18:00'], 20: ['09:00', '10:00'], 22: ['08:00', '14:00', '15:00'], 25: ['16:00', '17:00', '18:00']
-        } 
-    },
-    'PT002': { 
-        name: 'Jane Smith', 
-        price_per_hour: 300000,
-        imageUrl: 'https://placehold.co/400x300/10B981/FFFFFF?text=Jane+S', 
-        availability: { 
-            11: ['07:00', '08:00'], 13: ['18:00', '19:00'], 16: ['07:00', '08:00', '09:00'], 
-            18: ['18:00', '19:00', '20:00'], 21: ['07:00', '18:00'], 23: ['08:00', '09:00'], 26: ['18:00', '19:00']
-        } 
-    },
-    'PT003': { 
-        name: 'Mike Johnson', 
-        price_per_hour: 275000,
-        imageUrl: 'https://placehold.co/400x300/F59E0B/FFFFFF?text=Mike+J', 
-        availability: { 
-            12: ['08:00', '09:00'], 17: ['17:00', '18:00', '19:00'], 24: ['08:00'],
-            14: ['15:00', '16:00'], 19: ['17:00', '18:00'], 27: ['08:00', '09:00', '10:00']
-        } 
-    },
-    'PT004': { 
-        name: 'Sarah Lee', 
-        price_per_hour: 325000,
-        imageUrl: 'https://placehold.co/400x300/EF4444/FFFFFF?text=Sarah+L', 
-        availability: { 
-            13: ['06:00', '07:00'], 15: ['17:00', '18:00'], 18: ['06:00', '07:00', '17:00'], 
-            20: ['17:00', '18:00'], 22: ['06:00', '17:00'], 28: ['06:00', '07:00', '18:00'], 30: ['17:00', '18:00']
-        } 
-    },
+import { tryFetchJson } from "../../../requestScript.js"; // Pastikan path ini benar
+
+// --- FUNGSI BANTU & API ---
+
+const getCookie = (name) => {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [key, value] = cookie.trim().split('=');
+        if (key === name) return value;
+    }
+    return null;
+}
+
+const parseJwt = (token) => {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        console.error("Invalid token:", e);
+        return null;
+    }
+}
+
+const getTrainerIdFromUrl = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const trainerId = urlParams.get('id');
+    return trainerId;
 };
 
-async function fetchTrainerDetails(id) {
-  console.log(`Fetching details for trainer: ${id}`);
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (trainersData[id]) {
-        resolve(trainersData[id]);
-      } else {
-        reject(new Error("Trainer not found"));
-      }
-    }, 500); // Simulate network delay
-  });
-}
 
-// --- GLOBAL STATE ---
-let selectedDate = null;
-let selectedTime = null;
-let currentTrainer = null;
-let currentTrainerId = null;
+const getTrainerDetails = async (trainerId) => {
+    return await tryFetchJson(`/personaltrainer/${trainerId}`, { method: 'GET' });
+};
 
-// --- DOM ELEMENT REFERENCES ---
-const loader = document.getElementById("loader");
-const content = document.getElementById("content");
-const trainerImage = document.getElementById("trainer-image");
-const trainerName = document.getElementById("trainer-name");
-const trainerPrice = document.getElementById("trainer-price"); // <-- New reference
-const calendarContainer = document.getElementById("calendar-container");
-const timeSlotsGrid = document.getElementById("time-slots-grid");
-const timeSlotPlaceholder = document.getElementById("time-slot-placeholder");
-const confirmAppointmentBtn = document.getElementById("confirm-appointment-btn");
-const modalBackdrop = document.getElementById("confirm-modal-backdrop");
-const modal = document.getElementById("confirm-modal");
-const modalTrainerName = document.getElementById("modal-trainer-name");
-const modalDate = document.getElementById("modal-date");
-const modalTime = document.getElementById("modal-time");
+const getTrainerAvailability = async (trainerId, month, year) => {
+    const req = { method: "GET" };
+    return await tryFetchJson(`/personaltrainer/${trainerId}/availability?month=${month}&year=${year}`, req);
+};
 
-// --- RENDER FUNCTIONS ---
-
-/**
- * Creates and displays the monthly calendar.
- * @param {object} availability - The trainer's availability object.
- */
-function renderCalendar(availability) {
-  // Using a fixed date (June 2025) for demonstration so the mock data works reliably.
-  const now = new Date(2025, 5, 9);
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const today = now.getDate();
-  const monthName = now.toLocaleString("default", { month: "long" });
-
-  const firstDayOfMonth = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  let calendarHTML = `
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold">${monthName} ${year}</h3>
-                </div>
-                <div class="grid grid-cols-7 gap-1 text-center text-sm text-gray-500 mb-2">
-                    ${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-                      .map((day) => `<div>${day}</div>`)
-                      .join("")}
-                </div>
-                <div class="grid grid-cols-7 gap-2">`;
-
-  // Add blank days for the first week
-  calendarHTML += "<div></div>".repeat(firstDayOfMonth);
-
-  // Add all the days of the month
-  for (let day = 1; day <= daysInMonth; day++) {
-    const isAvailable = availability[day] && availability[day].length > 0;
-    const isPast = day < today;
-    let dayClasses = "p-2 text-center rounded-full text-gray-400"; // Default for past or unavailable days
-    if (isAvailable && !isPast) {
-      dayClasses =
-        "calendar-day cursor-pointer bg-blue-50 hover:bg-blue-200 rounded-full p-2 text-center";
+const purchaseAppointments = async (payload) => {
+    const token = getCookie("token");
+    if (!token) {
+        alert("You must be logged in to book an appointment.");
+        window.location.href = '/login';
+        return;
     }
-    calendarHTML += `<div class="${dayClasses}" data-day="${day}">${day}</div>`;
-  }
+    const req = {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+    };
+    return await tryFetchJson('/appointment/purchase', req);
+};
 
-  calendarHTML += `</div>`;
-  calendarContainer.innerHTML = calendarHTML;
-}
+// --- MAIN SCRIPT ---
 
-/**
- * Displays the available time slots for a given date.
- * @param {string[]} times - An array of available time strings.
- */
-function renderTimeSlots(times) {
-  timeSlotsGrid.innerHTML = "";
-  if (times && times.length > 0) {
-    timeSlotPlaceholder.classList.add("hidden");
-    timeSlotsGrid.classList.remove("hidden");
-    times.forEach((time) => {
-      const timeSlotBtn = document.createElement("button");
-      timeSlotBtn.className =
-        "time-slot border border-gray-300 rounded-lg p-2 hover:bg-gray-100";
-      timeSlotBtn.textContent = time;
-      timeSlotBtn.dataset.time = time;
-      timeSlotsGrid.appendChild(timeSlotBtn);
+document.addEventListener('DOMContentLoaded', async () => {
+    const loader = document.getElementById('loader');
+    const content = document.getElementById('content');
+    const monthYearHeader = document.getElementById('month-year-header');
+    const calendarDaysGrid = document.getElementById('calendar-days-grid');
+    const prevMonthBtn = document.getElementById('prev-month-btn');
+    const nextMonthBtn = document.getElementById('next-month-btn');
+    const timeSlotPlaceholder = document.getElementById('time-slot-placeholder');
+    const timeSlotsGrid = document.getElementById('time-slots-grid');
+    const confirmBtn = document.getElementById('confirm-appointment-btn');
+
+    // --- MANAJEMEN STATE ---
+    const now = new Date();
+    let currentDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    let selectedDate = null;
+    let selectedTimeSlots = []; 
+    let selectedAvailabilityIds = []; 
+    let monthlyAvailability = {};
+    const trainerId = getTrainerIdFromUrl();
+
+    const fetchAndDisplayTrainerInfo = async () => {
+        const [_, trainer] = await getTrainerDetails(trainerId);
+        const trainerName = trainer.data.name;
+        document.getElementById('trainer-name').textContent = trainerName;
+        document.getElementById('trainer-price').textContent = `Rp ${parseInt(trainer.data.price_per_hour)} / Month`;
+        document.getElementById('modal-trainer-name').textContent = trainerName;
+        const formattedName = trainerName.replace(/\s/g, '+');
+        document.getElementById('trainer-image').src = `https://ui-avatars.com/api/?name=${formattedName}&background=0D8ABC&color=fff&size=128`;
+        loader.classList.add('hidden');
+        content.classList.remove('hidden');
+    };
+
+    const fetchMonthlyAvailability = async () => {
+        const month = currentDate.getMonth() + 1;
+        const year = currentDate.getFullYear();
+        const [_, availabilityData] = await getTrainerAvailability(trainerId, month, year);
+        monthlyAvailability = {};
+        if (availabilityData.data) {
+            availabilityData.data.forEach(item => {
+                const day = new Date(item.at_date).getDate();
+                if (item.map_time) {
+                    monthlyAvailability[day] = item.map_time;
+                }
+            });
+        }
+        renderCalendar();
+    };
+
+    const renderCalendar = () => {
+        calendarDaysGrid.innerHTML = '';
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        monthYearHeader.textContent = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentDate);
+        const firstDayOfMonth = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        for (let i = 0; i < firstDayOfMonth; i++) {
+            calendarDaysGrid.innerHTML += '<div></div>';
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayButton = document.createElement('button');
+            const loopDate = new Date(year, month, day);
+            dayButton.textContent = day;
+            dayButton.dataset.day = day;
+            dayButton.className = "p-2 rounded-full transition text-center";
+
+            const isDateAvailable = monthlyAvailability[day] && monthlyAvailability[day].some(slotId => slotId !== null && slotId !== 'TAKEN');
+
+            if (loopDate < today || !isDateAvailable) {
+                dayButton.disabled = true;
+                dayButton.classList.add('text-gray-300', 'cursor-not-allowed');
+            } else {
+                dayButton.classList.add('hover:bg-slate-100', 'cursor-pointer', 'font-semibold', 'text-sky-600', 'bg-sky-50');
+            }
+
+            if (selectedDate && loopDate.getTime() === selectedDate.getTime()) {
+                dayButton.classList.add('bg-[#3490f3]', 'text-white');
+                dayButton.classList.remove('hover:bg-slate-100', 'bg-sky-50');
+            }
+            calendarDaysGrid.appendChild(dayButton);
+        }
+    };
+
+    const renderTimeSlots = (day) => {
+        const timeSlotsMap = [];
+        for (let hour = 8; hour < 22; hour++) {
+            const start = hour.toString().padStart(2, '0') + ':00';
+            const end = (hour + 1).toString().padStart(2, '0') + ':00';
+            timeSlotsMap.push(`${start}-${end}`);
+        }
+
+        const dailySchedule = monthlyAvailability[day];
+        timeSlotsGrid.innerHTML = '';
+
+        selectedTimeSlots = [];
+        selectedAvailabilityIds = [];
+        confirmBtn.disabled = true;
+
+        if (!dailySchedule) {
+            timeSlotPlaceholder.textContent = "Tidak ada informasi jadwal untuk tanggal ini.";
+            timeSlotPlaceholder.classList.remove('hidden');
+            timeSlotsGrid.classList.add('hidden');
+            return;
+        }
+
+        timeSlotsMap.forEach((slot, index) => {
+            const slotValue = dailySchedule[index];
+            const isAvailable = slotValue !== null && slotValue !== 'TAKEN';
+            const slotButton = document.createElement('button');
+            slotButton.textContent = slot.replace('-', ' - ');
+            slotButton.dataset.slot = slot;
+            if (isAvailable) {
+                slotButton.dataset.availabilityId = slotValue;
+                slotButton.disabled = false;
+                slotButton.className = "time-slot p-2 border rounded-md text-sm hover:bg-slate-100 transition cursor-pointer";
+            } else {
+                slotButton.disabled = true;
+                slotButton.className = "p-2 border rounded-md text-sm text-gray-400 bg-gray-100 cursor-not-allowed";
+            }
+            timeSlotsGrid.appendChild(slotButton);
+        });
+
+        timeSlotPlaceholder.classList.add('hidden');
+        timeSlotsGrid.classList.remove('hidden');
+    };
+
+    const handleDateClick = (event) => {
+        const target = event.target.closest('button');
+        if (!target || !target.dataset.day || target.disabled) return;
+        const day = parseInt(target.dataset.day);
+        selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        renderCalendar();
+        renderTimeSlots(day);
+    };
+
+    const handleTimeClick = (event) => {
+        const target = event.target.closest('button');
+        if (!target || !target.dataset.slot || target.disabled) return;
+
+        const time = target.dataset.slot;
+        const id = target.dataset.availabilityId;
+
+        const isSelected = selectedAvailabilityIds.includes(id);
+
+        if (isSelected) {
+            target.classList.remove('bg-[#3490f3]', 'text-white');
+            selectedAvailabilityIds = selectedAvailabilityIds.filter(selectedId => selectedId !== id);
+            selectedTimeSlots = selectedTimeSlots.filter(selectedTime => selectedTime !== time);
+        } else {
+            target.classList.add('bg-[#3490f3]', 'text-white');
+            selectedAvailabilityIds.push(id);
+            selectedTimeSlots.push(time);
+        }
+
+        confirmBtn.disabled = selectedAvailabilityIds.length === 0;
+    };
+
+    const openConfirmModal = () => {
+        if (!selectedDate || selectedAvailabilityIds.length === 0) return;
+
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('modal-date').textContent = selectedDate.toLocaleDateString('en-GB', dateOptions);
+
+        const timeText = selectedTimeSlots.sort().join(', ');
+        document.getElementById('modal-time').textContent = `at ${timeText}`;
+
+        const modalBackdrop = document.getElementById('confirm-modal-backdrop');
+        const modal = document.getElementById('confirm-modal');
+        modalBackdrop.classList.remove('hidden');
+        setTimeout(() => {
+            modalBackdrop.classList.remove('opacity-0');
+            modal.classList.remove('scale-95', 'opacity-0');
+        }, 10);
+    };
+
+    const closeConfirmModal = () => {
+        const modalBackdrop = document.getElementById('confirm-modal-backdrop');
+        const modal = document.getElementById('confirm-modal');
+        modalBackdrop.classList.add('opacity-0');
+        modal.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => modalBackdrop.classList.add('hidden'), 300);
+    };
+
+    const handleConfirmBooking = async () => {
+        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+        modalConfirmBtn.disabled = true;
+        modalConfirmBtn.textContent = 'Purchasing...';
+
+        const isoDate = selectedDate.toISOString().split('T')[0];
+
+        const payload = {
+            pt_id: trainerId,
+            date: isoDate,
+            times: selectedAvailabilityIds,
+        };
+
+        const [res, result] = await purchaseAppointments(payload);
+
+        console.log(res.status)
+        if (res.status != 201) {
+            alert(`Purchase failed: Please try again later.`);
+            modalConfirmBtn.disabled = false;
+            modalConfirmBtn.textContent = 'Book Session';
+        } else {
+            alert('Purchase successful! Check your receipt page for details.');
+            window.location.href = '/receipt';
+        }
+    };
+
+    prevMonthBtn.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        fetchMonthlyAvailability();
     });
-  } else {
-    timeSlotPlaceholder.textContent = "No available times for this date.";
-    timeSlotPlaceholder.classList.remove("hidden");
-    timeSlotsGrid.classList.add("hidden");
-  }
-}
 
-/**
- * Updates the entire page with the details of the fetched trainer.
- * @param {object} trainerData - The fetched trainer object.
- */
-function populatePage(trainerData) {
-  currentTrainer = trainerData;
-  trainerImage.src = trainerData.imageUrl;
-  trainerImage.alt = trainerData.name;
-  trainerName.textContent = trainerData.name;
-  // Set the price per hour
-  trainerPrice.textContent = `${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(trainerData.price_per_hour)} / hour`;
-  renderCalendar(trainerData.availability);
-  loader.classList.add("hidden");
-  content.classList.remove("hidden");
-}
+    nextMonthBtn.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        fetchMonthlyAvailability();
+    });
 
-// --- MODAL LOGIC ---
-function showConfirmationModal() {
-  modalTrainerName.textContent = currentTrainer.name;
-  modalDate.textContent = selectedDate.toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  modalTime.textContent = `at ${selectedTime}`;
-  modalBackdrop.classList.remove("hidden");
-  setTimeout(() => {
-    modalBackdrop.classList.remove("opacity-0");
-    modal.classList.remove("opacity-0", "scale-95");
-  }, 10);
-}
+    calendarDaysGrid.addEventListener('click', handleDateClick);
+    timeSlotsGrid.addEventListener('click', handleTimeClick);
+    confirmBtn.addEventListener('click', openConfirmModal);
+    document.getElementById('modal-close-btn').addEventListener('click', closeConfirmModal);
+    document.getElementById('modal-confirm-btn').addEventListener('click', handleConfirmBooking);
 
-function hideConfirmationModal() {
-  modalBackdrop.classList.add("opacity-0");
-  modal.classList.add("opacity-0", "scale-95");
-  setTimeout(() => modalBackdrop.classList.add("hidden"), 300);
-}
-
-// --- EVENT HANDLERS ---
-function handleDateSelection(e) {
-  if (!e.target.matches(".calendar-day[data-day]")) return;
-
-  document.querySelectorAll(".calendar-day.bg-blue-500").forEach((el) => {
-    el.classList.replace("bg-blue-500", "bg-blue-50");
-    el.classList.remove("text-white");
-  });
-
-  e.target.classList.replace("bg-blue-50", "bg-blue-500");
-  e.target.classList.add("text-white");
-
-  const day = e.target.dataset.day;
-  selectedDate = new Date(2025, 5, day);
-  selectedTime = null;
-  confirmAppointmentBtn.disabled = true;
-
-  renderTimeSlots(currentTrainer.availability[day] || []);
-}
-
-function handleTimeSelection(e) {
-  if (!e.target.matches(".time-slot[data-time]")) return;
-
-  document
-    .querySelectorAll(".time-slot.bg-blue-500")
-    .forEach((el) => el.classList.remove("bg-blue-500", "text-white"));
-
-  e.target.classList.add("bg-blue-500", "text-white");
-  selectedTime = e.target.dataset.time;
-  confirmAppointmentBtn.disabled = false;
-}
-
-function handleConfirmBooking() {
-  console.log(
-    `Booking confirmed for ${currentTrainer.name} on ${selectedDate} at ${selectedTime}`
-  );
-  
-  const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
-  const newBooking = {
-    id: Date.now().toString(),
-    trainerId: currentTrainerId, // Use the ID from the URL
-    trainerName: currentTrainer.name,
-    date: selectedDate.toISOString(),
-    time: selectedTime,
-    status: 'confirmed'
-  };
-  
-  bookings.push(newBooking);
-  localStorage.setItem('userBookings', JSON.stringify(bookings));
-  
-  hideConfirmationModal();
-  
-  alert('Appointment booked successfully!');
-  setTimeout(() => {
-    window.location.href = '/appointment/my-appointment/';
-  }, 1000);
-}
-
-// --- PAGE INITIALIZATION ---
-
-/**
-* Gets the trainer ID from the current page's URL query string.
-* @returns {string|null} The trainer ID or null if not found.
-*/
-function getTrainerIdFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    return params.get('id');
-}
-
-async function initializePage() {
-  // --- FIX: Get trainer ID from URL instead of localStorage ---
-  currentTrainerId = getTrainerIdFromURL();
-  
-  if (!currentTrainerId) {
-    loader.textContent = "Error: No trainer selected. Please go back and select a trainer.";
-    return;
-  }
-
-  if (!trainersData[currentTrainerId]) {
-    loader.textContent = "Error: Trainer not found.";
-    return;
-  }
-
-  try {
-    const trainerData = await fetchTrainerDetails(currentTrainerId);
-    populatePage(trainerData);
-  } catch (error) {
-    loader.textContent = "Could not find trainer details.";
-    console.error(error);
-  }
-}
-
-// --- ATTACH EVENT LISTENERS ---
-function attachEventListeners() {
-  if (calendarContainer) {
-    calendarContainer.addEventListener("click", handleDateSelection);
-  }
-  if (timeSlotsGrid) {
-    timeSlotsGrid.addEventListener("click", handleTimeSelection);
-  }
-  if (confirmAppointmentBtn) {
-    confirmAppointmentBtn.addEventListener("click", showConfirmationModal);
-  }
-  
-  const modalCloseBtn = document.getElementById("modal-close-btn");
-  const modalConfirmBtn = document.getElementById("modal-confirm-btn");
-  
-  if (modalCloseBtn) {
-    modalCloseBtn.addEventListener("click", hideConfirmationModal);
-  }
-  if (modalConfirmBtn) {
-    modalConfirmBtn.addEventListener("click", handleConfirmBooking);
-  }
-}
-
-// --- Initialize on page load ---
-document.addEventListener("DOMContentLoaded", () => {
-  attachEventListeners();
-  initializePage();
+    await fetchAndDisplayTrainerInfo();
+    await fetchMonthlyAvailability();
 });
