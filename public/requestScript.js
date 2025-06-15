@@ -124,6 +124,17 @@ async function getTrainerProfile() {
     return await tryFetchJson("/personaltrainer/profile", req);
 }
 
+async function getAllTrainers() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/personaltrainer/data", req);
+}
+
 async function getCustomerAppointment() {
     const req = {
         method: "GET",
@@ -195,6 +206,8 @@ export{
 
     loginTrainer,
     getTrainerProfile,
+    getAllTrainers,
+
 
     getCustomerAppointment,
     getCustomerCountOnGym,
