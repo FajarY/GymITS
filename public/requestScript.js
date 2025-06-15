@@ -124,6 +124,16 @@ async function getCustomerAppointment() {
     return await tryFetchJson("/customer/appointments", req);
 }
 
+async function getCustomerCountOnGym() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/customer/countOnGym", req);
+}
 
 
 export{
@@ -140,4 +150,5 @@ export{
     getTrainerProfile,
 
     getCustomerAppointment,
+    getCustomerCountOnGym,
 }
