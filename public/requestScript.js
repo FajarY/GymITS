@@ -61,6 +61,17 @@ async function getUserProfile() {
     return await tryFetchJson("/customer/profile", req);
 }
 
+async function getTotalSpending() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/customer/total-spending", req);
+}
+
 async function loginEmployee(employee_id, password) {
     const req = {
         method: "POST",
@@ -158,6 +169,17 @@ async function purchaseProducts(productsCart) {
     }
 }
 
+async function getReceiptHistory() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/receipt/history", req);
+}
+
 
 
 export{
@@ -166,6 +188,7 @@ export{
     userLogin,
     userRegister,
     getUserProfile,
+    getTotalSpending,
 
     loginEmployee,
     getEmployeeProfile,
@@ -178,4 +201,6 @@ export{
 
     getAllProduct,
     purchaseProducts,
+
+    getReceiptHistory,
 }
