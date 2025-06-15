@@ -113,6 +113,17 @@ async function getTrainerProfile() {
     return await tryFetchJson("/personaltrainer/profile", req);
 }
 
+async function getCustomerAppointment() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/customer/appointments", req);
+}
+
 
 
 export{
@@ -127,4 +138,6 @@ export{
 
     loginTrainer,
     getTrainerProfile,
+
+    getCustomerAppointment,
 }
