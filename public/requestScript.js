@@ -124,7 +124,17 @@ async function getTrainerProfile() {
     return await tryFetchJson("/personaltrainer/profile", req);
 }
 
-async function getAllTrainers() {
+async function getAllTrainers(filter) {
+    const base_url = "/personaltrainer/data";
+    const url = new URL(base_url, window.location.origin);
+    
+    if (filter === undefined) {
+        filter = null;
+    }
+    else if (filter !== null) {
+        url.searchParams.append("filter", filter);
+    }
+    
     const req = {
         method: "GET",
         headers: {
@@ -132,7 +142,7 @@ async function getAllTrainers() {
         },
     };
 
-    return await tryFetchJson("/personaltrainer/data", req);
+    return await tryFetchJson(url, req);
 }
 
 async function getCustomerAppointment() {
