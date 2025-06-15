@@ -46,7 +46,9 @@ const getAll = async () => {
         .select(
             'pt_id as id',
             'pt_name as name',
-            'pt_price_per_hour as price_per_hour'
+            'pt_price_per_hour as price_per_hour',
+            'pt_gender as gender',
+            'pt_telephone as telephone'
         );
 
         return personalTrainer;
@@ -131,7 +133,6 @@ const getAvailableDate = async (personal_trainer_id) => {
 const getAppointments = async (id) => {
     const rawQuery = `
         SELECT 
-            pt.pt_id,
             pt.pt_name,
             at.at_date,
             at.at_start_time,
@@ -198,7 +199,6 @@ const getTrainerLog = async () => {
 
     return result
 }
-
 module.exports = {
     create,
     getByID,

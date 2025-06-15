@@ -1,3 +1,34 @@
+import { tryFetchJson } from "../../requestScript.js";
+
+const getTrainers = async () => {
+    const req = {
+        method: "GET",
+    }
+    return await tryFetchJson("/personaltrainer/data", req);
+}
+
+const loadData = async () => {
+  const container = document.getElementById('trainer-list');
+  const [_, res] = await getTrainers();
+
+  const datas = res.data;
+  console.log(datas);
+  for(const data of datas) {
+    const template  = `
+      <div class="trainer-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden" data-trainer-id="1">
+        <img src="https://placehold.co/400x300/4a5568/white?text=Trainer" alt="Trainer Image" class="w-full h-48 object-cover">
+        <div class="p-6 flex-grow flex flex-col">
+            <h3 class="trainer-name text-xl font-bold text-[#0d141c]">${data.name}</h3>
+            <p class="trainer-gender text-sm text-gray-500">${(data.gender == "F") ? "Female" : "Male"}</p>
+            <p class="trainer-price text-lg font-semibold text-gray-700 mt-2">Rp ${parseInt(data.price_per_hour)} / hour</p>
+            <p class="trainer-phone text-sm text-gray-500 mt-2">Tel: ${data.telephone}</p>
+        </div>
+      </div>
+
+    `
+    container.innerHTML += template
+  }
+}
 document.addEventListener('DOMContentLoaded', () => {
   // --- Get all necessary elements from the DOM ---
   const createTrainerBtn = document.getElementById('create-trainer-btn');
@@ -91,4 +122,5 @@ document.addEventListener('DOMContentLoaded', () => {
     createTrainerForm.reset();
     closeModal();
   });
+  loadData();
 });

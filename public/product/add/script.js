@@ -1,3 +1,38 @@
+import { tryFetchJson } from "../../requestScript.js";
+
+const getProducts = async () => {
+    const req = {
+        method: "GET",
+    }
+    return await tryFetchJson("/product/data", req);
+}
+
+const loadData = async () => {
+  const container = document.getElementById('product-list');
+  const [_, res] = await getProducts();
+
+  const datas = res.data;
+  console.log(datas)
+  for (const data of res.data) {
+    const template = `
+      <div class="product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden" data-product-id="1">
+        <img src="https://placehold.co/400x300/3490f3/white?text=Gym+Product" alt="Product Image" class="w-full h-48 object-cover">
+        <div class="p-6 flex-grow flex flex-col">
+          <div class="flex-grow">
+            <h3 class="product-name text-xl font-bold text-[#0d141c]">${data.name}</h3>
+            <p class="product-price text-lg font-semibold text-gray-700 mt-2">Rp ${parseInt(data.price)}</p>
+            <p class="text-sm text-gray-500 mt-2">Current Stock: <span class="product-stock font-bold">${parseInt(data.stock)}</span></p>
+          </div>
+          <button class="add-stock-btn mt-6 w-full h-12 cursor-pointer rounded-lg bg-slate-200 text-slate-800 font-medium transition hover:bg-slate-300">
+            Add Stock
+          </button>
+        </div>
+      </div>
+    `
+    container.innerHTML += template
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // --- Mendapatkan semua elemen yang diperlukan dari DOM ---
   const createProductBtn = document.getElementById('create-product-btn');
@@ -117,4 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
     addStockForm.reset();
     closeModal();
   });
+
+  loadData();
 });
