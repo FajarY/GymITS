@@ -208,7 +208,7 @@ SELECT
     p.p_name,
     COALESCE(SUM(rp.rp_amount), 0) AS total_unit_sold,
     COALESCE(SUM(rp.rp_amount * rp.rp_price * (1 - rp.rp_discount)), 0) AS total_revenue,
-    (p.p_stock - COALESCE(SUM(rp.rp_amount), 0)) AS current_stock
+    p.p_stock AS current_stock
 FROM 
     product p
 LEFT JOIN 
