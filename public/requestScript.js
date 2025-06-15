@@ -135,6 +135,30 @@ async function getCustomerCountOnGym() {
     return await tryFetchJson("/customer/countOnGym", req);
 }
 
+async function getAllProduct() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/product/data", req);
+}
+
+async function purchaseProducts(productsCart) {
+    const req = {
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify({
+            "purchase": productsCart
+        })
+    }
+}
+
+
 
 export{
     tryFetchJson,
@@ -151,4 +175,7 @@ export{
 
     getCustomerAppointment,
     getCustomerCountOnGym,
+
+    getAllProduct,
+    purchaseProducts,
 }
