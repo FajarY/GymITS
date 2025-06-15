@@ -184,10 +184,20 @@ async function purchaseProducts(productsCart) {
         headers: {
             "Content-Type" : "application/json"
         },
-        body: JSON.stringify({
-            "purchase": productsCart
-        })
+        body: JSON.stringify(productsCart)
     }
+
+    return await tryFetchJson("/product/purchase", req);
+}
+
+async function getBoughtProducts() {
+   const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+    return await tryFetchJson("/product/bought", req);
 }
 
 async function getReceiptHistory() {
@@ -224,6 +234,7 @@ export{
 
     getAllProduct,
     purchaseProducts,
+    getBoughtProducts,
 
     getReceiptHistory,
 }
