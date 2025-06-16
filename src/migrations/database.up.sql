@@ -299,7 +299,7 @@ FOR EACH ROW
 EXECUTE FUNCTION format_nomor_telephone();
 
 CREATE OR REPLACE TRIGGER trg_formatting_telephone
-BEFORE INSERT ON membership
+BEFORE INSERT OR UPDATE ON membership
 FOR EACH ROW
 EXECUTE FUNCTION format_nomor_telephone();
 

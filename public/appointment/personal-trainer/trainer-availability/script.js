@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const [_, trainer] = await getTrainerDetails(trainerId);
         const trainerName = trainer.data.name;
         document.getElementById('trainer-name').textContent = trainerName;
-        document.getElementById('trainer-price').textContent = `Rp ${parseInt(trainer.data.price_per_hour)} / Month`;
+        document.getElementById('trainer-price').textContent = `Rp ${parseInt(trainer.data.price_per_hour)} / Hour`;
         document.getElementById('modal-trainer-name').textContent = trainerName;
         const formattedName = trainerName.replace(/\s/g, '+');
         document.getElementById('trainer-image').src = `https://ui-avatars.com/api/?name=${formattedName}&background=0D8ABC&color=fff&size=128`;
@@ -279,6 +279,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     nextMonthBtn.addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() + 1);
+        console.log(monthlyAvailability)
         fetchMonthlyAvailability();
     });
 
