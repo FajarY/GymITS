@@ -19,6 +19,11 @@ const parseJwt = (token) => {
     return JSON.parse(jsonPayload);
 }
 
+if (parseJwt(getCookie("token")) == null || parseJwt(getCookie("token")).role != 'trainer') {
+    window.location.href = '/login/trainer'
+}
+
+
 const getMonthavailability = async (month, year) => {
     const parsed = parseJwt(getCookie("token"))
     const req = {

@@ -141,8 +141,8 @@ router.post('/purchase', authenticate, authorize('customer'), purchaseProduct);
 router.post('/',authenticate, authorize('employee'), addNewProduct);
 router.post('/:id', authenticate, authorize('employee'),addStockToProduct);
 router.patch('/:id', authenticate, authorize('employee'), updateProduct);
-router.get('/summary/data', authenticate, productSummary);
-router.get('/:id/employee/summary', authenticate, percentageAddOnProductByemployee);
+router.get('/summary/data', authenticate, authorize('employee'), productSummary);
+router.get('/:id/employee/summary', authenticate, authorize('employee'), percentageAddOnProductByemployee);
 router.get('/productsDiscountsTotal', authenticate, authorize('employee'), getProductsDiscountSummary);
 
 async function purchaseProduct(req, res)

@@ -196,6 +196,6 @@ router.get('/countOnGym', customerOnGym);
 router.get('/training-session-statistic', authenticate, authorize('customer'), getTrainingSessionStatistic);
 router.get('/total-spending', authenticate, authorize('customer'), getCustomerTotalSpending);
 
-router.get('/efficiencyAllMemberships', efficiencyAllMembersipCustomer)
+router.get('/efficiencyAllMemberships', authenticate, authorize('employee'), efficiencyAllMembersipCustomer)
 
 module.exports = router;
