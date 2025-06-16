@@ -79,31 +79,9 @@
                                 <th class="p-4 text-sm font-semibold text-slate-600 text-right">Stok Saat Ini</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-200">
-                            <!-- Data example, ordered by total_revenue DESC -->
-                            <tr>
-                                <td class="p-4 font-medium text-gray-800">Premium Whey Protein</td>
-                                <td class="p-4 text-right">150</td>
-                                <td class="p-4 text-right">Rp 37.500.000</td>
-                                <td class="p-4 text-right">50</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 font-medium text-gray-800">Pro Lifting Gloves</td>
-                                <td class="p-4 text-right">95</td>
-                                <td class="p-4 text-right">Rp 11.875.000</td>
-                                <td class="p-4 text-right">25</td>
-                            </tr>
-                             <tr>
-                                <td class="p-4 font-medium text-gray-800">GymITS Shaker Bottle</td>
-                                <td class="p-4 text-right">120</td>
-                                <td class="p-4 text-right">Rp 9.000.000</td>
-                                <td class="p-4 text-right">80</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 font-medium text-gray-800">Yoga Mat</td>
-                                <td class="p-4 text-right">40</td>
-                                <td class="p-4 text-right">Rp 6.000.000</td>
-                                <td class="p-4 text-right">60</td>
+                        <tbody id="summary-tbody" class="divide-y divide-slate-200">
+                            <tr id="loading-row">
+                                <td colspan="4" class="p-8 text-center text-gray-500">Memuat data...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -113,5 +91,6 @@
         </main>
       </div>
     </div>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

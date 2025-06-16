@@ -79,20 +79,9 @@
                                 <th class="p-4 text-sm font-semibold text-slate-600">Waktu</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-200">
-                            <!-- Contoh Data dari Tabel Log -->
-                            <tr>
-                                <td class="p-4 font-medium text-gray-800">1</td>
-                                <td class="p-4 font-mono text-sm text-gray-500">PT000023</td>
-                                <td class="p-4 font-mono text-sm text-gray-500">E0000001</td>
-                                <td class="p-4 text-gray-600">2025-06-12 16:58:11</td>
-                            </tr>
-                            <!-- Baris data log lainnya akan muncul di sini -->
-                             <tr>
-                                <td class="p-4 font-medium text-gray-800">2</td>
-                                <td class="p-4 font-mono text-sm text-gray-500">PT000024</td>
-                                <td class="p-4 font-mono text-sm text-gray-500">E0000002</td>
-                                <td class="p-4 text-gray-600">2025-06-13 10:15:30</td>
+                        <tbody id="log-tbody" class="divide-y divide-slate-200">
+                            <tr id="loading-row">
+                                <td colspan="4" class="p-8 text-center text-gray-500">Memuat data...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -102,5 +91,6 @@
         </main>
       </div>
     </div>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

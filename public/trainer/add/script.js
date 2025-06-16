@@ -6,9 +6,20 @@ const getTrainers = async () => {
     }
     return await tryFetchJson("/personaltrainer/data", req);
 }
+const createTrainer = async (payload) => {
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    };
+    return await tryFetchJson('/personaltrainer', requestOptions);
+}
 
 const loadData = async () => {
   const container = document.getElementById('trainer-list');
+  container.innerHTML = ''; 
   const [_, res] = await getTrainers();
 
   const datas = res.data;
@@ -55,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- Handle FORM Submission ---
-  createTrainerForm.addEventListener('submit', (event) => {
+  createTrainerForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     // Get all input elements from the form
@@ -96,31 +107,23 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    const newTrainerData = {
+        name: nameInput.value,
+        alamat: addressInput.value,
+        password: passwordInput.value,
+        telephone: phoneInput.value,
+        gender: (genderInput.value === "Male") ? "M" : "F", // Konversi gender
+        price_per_hour: price
+    };
+    const [error, response] = await createTrainer(newTrainerData);
 
-    // Simulate sending to backend and getting a new ID
-    const newTrainerId = Date.now(); // Use timestamp as a unique ID for this example
+    alert('Trainer created successfully!');
+    console.log("Server response:", response);
     
-    console.log("Creating new trainer with the following data:");
-    console.log({ id: newTrainerId, name, phone, password, gender, address, price });
-
-    // Create the new trainer card HTML
-    const newCard = document.createElement('div');
-    newCard.className = 'trainer-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden';
-    newCard.setAttribute('data-trainer-id', newTrainerId);
-    newCard.innerHTML = `
-      <img src="https://placehold.co/400x300/4a5568/white?text=Trainer" alt="Trainer Image" class="w-full h-48 object-cover">
-      <div class="p-6 flex-grow flex flex-col">
-          <h3 class="trainer-name text-xl font-bold text-[#0d141c]">${name}</h3>
-          <p class="trainer-gender text-sm text-gray-500">${gender}</p>
-          <p class="trainer-price text-lg font-semibold text-gray-700 mt-2">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price)} / hour</p>
-          <p class="trainer-phone text-sm text-gray-500 mt-2">Tel: ${phone}</p>
-      </div>
-    `;
-
-    // Add the new card to the list and reset the form
-    trainerListContainer.appendChild(newCard);
     createTrainerForm.reset();
     closeModal();
+    
+    await loadData(); 
   });
   loadData();
 });

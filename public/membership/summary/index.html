@@ -82,51 +82,10 @@
                                 <th class="p-4 text-sm font-semibold text-slate-600">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-200">
-                            <!-- Contoh Data dari VIEW -->
-                            <tr>
-                                <td class="p-4 font-mono text-sm text-gray-500">M0000001</td>
-                                <td class="p-4 font-medium text-gray-800">Andi Saputra</td>
-                                <td class="p-4 text-gray-600">081234567890</td>
-                                <td class="p-4 text-gray-600">2025-01-15</td>
-                                <td class="p-4 text-gray-600">2026-01-15</td>
-                                <td class="p-4 text-gray-600">Gold</td>
-                                <td class="p-4">
-                                    <span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">active</span>
-                                </td>
-                            </tr>
-                             <tr>
-                                <td class="p-4 font-mono text-sm text-gray-500">M0000002</td>
-                                <td class="p-4 font-medium text-gray-800">Citra Lestari</td>
-                                <td class="p-4 text-gray-600">081222334455</td>
-                                <td class="p-4 text-gray-600">2025-05-20</td>
-                                <td class="p-4 text-gray-600">2025-06-20</td>
-                                <td class="p-4 text-gray-600">Bronze</td>
-                                <td class="p-4">
-                                     <span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">active</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 font-mono text-sm text-gray-500">M0000003</td>
-                                <td class="p-4 font-medium text-gray-800">Budi Setiawan</td>
-                                <td class="p-4 text-gray-600">081255667788</td>
-                                <td class="p-4 text-gray-600">2024-06-01</td>
-                                <td class="p-4 text-gray-600">2025-06-01</td>
-                                <td class="p-4 text-gray-600">Silver</td>
-                                <td class="p-4">
-                                     <span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-200 rounded-full">expired</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 font-mono text-sm text-gray-500">M0000004</td>
-                                <td class="p-4 font-medium text-gray-800">Eko Prasetyo</td>
-                                <td class="p-4 text-gray-600">081211223344</td>
-                                <td class="p-4 text-gray-600">2025-06-10</td>
-                                <td class="p-4 text-gray-600">2026-06-10</td>
-                                <td class="p-4 text-gray-600">Gold</td>
-                                 <td class="p-4">
-                                    <span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">active</span>
-                                </td>
+                        <tbody id="membership-tbody" class="divide-y divide-slate-200">
+                            <!-- Data akan diisi oleh JavaScript -->
+                             <tr id="loading-row">
+                                <td colspan="7" class="p-8 text-center text-gray-500">Memuat data...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -136,5 +95,6 @@
         </main>
       </div>
     </div>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

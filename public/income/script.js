@@ -1,3 +1,5 @@
+import { getRevenueOnDay } from "../../requestScript.js";
+
 document.addEventListener('DOMContentLoaded', () => {
     const datePicker = document.getElementById('date-picker');
     const genderRadios = document.querySelectorAll('input[name="gender"]');
@@ -14,29 +16,32 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {string} onGender - Gender ('M' atau 'F').
      */
     async function fetchIncomeData(onDate, onGender) {
-        const formattedDate = new Date(onDate).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const formattedDate = new Date(onDate + 'T00:00:00').toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
         const genderText = onGender === 'M' ? 'Pria' : 'Wanita';
 
         reportTitleEl.textContent = `Total Pendapatan (${genderText}) pada ${formattedDate}`;
         totalRevenueEl.textContent = 'Memuat...';
 
-        console.log(`Memanggil fungsi REVENUE_ON_AND_GENDER untuk tanggal: ${onDate} dan gender: ${onGender}`);
-
-        // --- SIMULASI PEMANGGILAN BACKEND ---
-        // Ganti ini dengan logika fetch API yang sesungguhnya ke backend Anda.
-        // Backend akan memanggil function PostgreSQL yang telah dibuat.
-        const mockRevenue = Math.random() * 7500000;
-        // --- AKHIR SIMULASI ---
-        
-        setTimeout(() => { // Simulasi jeda jaringan
-            const formatAsIDR = (value) => new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
-            }).format(value);
-
-            totalRevenueEl.textContent = formatAsIDR(mockRevenue);
-        }, 500);
+        try {
+            const [response, data] = await getRevenueOnDay(onDate, onGender);
+            
+            if (response.ok && data.status) {
+                const revenue = data.data.revenue_on_and_gender;
+                const formatAsIDR = (value) => new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                }).format(parseFloat(value) || 0);
+                
+                totalRevenueEl.textContent = formatAsIDR(revenue);
+            } else {
+                totalRevenueEl.textContent = "Gagal memuat";
+                console.error("Gagal mengambil data:", data.message);
+            }
+        } catch (error) {
+            totalRevenueEl.textContent = "Error";
+            console.error("Terjadi kesalahan saat fetch:", error);
+        }
     }
 
     // Fungsi untuk memicu pembaruan data

@@ -78,32 +78,9 @@
                                 <th class="p-4 text-sm font-semibold text-slate-600">Role</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-200">
-                            <!-- Contoh Data dari VIEW -->
-                            <tr>
-                                <td class="p-4 font-medium text-gray-800">Andi Saputra</td>
-                                <td class="p-4 text-gray-600">M</td>
-                                <td class="p-4 text-gray-800">Customer Gold</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 font-medium text-gray-800">Budi Santoso</td>
-                                <td class="p-4 text-gray-600">M</td>
-                                <td class="p-4 text-gray-800">Personal Trainer</td>
-                            </tr>
-                             <tr>
-                                <td class="p-4 font-medium text-gray-800">Citra Lestari</td>
-                                <td class="p-4 text-gray-600">F</td>
-                                <td class="p-4 text-gray-800">Customer Bronze</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 font-medium text-gray-800">Dewi Anggraini</td>
-                                <td class="p-4 text-gray-600">F</td>
-                                <td class="p-4 text-gray-800">Customer</td>
-                            </tr>
-                            <tr>
-                                <td class="p-4 font-medium text-gray-800">Siti Aminah</td>
-                                <td class="p-4 text-gray-600">F</td>
-                                <td class="p-4 text-gray-800">Employee</td>
+                        <tbody id="people-tbody" class="divide-y divide-slate-200">
+                            <tr id="loading-row">
+                                <td colspan="3" class="p-8 text-center text-gray-500">Memuat data...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -113,5 +90,6 @@
         </main>
       </div>
     </div>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

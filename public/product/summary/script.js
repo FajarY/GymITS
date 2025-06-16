@@ -1,81 +1,63 @@
-// script.js for /product/summary
+import { getProductSummary } from "../../requestScript.js";
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const productSummaryTableBody = document.getElementById('product-summary-table-body');
-    const loadingMessage = document.getElementById('loading-message');
-    const noResultsMessage = document.getElementById('no-results');
+document.addEventListener("DOMContentLoaded", async () => {
+    const tableBody = document.getElementById("summary-tbody");
+    const loadingRow = document.getElementById("loading-row");
 
-    // Mock data based on your SQL query results
-    const mockProductData = [
-        {
-            p_id: 1,
-            p_name: "Protein Powder (Whey)",
-            total_unit_sold: 150,
-            total_revenue: 7500000, // Example: 7,500,000 IDR
-            current_stock: 50
-        },
-        {
-            p_id: 2,
-            p_name: "Creatine Monohydrate",
-            total_unit_sold: 80,
-            total_revenue: 1600000, // Example: 1,600,000 IDR
-            current_stock: 20
-        },
-        {
-            p_id: 3,
-            p_name: "Pre-Workout Supplement",
-            total_unit_sold: 120,
-            total_revenue: 3000000, // Example: 3,000,000 IDR
-            current_stock: 30
-        },
-        {
-            p_id: 4,
-            p_name: "Gym Gloves",
-            total_unit_sold: 200,
-            total_revenue: 1000000, // Example: 1,000,000 IDR
-            current_stock: 100
-        },
-        {
-            p_id: 5,
-            p_name: "Resistance Bands Set",
-            total_unit_sold: 40,
-            total_revenue: 800000, // Example: 800,000 IDR
-            current_stock: 10
-        },
-        // Example of a product with no sales yet
-        {
-            p_id: 6,
-            p_name: "Yoga Mat",
-            total_unit_sold: 0,
-            total_revenue: 0,
-            current_stock: 25
+    /**
+     * Memformat angka sebagai mata uang Rupiah.
+     * @param {number|string} value - Angka yang akan diformat.
+     * @returns {string} String mata uang yang telah diformat.
+     */
+    function formatAsIDR(value) {
+        const numberValue = parseFloat(value);
+        if (isNaN(numberValue)) return 'N/A';
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(numberValue);
+    }
+
+    /**
+     * Merender data ringkasan produk ke dalam tabel.
+     * @param {object[]} summaryData - Array objek data ringkasan produk.
+     */
+    function renderSummaryTable(summaryData) {
+        tableBody.innerHTML = ""; // Hapus pesan "loading"
+
+        if (!summaryData || summaryData.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-gray-500">Tidak ada data ringkasan produk yang ditemukan.</td></tr>`;
+            return;
         }
-    ];
 
+        summaryData.forEach(item => {
+            const stock = parseInt(item.current_stock, 10);
+            // Tambahkan kelas warna merah jika stok negatif
+            const stockClass = stock < 0 ? 'text-red-600 font-bold' : 'text-gray-800';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="p-4 font-medium text-gray-800">${item.p_name}</td>
+                <td class="p-4 text-right">${item.total_unit_sold}</td>
+                <td class="p-4 text-right">${formatAsIDR(item.total_revenue)}</td>
+                <td class="p-4 text-right ${stockClass}">${item.current_stock}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // --- INISIALISASI HALAMAN ---
     try {
-        const products = await new Promise(resolve => setTimeout(() => resolve(mockProductData), 500)); // Simulate 0.5-second delay
+        const [response, data] = await getProductSummary();
 
-        loadingMessage.classList.add('hidden'); // Hide loading message
-
-        if (products.length === 0) {
-            noResultsMessage.classList.remove('hidden');
+        if (response.ok && data.status) {
+            renderSummaryTable(data.data);
         } else {
-            products.forEach(product => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${product.p_name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.total_unit_sold}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp ${product.total_revenue.toLocaleString('id-ID')}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.current_stock}</td>
-                `;
-                productSummaryTableBody.appendChild(row);
-            });
+            loadingRow.innerHTML = `<td colspan="4" class="p-8 text-center text-red-500">Gagal memuat data: ${data.message || 'Error tidak diketahui'}</td>`;
         }
-
     } catch (error) {
-        console.error('Error loading product summary:', error);
-        loadingMessage.textContent = 'Failed to load product data. Please try again later.';
-        loadingMessage.classList.remove('hidden');
-        noResultsMessage.classList.add('hidden');
+        console.error("Error fetching product summary:", error);
+        loadingRow.innerHTML = `<td colspan="4" class="p-8 text-center text-red-500">Terjadi kesalahan saat mengambil data.</td>`;
     }
 });

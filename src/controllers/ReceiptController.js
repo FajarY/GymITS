@@ -95,6 +95,6 @@ async function getRevenueOnDay(req, res)
 }
 
 router.get('/history', authenticate, getAllReceipt);
-router.get('/revenueOnDay', authenticate, authorize('employee'), getRevenueOnDay);
+router.post('/revenueOnDay', authenticate, authorize('employee'), getRevenueOnDay);
 
 module.exports = router;

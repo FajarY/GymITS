@@ -92,7 +92,7 @@ const getAvailableTime = async (personal_trainer_id, month, year, day) => {
                 GROUP BY at_date
             ) AS temp;
         `
-        available_time = await db.admin.raw(rawQuery, [personal_trainer_id, personal_trainer_id, month, year, day]);
+        available_time = await db.pg.raw(rawQuery, [personal_trainer_id, personal_trainer_id, month, year, day]);
     } else {
         rawQuery = `
             SELECT at_date, availabilityTrainer(?, at_date) AS map_time
@@ -105,7 +105,7 @@ const getAvailableTime = async (personal_trainer_id, month, year, day) => {
                 GROUP BY at_date
             ) AS temp;
         `
-        available_time = await db.admin.raw(rawQuery, [personal_trainer_id, personal_trainer_id, month, year]);
+        available_time = await db.pg.raw(rawQuery, [personal_trainer_id, personal_trainer_id, month, year]);
     }
     return available_time.rows;
 }
@@ -183,7 +183,7 @@ const addAvailableTime = async (id, date, times) => {
     if (values.length === 0) return 0;
 
     const rawQuery = base + values.join(',\n') + ';';
-    const result = await db.trainer.raw(rawQuery);
+    const result = await db.pg.raw(rawQuery);
     
     return result.rowCount
 }

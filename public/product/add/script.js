@@ -1,157 +1,159 @@
-import { tryFetchJson } from "../../requestScript.js";
+import { tryFetchJson, postNewProduct, postAddStockProduct } from "../../requestScript.js"; // Pastikan postAddStockProduct diimpor
 
-const getProducts = async () => {
-    const req = {
-        method: "GET",
+function renderProducts(products, container) {
+    container.innerHTML = ''; // Kosongkan kontainer
+    if (!products || products.length === 0) {
+        container.innerHTML = '<p class="col-span-full text-center text-gray-500">Belum ada produk.</p>';
+        return;
     }
-    return await tryFetchJson("/product/data", req);
+
+    products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden';
+        card.dataset.productId = product.id; // Gunakan id dari data
+
+        card.innerHTML = `
+            <img src="https://placehold.co/400x300/3490f3/white?text=Gym+Product" alt="Product Image" class="w-full h-48 object-cover">
+            <div class="p-6 flex-grow flex flex-col">
+                <div class="flex-grow">
+                    <h3 class="product-name text-xl font-bold text-[#0d141c]">${product.name}</h3>
+                    <p class="product-price text-lg font-semibold text-gray-700 mt-2">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(product.price)}</p>
+                    <p class="text-sm text-gray-500 mt-2">Current Stock: <span class="product-stock font-bold">${product.stock}</span></p>
+                </div>
+                <div class="mt-6 flex flex-col sm:flex-row gap-2">
+                    <button class="add-stock-btn w-full px-4 py-3 rounded-lg bg-slate-200 text-slate-800 font-medium transition hover:bg-slate-300">
+                        Add Stock
+                    </button>
+                    <a href="/product/add/detail/?id=${product.id}" class="detail-btn w-full px-4 py-3 rounded-lg bg-indigo-500 text-white font-medium transition hover:bg-indigo-600 text-center flex items-center justify-center">
+                        Detail
+                    </a>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
 }
 
-const loadData = async () => {
-  const container = document.getElementById('product-list');
-  const [_, res] = await getProducts();
-
-  const datas = res.data;
-  console.log(datas)
-  for (const data of res.data) {
-    const template = `
-      <div class="product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden" data-product-id="1">
-        <img src="https://placehold.co/400x300/3490f3/white?text=Gym+Product" alt="Product Image" class="w-full h-48 object-cover">
-        <div class="p-6 flex-grow flex flex-col">
-          <div class="flex-grow">
-            <h3 class="product-name text-xl font-bold text-[#0d141c]">${data.name}</h3>
-            <p class="product-price text-lg font-semibold text-gray-700 mt-2">Rp ${parseInt(data.price)}</p>
-            <p class="text-sm text-gray-500 mt-2">Current Stock: <span class="product-stock font-bold">${parseInt(data.stock)}</span></p>
-          </div>
-          <button class="add-stock-btn mt-6 w-full h-12 cursor-pointer rounded-lg bg-slate-200 text-slate-800 font-medium transition hover:bg-slate-300">
-            Add Stock
-          </button>
-        </div>
-      </div>
-    `
-    container.innerHTML += template
-  }
+async function loadData(container, loadingMessage) {
+    try {
+        const [response, res] = await tryFetchJson("/product/data");
+        if (response.ok && res.status) {
+            // Urutkan data berdasarkan ID produk sebelum merender
+            const sortedData = res.data.sort((a, b) => a.id.localeCompare(b.id));
+            renderProducts(sortedData, container);
+        } else {
+            loadingMessage.textContent = 'Gagal memuat produk.';
+            loadingMessage.style.color = 'red';
+        }
+    } catch (error) {
+        console.error('Error loading products:', error);
+        loadingMessage.textContent = 'Terjadi kesalahan.';
+        loadingMessage.style.color = 'red';
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // --- Mendapatkan semua elemen yang diperlukan dari DOM ---
   const createProductBtn = document.getElementById('create-product-btn');
   const createProductModal = document.getElementById('create-product-modal');
   const createProductForm = document.getElementById('create-product-form');
   const cancelCreateBtn = document.getElementById('cancel-create-btn');
-
   const addStockModal = document.getElementById('add-stock-modal');
   const addStockForm = document.getElementById('add-stock-form');
   const cancelStockBtn = document.getElementById('cancel-stock-btn');
   const stockProductName = document.getElementById('stock-product-name');
   const stockProductIdInput = document.getElementById('stockProductId');
-
   const productListContainer = document.getElementById('product-list');
+  const loadingMessage = document.getElementById('loading-message');
 
-  // --- Event Listener untuk MEMBUKA modal ---
   createProductBtn.addEventListener('click', () => {
     createProductModal.classList.remove('hidden');
   });
 
-  // Menggunakan event delegation untuk menangani klik pada tombol "Add Stock"
   productListContainer.addEventListener('click', (event) => {
-      // Kita hanya peduli pada tombol "Add Stock" di sini. Tombol "Detail" adalah link dan berfungsi sendiri.
       if (event.target.classList.contains('add-stock-btn')) {
           const card = event.target.closest('.product-card');
           const productId = card.dataset.productId;
           const productName = card.querySelector('.product-name').textContent;
-
-          // Mengatur data untuk modal
           stockProductName.textContent = productName;
           stockProductIdInput.value = productId;
-          
           addStockModal.classList.remove('hidden');
       }
   });
 
-  // --- Event Listener untuk MENUTUP modal ---
   function closeModal() {
     createProductModal.classList.add('hidden');
     addStockModal.classList.add('hidden');
   }
+
   cancelCreateBtn.addEventListener('click', closeModal);
   cancelStockBtn.addEventListener('click', closeModal);
   createProductModal.addEventListener('click', (e) => e.target === createProductModal && closeModal());
   addStockModal.addEventListener('click', (e) => e.target === addStockModal && closeModal());
 
-  // --- Menangani Pengiriman FORM ---
-
-  // 1. Form Pembuatan Produk
-  createProductForm.addEventListener('submit', (event) => {
+  // --- LOGIKA FORM PEMBUATAN PRODUK ---
+  createProductForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const name = document.getElementById('productName').value;
     const price = parseFloat(document.getElementById('productPrice').value);
 
-    // --- ATURAN VALIDASI untuk Harga ---
+    // Validasi harga
     if (price < 0 || price > 99999999) {
         alert("Error: Harga harus antara 0 dan 99,999,999.");
-        return; // Hentikan fungsi
+        return;
     }
 
-    // Simulasi pengiriman ke backend dan mendapatkan ID baru
-    const newProductId = Date.now(); // Gunakan timestamp sebagai ID unik untuk contoh ini
-    console.log(`Membuat produk: ${name}, Harga: ${price}, ID: ${newProductId}`);
-    
-    // Membuat HTML kartu produk baru dengan kedua tombol
-    const newCard = document.createElement('div');
-    newCard.className = 'product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden';
-    newCard.setAttribute('data-product-id', newProductId);
-    newCard.innerHTML = `
-      <img src="https://placehold.co/400x300/3490f3/white?text=Gym+Product" alt="Product Image" class="w-full h-48 object-cover">
-      <div class="p-6 flex-grow flex flex-col">
-          <div class="flex-grow">
-              <h3 class="product-name text-xl font-bold text-[#0d141c]">${name}</h3>
-              <p class="product-price text-lg font-semibold text-gray-700 mt-2">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price)}</p>
-              <p class="text-sm text-gray-500 mt-2">Current Stock: <span class="product-stock font-bold">0</span></p>
-          </div>
-          <div class="mt-6 flex flex-col sm:flex-row gap-2">
-            <button class="add-stock-btn w-full px-4 py-3 rounded-lg bg-slate-200 text-slate-800 font-medium transition hover:bg-slate-300">
-                Add Stock
-            </button>
-            <a href="/product/add/detail/?id=${newProductId}" class="detail-btn w-full px-4 py-3 rounded-lg bg-indigo-500 text-white font-medium transition hover:bg-indigo-600 text-center flex items-center justify-center">
-                Detail
-            </a>
-          </div>
-      </div>
-    `;
+    try {
+        const [response, res] = await postNewProduct(name, price);
 
-    // Menambahkan kartu baru ke daftar dan mereset form
-    productListContainer.appendChild(newCard);
-    createProductForm.reset();
-    closeModal();
+        if (response.ok && res.status) {
+            alert('Produk berhasil ditambahkan!');
+            
+            // Memuat ulang seluruh daftar produk dari server
+            loadData(productListContainer, loadingMessage);
+            
+            createProductForm.reset();
+            closeModal();
+        } else {
+            alert(`Gagal membuat produk: ${res.message || 'Error tidak diketahui'}`);
+        }
+    } catch (error) {
+        console.error('Error saat membuat produk:', error);
+        alert('Terjadi kesalahan saat menghubungi server.');
+    }
   });
 
 
-  // 2. Form Penambahan Stok
-  addStockForm.addEventListener('submit', (event) => {
+  // --- LOGIKA FORM PENAMBAHAN STOK ---
+  addStockForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const productId = stockProductIdInput.value;
     const quantity = parseInt(document.getElementById('stockQuantity').value, 10);
 
-    // --- ATURAN VALIDASI untuk Kuantitas Stok ---
+    // Validasi kuantitas
     if (quantity < 1 || quantity > 9999) {
         alert("Error: Kuantitas stok yang ditambahkan harus antara 1 dan 9,999.");
-        return; // Hentikan fungsi
+        return;
     }
 
-    console.log(`Menambahkan ${quantity} stok ke produk ID: ${productId}`);
+    try {
+        const [response, res] = await postAddStockProduct(productId, quantity);
 
-    // Menemukan kartu produk yang benar untuk diperbarui
-    const productCardToUpdate = document.querySelector(`.product-card[data-product-id='${productId}']`);
-    if (productCardToUpdate) {
-      const stockElement = productCardToUpdate.querySelector('.product-stock');
-      const currentStock = parseInt(stockElement.textContent, 10);
-      stockElement.textContent = currentStock + quantity;
+        if (response.ok && res.status) {
+            alert('Stok berhasil ditambahkan!');
+            
+            // Memuat ulang seluruh daftar produk dari server untuk memperbarui stok
+            loadData(productListContainer, loadingMessage);
+            
+            addStockForm.reset();
+            closeModal();
+        } else {
+             alert(`Gagal menambahkan stok: ${res.message || 'Error tidak diketahui'}`);
+        }
+    } catch (error) {
+        console.error('Error saat menambahkan stok:', error);
+        alert('Terjadi kesalahan saat menghubungi server.');
     }
-    
-    addStockForm.reset();
-    closeModal();
   });
 
-  loadData();
+  loadData(productListContainer, loadingMessage);
 });
