@@ -228,10 +228,10 @@ router.get('/profile', authenticate, profile);
 router.get('/appointments', authenticate, authorize('trainer'), trainerAppointments);
 router.get('/income', authenticate, authorize('trainer'), income);
 router.get('/log', authenticate, authorize('employee'), getNewTrainerLog);
+router.get('/efficiencyAllPTAvailableTimes', efficiencyAllPTAvailableTimes)
+router.post('/available-time', authenticate, authorize('trainer'), addAvailableTime);
 router.get('/:id/availability', authenticate, getPersonalTrainerAvailability);
 router.get('/:id', authenticate, getPersonalTrainer);
 
-router.get('/efficiencyAllPTAvailableTimes', efficiencyAllPTAvailableTimes)
-router.post('/available-time', authenticate, authorize('trainer'), addAvailableTime);
 
 module.exports = router;

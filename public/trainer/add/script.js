@@ -23,7 +23,6 @@ const loadData = async () => {
   const [_, res] = await getTrainers();
 
   const datas = res.data;
-  console.log(datas);
   for(const data of datas) {
     const template  = `
       <div class="trainer-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden" data-trainer-id="1">
