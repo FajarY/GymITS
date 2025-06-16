@@ -1,12 +1,15 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../../output.css" />
     <title>GymITS - Products</title>
   </head>
   <body>
     <div
       class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden pb-28"
-      style='font-family: "Space Grotesk", "Noto Sans", sans-serif'
+      style="font-family: 'Space Grotesk', 'Noto Sans', sans-serif"
     >
       <div class="layout-container flex h-full grow flex-col">
         <header
@@ -53,12 +56,14 @@
             </div>
             <div
               class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-              style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA_FEpA415mYDgkIUjRCHqFqXsuUJLr9MRU-azl8V1dUy0QG28Lv1_v3K-uXZe6cJzAP_DJT5jfMnCdwiYSpToDmFL9fwcIfYQi9qTvTyjXv4GehrbcrnNeIcrO1bVeRRTTcao0UqxGurmqM_2CklAk9XFkRH9mUD0maR7VU3lyyThrcbp_UmD1SmIC3kWGfS2lqJ71JILZre_AcBYPJwpJrgzbDTkfQl5WbZRthWAHPX8oSU0LV95GnQhEfJfg3uwR9wpe0TClUVo");'
+              style="
+                background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA_FEpA415mYDgkIUjRCHqFqXsuUJLr9MRU-azl8V1dUy0QG28Lv1_v3K-uXZe6cJzAP_DJT5jfMnCdwiYSpToDmFL9fwcIfYQi9qTvTyjXv4GehrbcrnNeIcrO1bVeRRTTcao0UqxGurmqM_2CklAk9XFkRH9mUD0maR7VU3lyyThrcbp_UmD1SmIC3kWGfS2lqJ71JILZre_AcBYPJwpJrgzbDTkfQl5WbZRthWAHPX8oSU0LV95GnQhEfJfg3uwR9wpe0TClUVo');
+              "
             ></div>
           </div>
         </header>
 
-        <div class="px-10 lg:px-40 flex-1 py-5">
+        <main class="px-10 lg:px-40 flex-1 py-5">
           <div class="max-w-[960px] mx-auto">
             <div class="flex flex-wrap justify-between items-center gap-4 p-4">
               <p
@@ -66,136 +71,19 @@
               >
                 Our Products
               </p>
-              <button id="filter-purchased-btn" class="px-4 py-2 text-sm font-medium text-white bg-[#3490f3] rounded-lg hover:bg-[#2579d5] transition">
-                  Show My Purchases
+              <button
+                id="filter-purchased-btn"
+                class="px-4 py-2 text-sm font-medium text-white bg-[#3490f3] rounded-lg hover:bg-[#2579d5] transition"
+              >
+                Show My Purchases
               </button>
             </div>
             <div
               id="product-grid"
               class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4"
-            >
-              <div
-                class="product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden"
-                data-product-id="1"
-                data-price="250000"
-                data-stock="15"
-              >
-                <img
-                  src="https://placehold.co/400x300/3490f3/white?text=Gym+Product"
-                  alt="Product Image"
-                  class="w-full h-48 object-cover"
-                />
-                <div class="p-6 flex-grow flex flex-col">
-                  <div class="flex-grow">
-                    <h3 class="text-xl font-bold text-[#0d141c]">
-                      Premium Whey Protein
-                    </h3>
-                    <p class="text-lg font-semibold text-[#3490f3] mt-2">
-                      Rp 250,000
-                    </p>
-                    <p class="text-sm text-gray-500 mt-1">Stock: 15</p>
-                  </div>
-                  <div class="mt-6 flex items-center justify-center gap-4">
-                    <button
-                      class="quantity-minus size-10 rounded-full bg-slate-200 text-2xl font-bold text-slate-700 transition hover:bg-slate-300"
-                    >
-                      -
-                    </button>
-                    <span
-                      class="quantity-value text-2xl font-bold text-[#0d141c] w-10 text-center"
-                      >0</span
-                    >
-                    <button
-                      class="quantity-plus size-10 rounded-full bg-slate-200 text-2xl font-bold text-slate-700 transition hover:bg-slate-300"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden"
-                data-product-id="2"
-                data-price="75000"
-                data-stock="30"
-              >
-                <img
-                  src="https://placehold.co/400x300/3490f3/white?text=Gym+Product"
-                  alt="Product Image"
-                  class="w-full h-48 object-cover"
-                />
-                <div class="p-6 flex-grow flex flex-col">
-                  <div class="flex-grow">
-                    <h3 class="text-xl font-bold text-[#0d141c]">
-                      GymITS Shaker Bottle
-                    </h3>
-                    <p class="text-lg font-semibold text-[#3490f3] mt-2">
-                      Rp 75,000
-                    </p>
-                    <p class="text-sm text-gray-500 mt-1">Stock: 30</p>
-                  </div>
-                  <div class="mt-6 flex items-center justify-center gap-4">
-                    <button
-                      class="quantity-minus size-10 rounded-full bg-slate-200 text-2xl font-bold text-slate-700 transition hover:bg-slate-300"
-                    >
-                      -
-                    </button>
-                    <span
-                      class="quantity-value text-2xl font-bold text-[#0d141c] w-10 text-center"
-                      >0</span
-                    >
-                    <button
-                      class="quantity-plus size-10 rounded-full bg-slate-200 text-2xl font-bold text-slate-700 transition hover:bg-slate-300"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="product-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden"
-                data-product-id="3"
-                data-price="125000"
-                data-stock="8"
-              >
-                <img
-                  src="https://placehold.co/400x300/3490f3/white?text=Gym+Product"
-                  alt="Product Image"
-                  class="w-full h-48 object-cover"
-                />
-                <div class="p-6 flex-grow flex flex-col">
-                  <div class="flex-grow">
-                    <h3 class="text-xl font-bold text-[#0d141c]">
-                      Pro Lifting Gloves
-                    </h3>
-                    <p class="text-lg font-semibold text-[#3490f3] mt-2">
-                      Rp 125,000
-                    </p>
-                    <p class="text-sm text-gray-500 mt-1">Stock: 8</p>
-                  </div>
-                  <div class="mt-6 flex items-center justify-center gap-4">
-                    <button
-                      class="quantity-minus size-10 rounded-full bg-slate-200 text-2xl font-bold text-slate-700 transition hover:bg-slate-300"
-                    >
-                      -
-                    </button>
-                    <span
-                      class="quantity-value text-2xl font-bold text-[#0d141c] w-10 text-center"
-                      >0</span
-                    >
-                    <button
-                      class="quantity-plus size-10 rounded-full bg-slate-200 text-2xl font-bold text-slate-700 transition hover:bg-slate-300"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              </div>
-              </div>
+            ></div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
 
@@ -207,9 +95,7 @@
       >
         <div class="text-left">
           <p class="text-sm text-gray-500">Total Price</p>
-          <p id="total-price" class="text-2xl font-bold text-[#0d141c]">
-            Rp 0
-          </p>
+          <p id="total-price" class="text-2xl font-bold text-[#0d141c]">Rp 0</p>
         </div>
         <button
           id="buy-btn"
@@ -220,6 +106,6 @@
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

@@ -61,6 +61,17 @@ async function getUserProfile() {
     return await tryFetchJson("/customer/profile", req);
 }
 
+async function getTotalSpending() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/customer/total-spending", req);
+}
+
 async function loginEmployee(employee_id, password) {
     const req = {
         method: "POST",
@@ -238,6 +249,93 @@ async function getTrainerProfile() {
     return await tryFetchJson("/personaltrainer/profile", req);
 }
 
+async function getAllTrainers(filter) {
+    const base_url = "/personaltrainer/data";
+    const url = new URL(base_url, window.location.origin);
+    
+    if (filter === undefined) {
+        filter = null;
+    }
+    else if (filter !== null) {
+        url.searchParams.append("filter", filter);
+    }
+    
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson(url, req);
+}
+
+async function getCustomerAppointment() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/customer/appointments", req);
+}
+
+async function getCustomerCountOnGym() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/customer/countOnGym", req);
+}
+
+async function getAllProduct() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/product/data", req);
+}
+
+async function purchaseProducts(productsCart) {
+    const req = {
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify(productsCart)
+    }
+
+    return await tryFetchJson("/product/purchase", req);
+}
+
+async function getBoughtProducts() {
+   const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+    return await tryFetchJson("/product/bought", req);
+}
+
+async function getReceiptHistory() {
+    const req = {
+        method: "GET",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+    };
+
+    return await tryFetchJson("/receipt/history", req);
+}
+
 
 
 export{
@@ -246,6 +344,7 @@ export{
     userLogin,
     userRegister,
     getUserProfile,
+    getTotalSpending,
 
     loginEmployee,
     getEmployeeProfile,
@@ -263,4 +362,15 @@ export{
 
     loginTrainer,
     getTrainerProfile,
+    getAllTrainers,
+
+
+    getCustomerAppointment,
+    getCustomerCountOnGym,
+
+    getAllProduct,
+    purchaseProducts,
+    getBoughtProducts,
+
+    getReceiptHistory,
 }

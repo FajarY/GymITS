@@ -1,12 +1,15 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../../output.css" />
     <title>GymITS - Find a Trainer</title>
   </head>
   <body>
     <div
       class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden"
-      style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'
+      style='font-family: "Space Grotesk", "Noto Sans", sans-serif'
     >
       <div class="layout-container flex h-full grow flex-col">
         <header
@@ -58,30 +61,46 @@
           </div>
         </header>
 
-        <!-- Main Content -->
         <main class="flex flex-1 flex-col items-center py-12 px-4">
-            <div class="w-full max-w-6xl">
-                <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
-                    <div>
-                        <h1 class="text-4xl font-bold text-[#0d141c]">Find a Personal Trainer</h1>
-                        <p class="text-gray-500 mt-1">Browse our experts and book your next session.</p>
-                    </div>
-                     <button id="filter-trainers-btn" class="px-4 py-2 text-sm font-medium text-white bg-[#3490f3] rounded-lg hover:bg-[#2579d5] transition self-start md:self-center">
-                        Show My Previous Trainers
-                    </button>
-                </div>
-                <!-- This container will be populated by JavaScript -->
-                <div id="trainer-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    <p id="loading-message" class="col-span-full text-center text-gray-500">Loading trainers...</p>
-                </div>
-                 <div id="no-results" class="hidden text-center py-12 col-span-full">
-                    <h3 class="text-xl font-bold text-gray-700">No Trainers Found</h3>
-                </div>
+          <div class="w-full max-w-6xl">
+            <div
+              class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8"
+            >
+              <div>
+                <h1 class="text-4xl font-bold text-[#0d141c]">
+                  Find a Personal Trainer
+                </h1>
+                <p class="text-gray-500 mt-1">
+                  Browse our experts and book your next session.
+                </p>
+              </div>
+              <button
+                id="filter-trainers-btn"
+                class="px-4 py-2 text-sm font-medium text-white bg-[#3490f3] rounded-lg hover:bg-[#2579d5] transition self-start md:self-center"
+              >
+                Show My Previous Trainers
+              </button>
             </div>
+            <div
+              id="trainer-list"
+              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+            >
+              <p
+                id="loading-message"
+                class="col-span-full text-center text-gray-500"
+              >
+                Loading trainers...
+              </p>
+            </div>
+            <div id="no-results" class="hidden text-center py-12 col-span-full">
+              <h3 class="text-xl font-bold text-gray-700">
+                No Trainers Found
+              </h3>
+            </div>
+          </div>
         </main>
-
       </div>
     </div>
-  <script type="module" src="./script.js"></script>
+    <script type="module" src="./script.js"></script>
   </body>
 </html>
