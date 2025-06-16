@@ -293,6 +293,41 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION availabilityTrainer(
+    trainer_id CHAR(8),
+    target_date DATE
+)
+RETURNS TEXT[]
+LANGUAGE PLPGSQL
+AS $$
+DECLARE
+    schedule TEXT[] := '{}';
+    hour INT;
+    mapping_time TEXT[21];
+    temp RECORD;
+BEGIN
+    FOR temp IN 
+        SELECT at_id, c_id, EXTRACT(HOUR FROM at_start_time) AS start
+        FROM available_time
+        WHERE pt_id = trainer_id AND at_date = target_date 
+    LOOP
+        IF temp.c_id IS NULL THEN 
+            mapping_time[temp.start] := temp.at_id;
+        ELSE
+            mapping_time[temp.start] := 'TAKEN';
+        END IF;
+    END LOOP;
+
+    FOR hour IN 8..21 LOOP
+        schedule := schedule || mapping_time[hour];
+    END LOOP;
+
+    RETURN schedule;
+END; 
+$$;
+
+
+
 CREATE OR REPLACE TRIGGER trg_formatting_telephone
 BEFORE INSERT ON personal_trainer
 FOR EACH ROW
