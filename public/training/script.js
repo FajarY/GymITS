@@ -57,7 +57,7 @@ async function initializeData()
   }
   catch(error)
   {
-    alert(error);
+    console.log(error)
   }
 }
 
@@ -68,8 +68,16 @@ async function initialize()
 
 initialize();
 
+var needBuyMembership = false;
+
 startBtn.addEventListener("click", async () =>
 {
+  if(needBuyMembership)
+  {
+    window.location.href = '/membership';
+    return;
+  }
+
   startBtn.disabled = true;
   startBtnText.textContent = "Starting...";
 
@@ -82,12 +90,15 @@ startBtn.addEventListener("click", async () =>
   if(!startData)
   {
     startBtn.disabled = false;
+    startBtnText.textContent = "Error";
     alert(`There was an error when starting`);
     return;
   }
   if(!startData[1].status)
   {
+    startBtnText.textContent = "Buy Membership";
     startBtn.disabled = false;
+    needBuyMembership = true;
     alert(`${startData[1].error}`);
     return;
   }
